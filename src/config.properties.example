@@ -1,6 +1,6 @@
 # config.properties
 
-# Informazioni di connessione al database PostgreSQL
+# Informazioni di connessione al database
 jdbc.url=URL
 jdbc.username=USERNAME
 jdbc.password=PASSWORD
