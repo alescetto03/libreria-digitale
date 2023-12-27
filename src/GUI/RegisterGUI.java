@@ -7,6 +7,9 @@ import GUI.Components.LinkButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class RegisterGUI extends AppView {
     private JPanel contentPane = new JPanel();
@@ -23,6 +26,7 @@ public class RegisterGUI extends AppView {
     private JLabel surnameLabel = new JLabel("Cognome");
     private JTextField surnameField = new JTextField(20);
     private JLabel birthdateLabel = new JLabel("Data di nascita");
+    private JTextField birthdateField = new JTextField(10);
     private LinkButton loginButton = new LinkButton("Login");
     private CustomButton registerButton = new CustomButton("Registrati");
 
@@ -51,6 +55,7 @@ public class RegisterGUI extends AppView {
         contentPane.add(surnameField);
         // Data di nascita
         contentPane.add(birthdateLabel);
+        contentPane.add(birthdateField);
 
         contentPane.add(registerButton);
         contentPane.add(loginButton);
@@ -63,7 +68,19 @@ public class RegisterGUI extends AppView {
                 String email = emailField.getText();
                 String name = nameField.getText();
                 String surname = surnameField.getText();
-                getAppController().registerUser(username, email, password, name, surname);
+                java.sql.Date sqlDate = null;
+                SimpleDateFormat birthdate = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    // Analizza la stringa per ottenere un oggetto java.util.Date
+                    java.util.Date utilDate = birthdate.parse(birthdateField.getText());
+
+                    // Converti l'oggetto java.util.Date in java.sql.Date
+                    sqlDate = new java.sql.Date(utilDate.getTime());
+
+                } catch (ParseException e1) {
+                    System.out.println(e1.getMessage());
+                }
+                getAppController().registerUser(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);
             } else {
                 JOptionPane.showMessageDialog(this.getContentPane(), "Le password non coincidono", "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }

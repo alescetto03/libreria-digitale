@@ -6,6 +6,8 @@ import GUI.LoginGUI;
 import PostgresImplementationDAO.UserDAO;
 
 import javax.swing.*;
+import java.security.PublicKey;
+import java.sql.Date;
 
 public class AppController {
     JFrame currentWindow;
@@ -36,11 +38,11 @@ public class AppController {
 
     public void showLogin() { showView(new LoginGUI(this)); }
 
-    public void authenticateUser() {
+    public void authenticateUser(String username, byte[] password) {
 
     }
 
-    public void registerUser(String username, String email, String password, String name, String surname) {
-        this.userDAO.register(username, email, password, name, surname);
+    public void registerUser(String username, String email, byte[] password, String name, String surname, Date birthdate) {
+        this.userDAO.register(username, email, password, name, surname, birthdate);
     }
 }

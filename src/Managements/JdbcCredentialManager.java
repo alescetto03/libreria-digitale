@@ -14,7 +14,7 @@ public class JdbcCredentialManager {
     private static String jdbcPassword;
 
     private static void loadProperties() {
-        String configFile = "src/config.properties";
+        String configFile = System.getProperty("user.dir") + "/src/config.properties";
         try (FileInputStream input = new FileInputStream(configFile)) {
             // Caricamento delle proprietà dal file di configurazione
             properties.load(input);

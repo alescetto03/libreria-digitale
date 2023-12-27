@@ -2,16 +2,14 @@ package PostgresImplementationDAO;
 
 import Managements.JdbcCredentialManager;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseConnection {
     static DatabaseConnection instance = null;
     Connection connection;
     public DatabaseConnection() {
         try {
-            this.connection = DriverManager.getConnection(JdbcCredentialManager.getJdbcUrl(),JdbcCredentialManager.getJdbcUsername(), JdbcCredentialManager.getJdbcPassword());
+            this.connection = DriverManager.getConnection("jdbc:postgresql:progetto_libreria", "postgres", "192605");
         } catch (SQLException e) {
             System.out.println("Non è stato possibile connettersi \n");
             System.out.println(e.getMessage());

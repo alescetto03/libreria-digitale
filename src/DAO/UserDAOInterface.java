@@ -1,6 +1,8 @@
 package DAO;
 
+import java.sql.Date;
+
 public interface UserDAOInterface {
-    UserResultInterface login();
-    void register(String username, String email, String password, String name, String surname);
+    UserResultInterface login(String username, byte[] password);
+    void register(String username, String email, byte[] password, String name, String surname, Date birthdate);
 }
