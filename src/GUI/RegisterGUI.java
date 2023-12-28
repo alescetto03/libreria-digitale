@@ -3,6 +3,8 @@ package GUI;
 import Controller.AppController;
 import GUI.Components.CustomButton;
 import GUI.Components.LinkButton;
+import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +28,8 @@ public class RegisterGUI extends AppView {
     private JLabel surnameLabel = new JLabel("Cognome");
     private JTextField surnameField = new JTextField(20);
     private JLabel birthdateLabel = new JLabel("Data di nascita");
-    private JTextField birthdateField = new JTextField(10);
+    //private JTextField birthdateField = new JTextField(10);
+    private JDateChooser birthdateField = new JDateChooser();
     private LinkButton loginButton = new LinkButton("Login");
     private CustomButton registerButton = new CustomButton("Registrati");
 
@@ -68,19 +71,10 @@ public class RegisterGUI extends AppView {
                 String email = emailField.getText();
                 String name = nameField.getText();
                 String surname = surnameField.getText();
-                java.sql.Date sqlDate = null;
-                SimpleDateFormat birthdate = new SimpleDateFormat("yyyy-MM-dd");
-                try {
                     // Analizza la stringa per ottenere un oggetto java.util.Date
-                    java.util.Date utilDate = birthdate.parse(birthdateField.getText());
+                    java.util.Date utilDate = birthdateField.getDate();
 
-                    // Converti l'oggetto java.util.Date in java.sql.Date
-                    sqlDate = new java.sql.Date(utilDate.getTime());
-
-                } catch (ParseException e1) {
-                    System.out.println(e1.getMessage());
-                }
-                getAppController().registerUser(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);
+                getAppController().registerUser(username, email, password, name, surname, utilDate);
             } else {
                 JOptionPane.showMessageDialog(this.getContentPane(), "Le password non coincidono", "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }

@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.charset.StandardCharsets;
 
 public class LoginGUI extends AppView {
     private JPanel contentPane = new JPanel();
@@ -33,6 +34,8 @@ public class LoginGUI extends AppView {
         loginButton.addActionListener((ActionEvent e) -> {
             String username = usernameField.getText();
             String password = String.valueOf(passwordField.getPassword());
+
+            getAppController().authenticateUser(username, password);
         });
 
         registerButton.addActionListener((ActionEvent e) -> {

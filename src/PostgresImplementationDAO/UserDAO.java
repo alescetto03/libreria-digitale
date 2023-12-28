@@ -7,7 +7,7 @@ import java.sql.*;
 
 public class UserDAO implements UserDAOInterface {
 
-    public UserResultInterface login(String username, byte[] password) {
+    public void login(String username, byte[] password) {
         final String query = "SELECT username, password, amministratore FROM Utente WHERE Utente.username = ? AND Utente.password = ?";
         try (
             Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -19,13 +19,11 @@ public class UserDAO implements UserDAOInterface {
 
             if (result.next()){
                 System.out.println("Utente trovato.");
-            } else System.out.println("Utente NON trovato.");;
+            } else System.out.println("Utente NON trovato.");
 
         } catch (SQLException e){
             System.out.println("Errore:" + e.getMessage());
         }
-
-        return null;
     }
 
     public void register(String username, String email, byte[] password, String name, String surname, Date birthdate) {
