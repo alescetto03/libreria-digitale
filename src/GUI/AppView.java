@@ -8,7 +8,7 @@ import java.awt.*;
 public abstract class AppView {
     private AppController controller;
     private Dimension dimension = null;
-    private String title = "Galleria";
+    private String title = "Libreria Digitale";
 
     public AppView(AppController appController) {
         this.controller = appController;

@@ -9,7 +9,7 @@ public class DatabaseConnection {
     Connection connection;
     public DatabaseConnection() {
         try {
-            this.connection = DriverManager.getConnection("jdbc:postgresql:progetto_libreria", "postgres", "192605");
+            this.connection = DriverManager.getConnection(JdbcCredentialManager.getJdbcUrl(), JdbcCredentialManager.getJdbcUsername(), JdbcCredentialManager.getJdbcPassword());
         } catch (SQLException e) {
             System.out.println("Non è stato possibile connettersi \n");
             System.out.println(e.getMessage());

@@ -10,5 +10,6 @@
     <orderEntry type="library" name="postgresql" level="project" />
     <orderEntry type="library" name="postgresql-42.7.1" level="project" />
     <orderEntry type="library" name="jcalendar-1.4" level="project" />
+    <orderEntry type="library" name="batik-rasterizer-1.17" level="project" />
   </component>
 </module>

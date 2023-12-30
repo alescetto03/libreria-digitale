@@ -2,6 +2,7 @@ package Controller;
 
 import DAO.UserDAOInterface;
 import GUI.AppView;
+import GUI.HomePage;
 import GUI.LoginGUI;
 import PostgresImplementationDAO.UserDAO;
 
@@ -41,22 +42,30 @@ public class AppController {
 
     public void showLogin() { showView(new LoginGUI(this)); }
 
-    public void authenticateUser(String username, String password) {
+    public boolean authenticateUser(String username, String password) {
         MessageDigest digest;
         try{
             digest = MessageDigest.getInstance("SHA-512");
         }catch (NoSuchAlgorithmException e) {
             System.out.println(e.getMessage());
-            return;
+            return false;
         }
         byte[] hashedPassword = digest.digest(password.getBytes());
 
-        this.userDAO.login(username, hashedPassword);
+        int res = this.userDAO.login(username, hashedPassword);
+        if (res == 1){
+            return true;
+        }
+        else return false;
     }
 
     public void registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
         // Converti l'oggetto java.util.Date in java.sql.Date
         java.sql.Date sqlDate = new java.sql.Date(birthdate.getTime());
         this.userDAO.register(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);
+    }
+
+
+    public void getCollections() {
     }
 }

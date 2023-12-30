@@ -3,15 +3,11 @@ package GUI;
 import Controller.AppController;
 import GUI.Components.CustomButton;
 import GUI.Components.LinkButton;
-import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class RegisterGUI extends AppView {
     private JPanel contentPane = new JPanel();
