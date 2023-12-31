@@ -2,87 +2,82 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.CustomButton;
+import GUI.Components.CustomDatePicker;
+import GUI.Components.CustomFormGroup;
 import GUI.Components.LinkButton;
-import com.toedter.calendar.JCalendar;
+import GUI.InputVerifiers.ConfirmPasswordVerifier;
+import GUI.InputVerifiers.NonEmptyDateFieldVerifier;
+import GUI.InputVerifiers.NonEmptyFieldVerifier;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RegisterGUI extends AppView {
     private JPanel contentPane = new JPanel();
-    private JLabel usernameLabel = new JLabel("Username");
-    private JTextField usernameField = new JTextField(20);
-    private JLabel emailLabel = new JLabel("Email");
-    private JTextField emailField = new JTextField(20);
-    private JLabel passwordLabel = new JLabel("Password");
-    private JPasswordField passwordField = new JPasswordField(20);
-    private JLabel confirmPasswordLabel = new JLabel("Password");
-    private JPasswordField confirmPasswordField = new JPasswordField(20);
-    private JLabel nameLabel = new JLabel("Nome");
-    private JTextField nameField = new JTextField(20);
-    private JLabel surnameLabel = new JLabel("Cognome");
-    private JTextField surnameField = new JTextField(20);
-    private JLabel birthdateLabel = new JLabel("Data di nascita");
-    //private JTextField birthdateField = new JTextField(10);
-    private JDateChooser birthdateField = new JDateChooser();
+    int columnsNumber = 25;
+    private NonEmptyFieldVerifier nonEmptyFieldVerifier = new NonEmptyFieldVerifier();
+    private NonEmptyDateFieldVerifier nonEmptyDateFieldVerifier = new NonEmptyDateFieldVerifier();
+    private CustomFormGroup usernameFormGroup = new CustomFormGroup(new JLabel("Username"), new JTextField(columnsNumber), nonEmptyFieldVerifier);
+    private CustomFormGroup emailFormGroup = new CustomFormGroup(new JLabel("Email"), new JTextField(columnsNumber), nonEmptyFieldVerifier);
+    private CustomFormGroup passwordFormGroup = new CustomFormGroup(new JLabel("Password"), new JPasswordField(columnsNumber), nonEmptyFieldVerifier);
+    private ConfirmPasswordVerifier confirmPasswordVerifier = new ConfirmPasswordVerifier((JPasswordField) passwordFormGroup.getField());
+    private CustomFormGroup confirmPasswordFormGroup = new CustomFormGroup(new JLabel("Conferma password"), new JPasswordField(columnsNumber), confirmPasswordVerifier);
+    private CustomFormGroup nameFormGroup = new CustomFormGroup(new JLabel("Nome"), new JTextField(columnsNumber), nonEmptyFieldVerifier);
+    private CustomFormGroup surnameFormGroup = new CustomFormGroup(new JLabel("Cognome"), new JTextField(columnsNumber), nonEmptyFieldVerifier);
+    private CustomFormGroup birthdateFormGroup = new CustomFormGroup(new JLabel("Data di nascita"), new CustomDatePicker(), nonEmptyDateFieldVerifier);
     private LinkButton loginButton = new LinkButton("Login");
     private CustomButton registerButton = new CustomButton("Registrati");
-
+    ArrayList<CustomFormGroup> formGroups = new ArrayList<>(Arrays.asList(usernameFormGroup, emailFormGroup, passwordFormGroup, confirmPasswordFormGroup, nameFormGroup, surnameFormGroup, birthdateFormGroup));
     public RegisterGUI(AppController appController) {
         super(appController);
         setTitle("Registrati");
-
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        // Username
-        contentPane.add(usernameLabel);
-        contentPane.add(usernameField);
-        // Email
-        contentPane.add(emailLabel);
-        contentPane.add(emailField);
-        // Password
-        contentPane.add(passwordLabel);
-        contentPane.add(passwordField);
-        // Confirm password
-        contentPane.add(confirmPasswordLabel);
-        contentPane.add(confirmPasswordField);
-        // Nome
-        contentPane.add(nameLabel);
-        contentPane.add(nameField);
-        // Cognome
-        contentPane.add(surnameLabel);
-        contentPane.add(surnameField);
-        // Data di nascita
-        contentPane.add(birthdateLabel);
-        contentPane.add(birthdateField);
 
+        // Form groups
+        addCustomFormGroupWithMargin(usernameFormGroup);
+        addCustomFormGroupWithMargin(emailFormGroup);
+        addCustomFormGroupWithMargin(passwordFormGroup);
+        addCustomFormGroupWithMargin(confirmPasswordFormGroup);
+        addCustomFormGroupWithMargin(nameFormGroup);
+        addCustomFormGroupWithMargin(surnameFormGroup);
+        addCustomFormGroupWithMargin(birthdateFormGroup);
+        // Pulsanti di register e login
         contentPane.add(registerButton);
         contentPane.add(loginButton);
 
         registerButton.addActionListener((ActionEvent e) -> {
-            String password = String.valueOf(passwordField.getPassword());
-            String confirmPassword = String.valueOf(confirmPasswordField.getPassword());
-            if (password.equals(confirmPassword)) {
-                String username = usernameField.getText();
-                String email = emailField.getText();
-                String name = nameField.getText();
-                String surname = surnameField.getText();
-                    // Analizza la stringa per ottenere un oggetto java.util.Date
-                    java.util.Date utilDate = birthdateField.getDate();
-
-                getAppController().registerUser(username, email, password, name, surname, utilDate);
-            } else {
-                JOptionPane.showMessageDialog(this.getContentPane(), "Le password non coincidono", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+            formGroups.forEach(CustomFormGroup::onVerifyInput);
+            JFrame frame = (JFrame) SwingUtilities.getRootPane(contentPane).getTopLevelAncestor();
+            System.out.println("Larghezza" + contentPane.getWidth());
+            System.out.println("Altezza" + contentPane.getHeight());
+            String username = ((JTextField) usernameFormGroup.getField()).getText();
+            String email = ((JTextField) emailFormGroup.getField()).getText();
+            String password = String.valueOf(((JPasswordField) passwordFormGroup.getField()).getPassword());
+            String confirmPassword = String.valueOf(((JPasswordField) confirmPasswordFormGroup.getField()).getPassword());
+            String name = ((JTextField) nameFormGroup.getField()).getText();
+            String surname = ((JTextField) surnameFormGroup.getField()).getText();
+            java.util.Date utilDate = ((JDateChooser) birthdateFormGroup.getField()).getDate();
+            try {
+                getAppController().registerUser(username, email, password, confirmPassword, name, surname, utilDate);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(this.getContentPane(), exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         loginButton.addActionListener((ActionEvent e) -> {
             getAppController().switchView(new LoginGUI(getAppController()));
         });
+    }
+
+    private void addCustomFormGroupWithMargin(CustomFormGroup formGroup) {
+        contentPane.add(formGroup);
+        // Aggiungo un bordo inferiore vuoto per creare il margine tra i form group
+        formGroup.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     }
 
     @Override

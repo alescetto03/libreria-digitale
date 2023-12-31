@@ -3,6 +3,7 @@ package GUI;
 import Controller.AppController;
 import GUI.Components.CustomButton;
 import GUI.Components.LinkButton;
+import GUI.InputVerifiers.NonEmptyFieldVerifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ public class LoginGUI extends AppView {
     private JPasswordField passwordField = new JPasswordField(20);
     private CustomButton loginButton = new CustomButton("Login");
     private LinkButton registerButton = new LinkButton("Registrati");
+    private NonEmptyFieldVerifier inputVerifier = new NonEmptyFieldVerifier();
 
     public LoginGUI(AppController appController) {
         super(appController);
@@ -31,11 +33,22 @@ public class LoginGUI extends AppView {
         contentPane.add(loginButton);
         contentPane.add(registerButton);
 
-        loginButton.addActionListener((ActionEvent e) -> {
-            String username = usernameField.getText();
-            String password = String.valueOf(passwordField.getPassword());
+        // Aggiungo delle validation per gli input
+        usernameField.setInputVerifier(inputVerifier);
+        passwordField.setInputVerifier(inputVerifier);
 
-            getAppController().authenticateUser(username, password);
+        loginButton.addActionListener((ActionEvent e) -> {
+            boolean isUsernameValid = usernameField.getInputVerifier().verify(usernameField);
+            boolean isPasswordValid = passwordField.getInputVerifier().verify(passwordField);
+
+            if (isUsernameValid && isPasswordValid) {
+                String username = usernameField.getText();
+                String password = String.valueOf(passwordField.getPassword());
+
+                getAppController().authenticateUser(username, password);
+            } else {
+                JOptionPane.showMessageDialog(contentPane, "I campi username e password non possono essere vuoti!", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         registerButton.addActionListener((ActionEvent e) -> {

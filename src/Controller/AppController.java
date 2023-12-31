@@ -7,8 +7,6 @@ import PostgresImplementationDAO.UserDAO;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
-import java.sql.Date;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -27,8 +25,10 @@ public class AppController {
         } else {
             currentWindow.pack();
         }
+
         currentWindow.setLocationRelativeTo(null);
         currentWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        currentWindow.setResizable(false);
         currentWindow.setVisible(true);
     }
 
@@ -54,7 +54,7 @@ public class AppController {
         this.userDAO.login(username, hashedPassword);
     }
 
-    public void registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
+    public void registerUser(String username, String email, String password, String confirmPassword, String name, String surname, java.util.Date birthdate) throws Exception {
         // Converti l'oggetto java.util.Date in java.sql.Date
         java.sql.Date sqlDate = new java.sql.Date(birthdate.getTime());
         this.userDAO.register(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);

@@ -26,7 +26,7 @@ public class UserDAO implements UserDAOInterface {
         }
     }
 
-    public void register(String username, String email, byte[] password, String name, String surname, Date birthdate) {
+    public void register(String username, String email, byte[] password, String name, String surname, Date birthdate) throws Exception {
         final String query = "INSERT INTO Utente(username, email, password, nome, cognome, data_nascita) VALUES (?, ?, ?, ?, ?, ?)";
         try (
             Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -44,15 +44,19 @@ public class UserDAO implements UserDAOInterface {
 
             // Gestisci il risultato, se necessario
             if (affectedRows > 0) {
-                System.out.println("Inserimento effettuato con successo!");
+                System.out.println("L'utente " + username +  " è stato registrato con successo!");
             } else {
-                System.out.println("Nessun record inserito.");
+                System.out.println("L'utente " + username +  " non è stato registrato correttamente.");
             }
 
             connection.setAutoCommit(false);
             connection.commit();
         } catch (SQLException e) {
-            System.out.println("Errore:" + e.getMessage());
+            // 23505 è il codice SQLState per la violazione della chiave primaria
+            if (e.getSQLState().equals("23505")) {
+                throw new Exception("L'username inserito è già registrato!");
+            }
+            System.out.println(e.getMessage() + " SQL STATE: " + e.getSQLState());
         }
     }
 }
