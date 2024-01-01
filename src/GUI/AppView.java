@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class AppView {
-    private AppController controller;
+    AppController controller;
     private Dimension dimension = null;
     private String title = "Libreria Digitale";
 
@@ -21,6 +21,7 @@ public abstract class AppView {
     protected void setTitle(String title) {
         this.title = title;
     }
+
 
     /**
      * Funzione che restituisce l'AppController che gestisce questa view.

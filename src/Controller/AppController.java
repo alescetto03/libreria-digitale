@@ -2,14 +2,11 @@ package Controller;
 
 import DAO.UserDAOInterface;
 import GUI.AppView;
-import GUI.HomePage;
 import GUI.LoginGUI;
 import PostgresImplementationDAO.UserDAO;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
-import java.sql.Date;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -30,6 +27,7 @@ public class AppController {
         }
         currentWindow.setLocationRelativeTo(null);
         currentWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        currentWindow.setResizable(false);
         currentWindow.setVisible(true);
     }
 

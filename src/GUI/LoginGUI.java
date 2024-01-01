@@ -1,52 +1,67 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.CustomButton;
-import GUI.Components.LinkButton;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.nio.charset.StandardCharsets;
 
-public class LoginGUI extends AppView {
-    private JPanel contentPane = new JPanel();
-    private JLabel usernameLabel = new JLabel("Username:");
-    private JTextField usernameField = new JTextField(20);
-    private JLabel passwordLabel = new JLabel("Password:");
-    private JPasswordField passwordField = new JPasswordField(20);
-    private CustomButton loginButton = new CustomButton("Login");
-    private LinkButton registerButton = new LinkButton("Registrati");
+public class LoginGUI extends AppView{
+    public JPanel contentPane;
+    private JLabel title;
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JButton loginButton;
+    private JButton registerButton;
+    private JLabel usernameLabel;
+    private JLabel passwordLabel;
+    private JLabel registerLabel;
 
     public LoginGUI(AppController appController) {
         super(appController);
+
+        //Impostazioni per il contentPane
         setTitle("Login");
         setDimension(new Dimension(350, 450));
 
-        contentPane.add(usernameLabel);
-        contentPane.add(usernameField);
-        contentPane.add(passwordLabel);
-        contentPane.add(passwordField);
-        contentPane.add(loginButton);
-        contentPane.add(registerButton);
+        //Impostazioni per i vari font/dimensioni testo Label
+        title.setFont(new Font("Arial", Font.BOLD, 20));
+        usernameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        passwordLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        registerLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        //Impostazioni per i vari font/dimensioni testo Button
+        loginButton.setFont(new Font("Arial", Font.BOLD, 13));
+        registerButton.setFont(new Font("Arial", Font.BOLD, 13));
+        loginButton.setBackground(Color.darkGray);
+        registerButton.setBackground(Color.darkGray);
 
+
+
+        //Listener LoginButton
         loginButton.addActionListener((ActionEvent e) -> {
             String username = usernameField.getText();
             String password = String.valueOf(passwordField.getPassword());
 
             if(getAppController().authenticateUser(username, password)){
-                getAppController().switchView(new HomePages(appController));
+                getAppController().switchView(new HomePage(appController));
             } else {
                 JOptionPane.showMessageDialog(contentPane, "Non è stato possibile effettuare il login. Riprovare.");
             }
         });
 
+        //Listener RegisterButton
         registerButton.addActionListener((ActionEvent e) -> {
-            getAppController().switchView(new RegisterGUI(getAppController()));
+            getAppController().switchView(new RegisterGUI(appController));
         });
     }
 
+
+
+
     @Override
-    public JPanel getContentPane() { return contentPane; }
+    public JPanel getContentPane() {
+        return contentPane;
+    }
 }

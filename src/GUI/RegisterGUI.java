@@ -1,64 +1,61 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.CustomButton;
-import GUI.Components.LinkButton;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Date;
 
-public class RegisterGUI extends AppView {
-    private JPanel contentPane = new JPanel();
-    private JLabel usernameLabel = new JLabel("Username");
-    private JTextField usernameField = new JTextField(20);
-    private JLabel emailLabel = new JLabel("Email");
-    private JTextField emailField = new JTextField(20);
-    private JLabel passwordLabel = new JLabel("Password");
-    private JPasswordField passwordField = new JPasswordField(20);
-    private JLabel confirmPasswordLabel = new JLabel("Password");
-    private JPasswordField confirmPasswordField = new JPasswordField(20);
-    private JLabel nameLabel = new JLabel("Nome");
-    private JTextField nameField = new JTextField(20);
-    private JLabel surnameLabel = new JLabel("Cognome");
-    private JTextField surnameField = new JTextField(20);
-    private JLabel birthdateLabel = new JLabel("Data di nascita");
-    //private JTextField birthdateField = new JTextField(10);
-    private JDateChooser birthdateField = new JDateChooser();
-    private LinkButton loginButton = new LinkButton("Login");
-    private CustomButton registerButton = new CustomButton("Registrati");
+public class RegisterGUI extends AppView{
+    public JPanel contentPane;
+    private JTextField usernameField;
+    private JTextField emailField;
+    private JPasswordField passwordField;
+    private JPasswordField confirmPasswordField;
+    private JTextField nameField;
+    private JTextField surnameField;
+    private JDateChooser birthdateField;
+    private JButton registerButton;
+    private JButton loginButton;
+    private JLabel title;
+    private JLabel subtitle;
+    private JLabel usernameLabel;
+    private JLabel emailLabel;
+    private JLabel passwordLabel;
+    private JLabel confirmPasswordLabel;
+    private JLabel nameLabel;
+    private JLabel surnameLabel;
+    private JLabel birthdateLabel;
 
     public RegisterGUI(AppController appController) {
         super(appController);
+
+        //Impostazioni contentPane
         setTitle("Registrati");
+        setDimension(new Dimension(450, 500));
 
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        // Username
-        contentPane.add(usernameLabel);
-        contentPane.add(usernameField);
-        // Email
-        contentPane.add(emailLabel);
-        contentPane.add(emailField);
-        // Password
-        contentPane.add(passwordLabel);
-        contentPane.add(passwordField);
-        // Confirm password
-        contentPane.add(confirmPasswordLabel);
-        contentPane.add(confirmPasswordField);
-        // Nome
-        contentPane.add(nameLabel);
-        contentPane.add(nameField);
-        // Cognome
-        contentPane.add(surnameLabel);
-        contentPane.add(surnameField);
-        // Data di nascita
-        contentPane.add(birthdateLabel);
-        contentPane.add(birthdateField);
 
-        contentPane.add(registerButton);
-        contentPane.add(loginButton);
+        //Impostazioni per i vari font/dimensioni testo Label
+        title.setFont(new Font("Arial", Font.BOLD, 20));
+        subtitle.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 15));
+        usernameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        emailLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        passwordLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        confirmPasswordLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        nameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        surnameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        birthdateLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+        //Impostazioni per i vari font/dimensioni testo Button
+        loginButton.setFont(new Font("Arial", Font.BOLD, 13));
+        registerButton.setFont(new Font("Arial", Font.BOLD, 13));
+        loginButton.setBackground(Color.darkGray);
+        registerButton.setBackground(Color.darkGray);
 
+
+
+        //Listener RegisterButton
         registerButton.addActionListener((ActionEvent e) -> {
             String password = String.valueOf(passwordField.getPassword());
             String confirmPassword = String.valueOf(confirmPasswordField.getPassword());
@@ -67,8 +64,8 @@ public class RegisterGUI extends AppView {
                 String email = emailField.getText();
                 String name = nameField.getText();
                 String surname = surnameField.getText();
-                    // Analizza la stringa per ottenere un oggetto java.util.Date
-                    java.util.Date utilDate = birthdateField.getDate();
+                // Analizza la stringa per ottenere un oggetto java.util.Date
+                java.util.Date utilDate = birthdateField.getDate();
 
                 getAppController().registerUser(username, email, password, name, surname, utilDate);
             } else {
@@ -76,11 +73,19 @@ public class RegisterGUI extends AppView {
             }
         });
 
+        //Listener LoginButton
         loginButton.addActionListener((ActionEvent e) -> {
             getAppController().switchView(new LoginGUI(getAppController()));
         });
     }
 
+
+    private void createUIComponents() {
+        birthdateField = new JDateChooser();
+    }
+
     @Override
-    public JPanel getContentPane() { return contentPane; }
+    public JPanel getContentPane() {
+        return contentPane;
+    }
 }
