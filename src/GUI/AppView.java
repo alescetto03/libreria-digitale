@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class AppView {
-    AppController controller;
+    private AppController controller;
     private Dimension dimension = null;
     private String title = "Libreria Digitale";
 
