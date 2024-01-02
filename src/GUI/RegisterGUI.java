@@ -1,6 +1,7 @@
 package GUI;
 
 import Controller.AppController;
+import GUI.Components.CustomButton;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
@@ -17,8 +18,8 @@ public class RegisterGUI extends AppView{
     private JTextField nameField;
     private JTextField surnameField;
     private JDateChooser birthdateField;
-    private JButton registerButton;
-    private JButton loginButton;
+    private CustomButton registerButton;
+    private CustomButton loginButton;
     private JLabel title;
     private JLabel subtitle;
     private JLabel usernameLabel;
@@ -47,12 +48,6 @@ public class RegisterGUI extends AppView{
         nameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
         surnameLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
         birthdateLabel.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
-        //Impostazioni per i vari font/dimensioni testo Button
-        loginButton.setFont(new Font("Arial", Font.BOLD, 13));
-        registerButton.setFont(new Font("Arial", Font.BOLD, 13));
-        loginButton.setBackground(Color.darkGray);
-        registerButton.setBackground(Color.darkGray);
-
 
 
         //Listener RegisterButton
@@ -82,6 +77,8 @@ public class RegisterGUI extends AppView{
 
     private void createUIComponents() {
         birthdateField = new JDateChooser();
+        loginButton = new CustomButton("Arial", Font.BOLD, 13, Color.darkGray);
+        registerButton = new CustomButton("Arial", Font.BOLD, 13, Color.darkGray);
     }
 
     @Override
