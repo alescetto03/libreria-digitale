@@ -6,14 +6,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class HomePage extends AppView{
-    private JList personalCollectionList;
-    private JList savedCollectionList;
     private JTextField searchBar;
     private JButton searchButton;
     private JButton notificationButton;
     private JButton accountButton;
     private JLabel personalCollectionLabel;
     private JLabel savedCollectionLabel;
+    private JPanel contentPane;
+    private JTable table1;
 
     public HomePage(AppController appController) {
         super(appController);
@@ -25,13 +25,12 @@ public class HomePage extends AppView{
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         //button1 = new IconButton("/GUI/images/search_icon.png",30, 30, Image.SCALE_SMOOTH);
 
     }
 
     @Override
     public JPanel getContentPane() {
-        return null;
+        return contentPane;
     }
 }
