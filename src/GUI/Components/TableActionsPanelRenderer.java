@@ -1,57 +1,20 @@
 package GUI.Components;
 
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class TableActionsPanelRenderer extends JPanel implements TableCellRenderer {
-    private ActionButton viewButton;
-    private ActionButton editButton;
-    private ActionButton deleteButton;
-
-    public TableActionsPanelRenderer(boolean view, boolean edit, boolean delete) {
-        if (view) {
-            viewButton = new ActionButton();
-            viewButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/view.png")));
-            add(viewButton);
-        }
-        if (edit) {
-            editButton = new ActionButton();
-            editButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/edit.png")));
-            add(editButton);
-        }
-        if (delete) {
-            deleteButton = new ActionButton();
-            deleteButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/edit.png")));
-            add(deleteButton);
-        }
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(viewButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(viewButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+public class TableActionsPanelRenderer extends DefaultTableCellRenderer {
+    private final ActionsPanel actionsPanel;
+    public TableActionsPanelRenderer(ActionsPanel actionsPanel) {
+        this.actionsPanel = actionsPanel;
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        return this;
+        Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        ActionsPanel actionsPanel = new ActionsPanel(true, true, true);
+        actionsPanel.setBackground(component.getBackground());
+        return actionsPanel;
     }
 }
