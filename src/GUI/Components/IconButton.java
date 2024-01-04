@@ -10,6 +10,7 @@ public class IconButton extends JButton {
         buttonIcon = new ImageIcon(scaledImage);
         this.setIcon(buttonIcon);
         this.setBorder(BorderFactory.createEmptyBorder());
+        this.setContentAreaFilled(false);
 
     }
 }
