@@ -1,8 +1,11 @@
 package Controller;
 
 import DAO.UserDAOInterface;
+import DAO.UserResultInterface;
 import GUI.AppView;
+import GUI.Components.CrudTable;
 import GUI.LoginGUI;
+import Model.User;
 import PostgresImplementationDAO.UserDAO;
 
 import javax.swing.*;
@@ -13,6 +16,10 @@ import java.security.NoSuchAlgorithmException;
 public class AppController {
     JFrame currentWindow;
     UserDAOInterface userDAO = new UserDAO();
+    /**
+     * Utente correntemente autenticato all'applicativo
+     */
+    User loggedUser = null;
 
     public static void main(String[] args) { (new AppController()).showLogin(); }
 
@@ -50,11 +57,12 @@ public class AppController {
         }
         byte[] hashedPassword = digest.digest(password.getBytes());
 
-        int res = this.userDAO.login(username, hashedPassword);
-        if (res == 1){
+        UserResultInterface userResult = this.userDAO.login(username, hashedPassword);
+        if (userResult != null){
+            loggedUser = new User(userResult.getUsername(), userResult.getEmail(), userResult.getName(), userResult.getSurname(), userResult.getBirthdate(), userResult.isAdmin());
             return true;
         }
-        else return false;
+        return false;
     }
 
     public void registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
