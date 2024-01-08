@@ -39,9 +39,9 @@ public class HomePage extends AppView{
         table1.setModel(new DefaultTableModel(data, new String[]{"nome", "azioni"}));
         table1.setRowHeight(40);
         table1.setSelectionBackground(new java.awt.Color(56, 138, 112));
-        ActionsPanel actionsPanel = new ActionsPanel(true, true, true);
-        table1.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(actionsPanel));
-        table1.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(actionsPanel));
+        //ActionsPanel actionsPanel = new ActionsPanel(true, true, true);
+        //table1.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(actionsPanel));
+        //table1.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(actionsPanel));
     }
     @Override
     public JPanel getContentPane() {
