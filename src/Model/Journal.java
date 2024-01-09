@@ -1,6 +1,6 @@
 package Model;
 
-public class Megazine {
+public class Journal {
     private int id;
     private String name;
     private String argument;
@@ -8,7 +8,7 @@ public class Megazine {
     private String manager;
 
 
-    public Megazine(int id, String name, String argument, int publication_year, String manager) {
+    public Journal(int id, String name, String argument, int publication_year, String manager) {
         this.id = id;
         this.name = name;
         this.argument = argument;

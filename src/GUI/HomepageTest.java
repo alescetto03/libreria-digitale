@@ -6,10 +6,12 @@ import GUI.Components.PersonalCollectionsCrudTable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class HomepageTest extends AppView{
     JPanel contentPane = new JPanel();
-    public HomepageTest(AppController appController) {
+    public HomepageTest(AppController appController, ArrayList<Map<String, Object>> personalCollections) {
         super(appController);
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
@@ -35,10 +37,10 @@ public class HomepageTest extends AppView{
         buttonsWrapper.add(notifyButton);
         buttonsWrapper.add(adminButton);
 
-        CrudTable personalCollections = new PersonalCollectionsCrudTable("Le tue raccolte:");
-        contentPane.add(personalCollections);
+        CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "proprietario", "visibilita"}, personalCollections);
+        contentPane.add(personalCollectionsTable);
 
-        CrudTable savedCollections = new PersonalCollectionsCrudTable("Le tue raccolte salvate:");
+        CrudTable savedCollections = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario", "visibilita"}, personalCollections);
         contentPane.add(savedCollections);
     }
 

@@ -8,14 +8,14 @@ import java.util.EventObject;
 
 public class TableActionsPanelEditor extends DefaultCellEditor {
     private boolean displayViewButton;
-    private boolean displayEditButton;
+    private boolean displaySaveButton;
     private boolean displayCreateButton;
     private boolean displayDeleteButton;
     private CrudTable crudTable;
-    public TableActionsPanelEditor(CrudTable crudTable, boolean displayViewButton, boolean displayEditButton, boolean displayCreateButton, boolean displayDeleteButton) {
+    public TableActionsPanelEditor(CrudTable crudTable, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         super(new JCheckBox());
         this.displayViewButton = displayViewButton;
-        this.displayEditButton = displayEditButton;
+        this.displaySaveButton = displaySaveButton;
         this.displayCreateButton = displayCreateButton;
         this.displayDeleteButton = displayDeleteButton;
         this.crudTable = crudTable;
@@ -23,7 +23,7 @@ public class TableActionsPanelEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        ActionsPanel actionsPanel = new ActionsPanel(crudTable, displayViewButton, displayEditButton, displayCreateButton, displayDeleteButton);
+        ActionsPanel actionsPanel = new ActionsPanel(crudTable, displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton);
         actionsPanel.setBackground(table.getSelectionBackground());
         return actionsPanel;
     }

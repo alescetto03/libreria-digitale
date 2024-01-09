@@ -1,27 +1,37 @@
 package Model;
 
 import java.security.PublicKey;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-public class Collection {
+public class Collection extends AbstractModel {
     private int id;
     private String name;
-    private User owner;
-    private enum Visibility{
+    private String owner;
+    public enum Visibility{
         PRIVATE,
         PUBLIC
     }
     private Visibility visibility;
 
 
-    public Collection(int id, String name, User owner, Visibility visibility){
+    public Collection(int id, String name, String owner, Visibility visibility){
         this.id = id;
         this.name = name;
         this.owner = owner;
         this.visibility = visibility;
     }
 
-
-
+    @Override
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", getId());
+        data.put("name", getName());
+        data.put("owner", getOwner());
+        data.put("visibility", getVisibility());
+        return data;
+    }
 
     public int getId() {
         return id;
@@ -39,11 +49,11 @@ public class Collection {
         this.name = name;
     }
 
-    public User getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
