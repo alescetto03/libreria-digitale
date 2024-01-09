@@ -6,7 +6,7 @@ public class Book {
     private String isbn;
     private String title;
     private String publisher;
-    private enum FruitionMode{
+    public enum FruitionMode{
         PAPER,
         DIGITAL,
         AUDIOBOOK
@@ -15,7 +15,7 @@ public class Book {
     private int publication_year;
     private BufferedImage cover;
     private String description;
-    private enum BookType {
+    public enum BookType {
         ROMANZO,
         DIDATTICO
     }
@@ -38,7 +38,6 @@ public class Book {
         this.topic = topic;
 
     }
-
 
 
 

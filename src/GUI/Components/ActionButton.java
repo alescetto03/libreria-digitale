@@ -1,13 +1,10 @@
 package GUI.Components;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
-import javax.swing.JButton;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class ActionButton extends JButton {
@@ -17,6 +14,27 @@ public class ActionButton extends JButton {
     public ActionButton() {
         setContentAreaFilled(false);
         setBorder(new EmptyBorder(3, 3, 3, 3));
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                mousePress = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent me) {
+                mousePress = false;
+            }
+        });
+    }
+
+    public ActionButton(String path, int width, int height, int scale_alg) {
+        setContentAreaFilled(false);
+        setBorder(new EmptyBorder(3, 3, 3, 3));
+
+        ImageIcon buttonIcon = new ImageIcon(getClass().getResource(path));
+        Image scaledImage = buttonIcon.getImage().getScaledInstance(width, height, scale_alg);
+        buttonIcon = new ImageIcon(scaledImage);
+        setIcon(buttonIcon);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {

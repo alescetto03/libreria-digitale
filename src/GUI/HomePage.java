@@ -1,20 +1,20 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.ActionButton;
-import GUI.Components.ActionsPanel;
-import GUI.Components.TableActionsPanelEditor;
-import GUI.Components.TableActionsPanelRenderer;
+import GUI.Components.*;
+import Model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class HomePage extends AppView{
     private JTextField searchBar;
-    private ActionButton searchButton;
-    private JButton notificationButton;
-    private JButton accountButton;
+    private IconButton searchButton;
+    private IconButton notificationButton;
+    private IconButton accountButton;
     private JLabel personalCollectionLabel;
     private JLabel savedCollectionLabel;
     private JPanel contentPane;
@@ -23,12 +23,41 @@ public class HomePage extends AppView{
         super(appController);
         setTitle("Home Page");
         setDimension(new Dimension(350, 300));
-        searchButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/edit.png")));
         createTable();
+        searchButton.setText("");
+        notificationButton.setText("");
+        accountButton.setText("");
+
+
+        notificationButton.addActionListener((ActionEvent e) -> {
+            JPopupMenu popupMenu = new JPopupMenu();
+            // Aggiungi elementi al popupMenu per visualizzare le notifiche
+
+            for(String text : getAppController().getUserNotificationResult()){
+                popupMenu.add(new JLabel(text));
+            }
+            // Mostra il popupMenu
+            popupMenu.show(notificationButton, 0, notificationButton.getHeight());
+        });
+
+
+        searchButton.addActionListener((ActionEvent e) -> {
+            String searchText = searchBar.getText();
+
+        });
     }
+
     private void createUIComponents() {
-        searchButton = new ActionButton();
+        searchButton = new IconButton("/GUI/images/search_icon.png",30, 30, Image.SCALE_SMOOTH);
+        notificationButton = new IconButton("/GUI/images/notification_icon.png",30, 30, Image.SCALE_SMOOTH);
+        accountButton = new IconButton("/GUI/images/account_icon.png",30, 30, Image.SCALE_SMOOTH);
     }
+
+    @Override
+    public JPanel getContentPane() {
+        return contentPane;
+    }
+
     private void createTable() {
         Object[][] data = {
                 {"raccolta 1", null},
@@ -42,9 +71,5 @@ public class HomePage extends AppView{
         ActionsPanel actionsPanel = new ActionsPanel(true, true, true);
         table1.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(actionsPanel));
         table1.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(actionsPanel));
-    }
-    @Override
-    public JPanel getContentPane() {
-        return contentPane;
     }
 }

@@ -46,6 +46,7 @@ public class LoginGUI extends AppView{
 
             if(getAppController().authenticateUser(username, password)){
                 getAppController().switchView(new HomePage(appController));
+                getAppController().getUserNotification();
             } else {
                 JOptionPane.showMessageDialog(contentPane, "Non è stato possibile effettuare il login. Riprovare.");
             }
@@ -54,6 +55,7 @@ public class LoginGUI extends AppView{
         //Listener RegisterButton
         registerButton.addActionListener((ActionEvent e) -> {
             getAppController().switchView(new RegisterGUI(appController));
+            getAppController().getUserNotification();
         });
     }
 

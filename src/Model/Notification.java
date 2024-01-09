@@ -7,6 +7,7 @@ public class Notification {
     private LocalDateTime date_time;
 
 
+
     public Notification(String text, LocalDateTime date_time) {
         this.text = text;
         this.date_time = date_time;
@@ -28,4 +29,5 @@ public class Notification {
     public void setDate_time(LocalDateTime date_time) {
         this.date_time = date_time;
     }
+
 }

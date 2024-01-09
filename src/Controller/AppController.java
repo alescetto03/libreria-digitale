@@ -1,25 +1,36 @@
 package Controller;
 
-import DAO.UserDAOInterface;
-import DAO.UserResultInterface;
-import GUI.AppView;
-import GUI.Components.CrudTable;
-import GUI.LoginGUI;
-import Model.User;
+import DAO.*;
+import GUI.*;
+import Model.*;
+import PostgresImplementationDAO.BookDAO;
+import PostgresImplementationDAO.NotificationDAO;
 import PostgresImplementationDAO.UserDAO;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class AppController {
     JFrame currentWindow;
     UserDAOInterface userDAO = new UserDAO();
+
+    NotificationDAOInterface notificationDAO = new NotificationDAO();
+
+    BookDAOInterface bookDAO = new BookDAO();
+
     /**
      * Utente correntemente autenticato all'applicativo
      */
     User loggedUser = null;
+
+    ArrayList<Notification> userNotification = new ArrayList<Notification>();
+
+    ArrayList<Book> searchedBook = new ArrayList<Book>();
+
 
     public static void main(String[] args) { (new AppController()).showLogin(); }
 
@@ -73,5 +84,30 @@ public class AppController {
 
 
     public void getCollections() {
+    }
+
+    public void getUserNotification(){
+        ArrayList<NotificationDAOResult> results = this.notificationDAO.getUserNotification(loggedUser.getUsername());
+
+        for(NotificationDAOResult result : results){
+            Notification notification = new Notification(result.getText(), (result.getDate_time()).toLocalDateTime());
+            this.userNotification.add(notification);
+        }
+    }
+    public ArrayList<String> getUserNotificationResult(){
+        ArrayList<String> notificationTextList= new ArrayList<String>();
+        for (Notification notification : this.userNotification){
+            notificationTextList.add(notification.getText());
+        }
+        return notificationTextList;
+    }
+
+    public void getBookByString(String searchItem){
+        ArrayList<BookDAOResult> results = this.bookDAO.getResearchedBook(searchItem);
+
+        for(BookDAOResult result : results){
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type()), result.getGenre(), result.getTarget(), result.getTopic());
+            this.searchedBook.add(book);
+        }
     }
 }

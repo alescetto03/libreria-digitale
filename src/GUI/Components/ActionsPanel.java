@@ -1,6 +1,7 @@
 package GUI.Components;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ActionsPanel extends JPanel{
     ActionButton viewButton;
@@ -8,18 +9,15 @@ public class ActionsPanel extends JPanel{
     ActionButton deleteButton;
     public ActionsPanel(boolean displayViewButton, boolean displayEditButton, boolean displayDeleteButton) {
         if (displayViewButton) {
-            viewButton = new ActionButton();
-            viewButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/view.png")));
+            viewButton = new ActionButton("/GUI/images/view.png", 20, 20, Image.SCALE_SMOOTH);
             add(viewButton);
         }
         if (displayEditButton) {
-            editButton = new ActionButton();
-            editButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/edit.png")));
+            editButton = new ActionButton("/GUI/images/save.png", 20, 20, Image.SCALE_SMOOTH);
             add(editButton);
         }
         if (displayDeleteButton) {
-            deleteButton = new ActionButton();
-            deleteButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/delete.png")));
+            deleteButton = new ActionButton("/GUI/images/delete.png", 20, 20, Image.SCALE_SMOOTH);
             add(deleteButton);
         }
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
