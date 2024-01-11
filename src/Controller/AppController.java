@@ -3,16 +3,14 @@ package Controller;
 import DAO.*;
 import GUI.*;
 import Model.*;
-import PostgresImplementationDAO.BookDAO;
-import PostgresImplementationDAO.NotificationDAO;
-import PostgresImplementationDAO.UserDAO;
+import PostgresImplementationDAO.*;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class AppController {
     JFrame currentWindow;
@@ -22,6 +20,8 @@ public class AppController {
 
     BookDAOInterface bookDAO = new BookDAO();
 
+    ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
+
     /**
      * Utente correntemente autenticato all'applicativo
      */
@@ -30,6 +30,7 @@ public class AppController {
     ArrayList<Notification> userNotification = new ArrayList<Notification>();
 
     ArrayList<Book> searchedBook = new ArrayList<Book>();
+    ArrayList<ScientificPublication> searchedPublication = new ArrayList<ScientificPublication>();
 
 
     public static void main(String[] args) { (new AppController()).showLogin(); }
@@ -86,28 +87,66 @@ public class AppController {
     public void getCollections() {
     }
 
-    public void getUserNotification(){
-        ArrayList<NotificationDAOResult> results = this.notificationDAO.getUserNotification(loggedUser.getUsername());
 
-        for(NotificationDAOResult result : results){
+    public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
+        ArrayList<Map<String, Object>> renderedData = new ArrayList<>();
+        objects.forEach(object -> {
+            renderedData.add(object.getData());
+        });
+        return renderedData;
+    }
+
+    public void getUserNotification(){
+        ArrayList<NotificationResultInterface> results = this.notificationDAO.getUserNotification(loggedUser.getUsername());
+
+        for(NotificationResultInterface result : results){
             Notification notification = new Notification(result.getText(), (result.getDate_time()).toLocalDateTime());
             this.userNotification.add(notification);
         }
     }
-    public ArrayList<String> getUserNotificationResult(){
-        ArrayList<String> notificationTextList= new ArrayList<String>();
-        for (Notification notification : this.userNotification){
-            notificationTextList.add(notification.getText());
-        }
-        return notificationTextList;
-    }
 
     public void getBookByString(String searchItem){
-        ArrayList<BookDAOResult> results = this.bookDAO.getResearchedBook(searchItem);
+        ArrayList<BookResultInterface> results = this.bookDAO.getResearchedBook(searchItem);
+        searchedBook.clear();
 
-        for(BookDAOResult result : results){
+        for(BookResultInterface result : results){
             Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type()), result.getGenre(), result.getTarget(), result.getTopic());
             this.searchedBook.add(book);
         }
+    }
+
+    public void getScientificPublicationByString(String searchItem){
+        ArrayList<ScientificPublicationResultInterface> results = this.publicationDAO.getResearchedPublication(searchItem);
+        searchedPublication.clear();
+
+        for(ScientificPublicationResultInterface result : results){
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            this.searchedPublication.add(publication);
+        }
+    }
+
+    public void showSearchResults(String searchText){
+        getBookByString(searchText);
+        getScientificPublicationByString(searchText);
+
+        ArrayList<AbstractModel> abstractModelsBook = new ArrayList<>(searchedBook);//Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<AbstractModel> abstractModelsPublication = new ArrayList<>(searchedPublication);
+
+        ArrayList<Map<String, Object>> renderedSearchedBook = renderData(abstractModelsBook);
+        ArrayList<Map<String, Object>> renderedSearchedPublication = renderData(abstractModelsPublication);
+
+        for(Map<String, Object> item : renderedSearchedBook){
+            System.out.println(item);
+        }
+        for(Map<String, Object> item : renderedSearchedPublication){
+            System.out.println(item);
+        }
+    }
+
+    public void showHomePage(){
+        getUserNotification();
+        ArrayList<AbstractModel> abstractModels = new ArrayList<>(userNotification); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<Map<String, Object>> renderedUserNotification = renderData(abstractModels);
+        switchView(new HomePage(this, renderedUserNotification));
     }
 }

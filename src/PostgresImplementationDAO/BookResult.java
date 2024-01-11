@@ -1,14 +1,12 @@
 package PostgresImplementationDAO;
 
-import DAO.BookDAOResult;
-import Model.Book;
+import DAO.BookResultInterface;
 
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BookResult implements BookDAOResult {
+public class BookResult implements BookResultInterface {
     String isbn;
     String title;
     String publisher;

@@ -1,7 +1,7 @@
 package PostgresImplementationDAO;
 
 import DAO.BookDAOInterface;
-import DAO.BookDAOResult;
+import DAO.BookResultInterface;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class BookDAO implements BookDAOInterface {
     @Override
-    public ArrayList<BookDAOResult> getResearchedBook(String searchedBook){
-        final String query = "SELECT * FROM Libro WHERE Libro.titolo ILIKE '%?%'";
+    public ArrayList<BookResultInterface> getResearchedBook(String searchedBook){
+        final String query = "SELECT * FROM Libro WHERE Libro.titolo ILIKE '%'|| ? ||'%'";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -20,7 +20,7 @@ public class BookDAO implements BookDAOInterface {
                 statement.setString(1, searchedBook);
                 ResultSet result = statement.executeQuery();
 
-                ArrayList<BookDAOResult> searchedBookList = new ArrayList<BookDAOResult>();
+                ArrayList<BookResultInterface> searchedBookList = new ArrayList<BookResultInterface>();
                 while(result.next()){
                     BookResult book = new BookResult(result);
                     searchedBookList.add(book);

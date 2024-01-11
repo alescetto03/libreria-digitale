@@ -1,11 +1,8 @@
 package DAO;
 
-import PostgresImplementationDAO.BookResult;
-
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
-public interface BookDAOResult {
+public interface BookResultInterface {
     String getIsbn();
     String getTitle();
     String getPublisher();

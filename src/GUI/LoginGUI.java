@@ -45,8 +45,7 @@ public class LoginGUI extends AppView{
             String password = String.valueOf(passwordField.getPassword());
 
             if(getAppController().authenticateUser(username, password)){
-                getAppController().switchView(new HomePage(appController));
-                getAppController().getUserNotification();
+                getAppController().showHomePage();
             } else {
                 JOptionPane.showMessageDialog(contentPane, "Non è stato possibile effettuare il login. Riprovare.");
             }

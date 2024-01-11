@@ -2,7 +2,7 @@ package DAO;
 
 import java.sql.Timestamp;
 
-public interface NotificationDAOResult {
+public interface NotificationResultInterface {
     String getText();
     Timestamp getDate_time();
 

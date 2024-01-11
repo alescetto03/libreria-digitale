@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class HomePage extends AppView{
     private JTextField searchBar;
@@ -19,7 +20,7 @@ public class HomePage extends AppView{
     private JLabel savedCollectionLabel;
     private JPanel contentPane;
     private JTable table1;
-    public HomePage(AppController appController) {
+    public HomePage(AppController appController, ArrayList<Map<String, Object>> notification) {
         super(appController);
         setTitle("Home Page");
         setDimension(new Dimension(350, 300));
@@ -33,8 +34,8 @@ public class HomePage extends AppView{
             JPopupMenu popupMenu = new JPopupMenu();
             // Aggiungi elementi al popupMenu per visualizzare le notifiche
 
-            for(String text : getAppController().getUserNotificationResult()){
-                popupMenu.add(new JLabel(text));
+            for(Map<String, Object> item : notification){
+                popupMenu.add(new JLabel(String.valueOf(item.get("text"))));
             }
             // Mostra il popupMenu
             popupMenu.show(notificationButton, 0, notificationButton.getHeight());
@@ -43,7 +44,7 @@ public class HomePage extends AppView{
 
         searchButton.addActionListener((ActionEvent e) -> {
             String searchText = searchBar.getText();
-
+            getAppController().showSearchResults(searchText);
         });
     }
 

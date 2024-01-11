@@ -1,7 +1,7 @@
 package PostgresImplementationDAO;
 
 import DAO.NotificationDAOInterface;
-import DAO.NotificationDAOResult;
+import DAO.NotificationResultInterface;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class NotificationDAO implements NotificationDAOInterface {
 
     @Override
-    public ArrayList<NotificationDAOResult> getUserNotification(String username) {
+    public ArrayList<NotificationResultInterface> getUserNotification(String username) {
         final String query = "SELECT messaggio, data_ora FROM Notifica WHERE Notifica.destinatario = ?";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -21,7 +21,7 @@ public class NotificationDAO implements NotificationDAOInterface {
             statement.setString(1, username);
             ResultSet result = statement.executeQuery();
 
-            ArrayList<NotificationDAOResult> userNotificationList = new ArrayList<NotificationDAOResult>();
+            ArrayList<NotificationResultInterface> userNotificationList = new ArrayList<NotificationResultInterface>();
             while(result.next()){
                 NotificationResult notification = new NotificationResult(result);
                 userNotificationList.add(notification);
