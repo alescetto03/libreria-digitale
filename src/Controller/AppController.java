@@ -3,6 +3,7 @@ package Controller;
 import DAO.*;
 import GUI.*;
 import Model.*;
+import Model.User;
 import PostgresImplementationDAO.*;
 
 import javax.swing.*;
@@ -22,6 +23,8 @@ public class AppController {
 
     ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
 
+    CollectionDAOInterface collectionDAO = new CollectionDAO();
+
     /**
      * Utente correntemente autenticato all'applicativo
      */
@@ -31,6 +34,7 @@ public class AppController {
 
     ArrayList<Book> searchedBook = new ArrayList<Book>();
     ArrayList<ScientificPublication> searchedPublication = new ArrayList<ScientificPublication>();
+    ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
 
 
     public static void main(String[] args) { (new AppController()).showLogin(); }
@@ -125,22 +129,39 @@ public class AppController {
         }
     }
 
+    public void getCollectionByString(String searchItem){
+        ArrayList<CollectionResultInterface> results = this.collectionDAO.getReasearchedCollection(searchItem);
+        searchedCollection.clear();
+
+        for(CollectionResultInterface result : results){
+            Collection collection = new Collection(result.getId(), result.getName(), result.getOwner(), Collection.Visibility.valueOf(result.getVisibility()));
+            this.searchedCollection.add(collection);
+        }
+    }
+
     public void showSearchResults(String searchText){
         getBookByString(searchText);
         getScientificPublicationByString(searchText);
+        getCollectionByString(searchText);
 
-        ArrayList<AbstractModel> abstractModelsBook = new ArrayList<>(searchedBook);//Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<AbstractModel> abstractModelsBook = new ArrayList<>(searchedBook);
         ArrayList<AbstractModel> abstractModelsPublication = new ArrayList<>(searchedPublication);
+        ArrayList<AbstractModel> abstractModelsCollection = new ArrayList<>(searchedCollection);
 
         ArrayList<Map<String, Object>> renderedSearchedBook = renderData(abstractModelsBook);
         ArrayList<Map<String, Object>> renderedSearchedPublication = renderData(abstractModelsPublication);
+        ArrayList<Map<String, Object>> renderedSearchedCollection = renderData(abstractModelsCollection);
 
         for(Map<String, Object> item : renderedSearchedBook){
-            System.out.println(item);
+            System.out.println(item.get("title"));
         }
         for(Map<String, Object> item : renderedSearchedPublication){
-            System.out.println(item);
+            System.out.println(item.get("title"));
         }
+        for(Map<String, Object> item : renderedSearchedCollection){
+            System.out.println(item.get("name"));
+        }
+
     }
 
     public void showHomePage(){
