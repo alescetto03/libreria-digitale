@@ -11,30 +11,34 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AppController {
     JFrame currentWindow;
     UserDAOInterface userDAO = new UserDAO();
-
     NotificationDAOInterface notificationDAO = new NotificationDAO();
-
     BookDAOInterface bookDAO = new BookDAO();
-
     ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
-
     CollectionDAOInterface collectionDAO = new CollectionDAO();
+    StoreDAOInterface storeDAO = new StoreDAO();
 
     /**
      * Utente correntemente autenticato all'applicativo
      */
     User loggedUser = null;
 
+
+
+
+
+
     ArrayList<Notification> userNotification = new ArrayList<Notification>();
 
     ArrayList<Book> searchedBook = new ArrayList<Book>();
     ArrayList<ScientificPublication> searchedPublication = new ArrayList<ScientificPublication>();
     ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
+    ArrayList<Store> storeCompleteSeries = new ArrayList<Store>();
 
 
     public static void main(String[] args) { (new AppController()).showLogin(); }
@@ -139,6 +143,20 @@ public class AppController {
         }
     }
 
+    public ArrayList<String> getSeriesByString(String searchItem){
+        return this.bookDAO.getResearchedSeries(searchItem);
+    }
+
+    public void getStoreCompleteSeries(String searchItem){
+        ArrayList<StoreResultInterface> results = this.storeDAO.storeCompleteSerie(searchItem);
+        storeCompleteSeries.clear();
+
+        for(StoreResultInterface result : results){
+            Store store = new Store(result.getPartita_iva(), result.getName(), result.getAddress(), result.getUrl());
+            this.storeCompleteSeries.add(store);
+        }
+    }
+
     public void showSearchResults(String searchText){
         getBookByString(searchText);
         getScientificPublicationByString(searchText);
@@ -161,6 +179,14 @@ public class AppController {
         for(Map<String, Object> item : renderedSearchedCollection){
             System.out.println(item.get("name"));
         }
+        Map<String, Map<String, Object>> storeBySeries = new HashMap<>();
+        for(String item : getSeriesByString(searchText)){
+            getStoreCompleteSeries(item);
+            storeBySeries.put(item, storeCompleteSeries.getFirst().getData());
+
+            //System.out.println(item);
+        }
+        System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
 
     }
 

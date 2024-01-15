@@ -1,6 +1,9 @@
 package Model;
 
-public class Store {
+import java.util.HashMap;
+import java.util.Map;
+
+public class Store extends AbstractModel{
     private String partita_iva;
     private String name;
     private String address;
@@ -47,4 +50,13 @@ public class Store {
         this.url = url;
     }
 
+    @Override
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("partita_iva", getPartita_iva());
+        data.put("name", getName());
+        data.put("address", getAddress());
+        data.put("url", getUrl());
+        return data;
+    }
 }
