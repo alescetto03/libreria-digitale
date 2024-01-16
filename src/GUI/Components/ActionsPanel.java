@@ -13,14 +13,12 @@ public class ActionsPanel extends JPanel{
     private IconButton saveButton;
     private IconButton deleteButton;
     private CrudTable crudTable;
-    boolean displayCreateButton;
     boolean displayViewButton;
     boolean displaySaveButton;
     boolean displayDeleteButton;
 
-    public ActionsPanel(CrudTable crudTable, boolean displayCreateButton, boolean displayViewButton, boolean displaySaveButton, boolean displayDeleteButton) {
+    public ActionsPanel(CrudTable crudTable, boolean displayViewButton, boolean displaySaveButton, boolean displayDeleteButton) {
         this.crudTable = crudTable;
-        this.displayCreateButton = displayCreateButton;
         this.displayViewButton = displayViewButton;
         this.displaySaveButton = displaySaveButton;
         this.displayDeleteButton = displayDeleteButton;

@@ -105,15 +105,18 @@ public class AppController {
 
     public void showHomepage() {
         getUserPersonalCollections();
+        getUserSavedCollections();
         getUserNotification();
 
         ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<AbstractModel> abstractModelsCollectionSaved = new ArrayList<>(savedCollections);
         ArrayList<AbstractModel> abstractModelsNotification = new ArrayList<>(userNotification);
 
         ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModelsCollections);
+        ArrayList<Map<String, Object>> renderedPersonalCollectionsSaved = renderData(abstractModelsCollectionSaved);
         ArrayList<Map<String, Object>> renderedUserNotification = renderData(abstractModelsNotification);
 
-        switchView(new HomepageGUI(this, renderedPersonalCollections, renderedUserNotification));
+        switchView(new HomepageGUI(this, renderedPersonalCollections, renderedUserNotification, renderedPersonalCollectionsSaved));
     }
 
     public void getUserPersonalCollections() {
@@ -123,6 +126,16 @@ public class AppController {
         for (CollectionResultInterface result: results) {
             Collection collection = new Collection(result.getId(), result.getName(), loggedUser.getUsername(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
             this.personalCollections.add(collection);
+        }
+    }
+
+    public void getUserSavedCollections(){
+        ArrayList<CollectionResultInterface> results = this.collectionDAO.getUserSavedCollections(loggedUser.getUsername());
+
+        this.savedCollections.clear();
+        for(CollectionResultInterface result : results){
+            Collection collection = new Collection(result.getId(), result.getName(), result.getOwner(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
+            this.savedCollections.add(collection);
         }
     }
 
@@ -151,6 +164,19 @@ public class AppController {
             for (Collection personalCollection: personalCollections) {
                 if (personalCollection.getId() == id) {
                     personalCollections.remove(personalCollection);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeSavedCollectionFromDatabase(int id){
+        if(collectionDAO.deleteSavedCollectionById(id, loggedUser.getUsername())){
+            for (Collection savedCollection: savedCollections) {
+                if (savedCollection.getId() == id) {
+                    savedCollections.remove(savedCollection);
                     break;
                 }
             }

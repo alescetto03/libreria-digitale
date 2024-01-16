@@ -19,6 +19,8 @@ public abstract class CrudTable extends JPanel {
     private boolean displaySaveButton;
     private boolean displayCreateButton;
     private boolean displayDeleteButton;
+
+
     public CrudTable(String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         this.columns = columns;
         this.data = data;
@@ -26,6 +28,7 @@ public abstract class CrudTable extends JPanel {
         this.displaySaveButton = displaySaveButton;
         this.displayCreateButton = displayCreateButton;
         this.displayDeleteButton = displayDeleteButton;
+
         setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         setLayout(new BorderLayout());
         JPanel topBar = new JPanel();
@@ -34,10 +37,12 @@ public abstract class CrudTable extends JPanel {
         JLabel titleLabel = new JLabel(title);
         topBar.add(titleLabel, BorderLayout.LINE_START);
 
-        IconButton createButton = new IconButton("/GUI/images/create.png", 18, 18, Image.SCALE_SMOOTH);
-        topBar.add(createButton, BorderLayout.LINE_END);
+        IconButton createButton = null;
+        if (displayCreateButton) {
+            createButton = new IconButton("/GUI/images/create.png", 18, 18, Image.SCALE_SMOOTH);
+            topBar.add(createButton, BorderLayout.LINE_END);
+        }
         add(topBar, BorderLayout.NORTH);
-
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(items, BorderLayout.CENTER);
@@ -47,17 +52,19 @@ public abstract class CrudTable extends JPanel {
         items.setRowHeight(40);
         items.setRowSelectionAllowed(false);
         model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton));
-        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton));
+        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
+        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
         scrollPane.setViewportView(items);
         add(scrollPane);
 
-        createButton.addActionListener((ActionEvent e) -> {
-            int columnCount = items.getColumnCount();
-            String[] emptyRow = new String[columnCount];
-            Arrays.fill(emptyRow, "");
-            model.insertRow(0, emptyRow);
-        });
+        if (createButton != null) {
+            createButton.addActionListener((ActionEvent e) -> {
+                int columnCount = items.getColumnCount();
+                String[] emptyRow = new String[columnCount];
+                Arrays.fill(emptyRow, "");
+                model.insertRow(0, emptyRow);
+            });
+        }
     }
 
     private void createTable() {
@@ -70,8 +77,8 @@ public abstract class CrudTable extends JPanel {
         items.setRowHeight(40);
         items.setRowSelectionAllowed(false);
         model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton));
-        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton));
+        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
+        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
         scrollPane.setViewportView(items);
         add(scrollPane);
     }
