@@ -6,17 +6,15 @@ import DAO.UserDAOInterface;
 import DAO.UserResultInterface;
 import GUI.AppView;
 import GUI.Components.CrudTable;
-import GUI.HomepageTest;
+import GUI.HomepageGUI;
 import GUI.LoginGUI;
 import Model.AbstractModel;
-import Model.Author;
 import Model.Collection;
 import Model.User;
 import PostgresImplementationDAO.CollectionDAO;
 import PostgresImplementationDAO.UserDAO;
 
 import javax.swing.*;
-import java.lang.annotation.ElementType;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -104,8 +102,8 @@ public class AppController {
     public void showHomepage() {
         getUserPersonalCollections();
         ArrayList<AbstractModel> abstractModels = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
-        ArrayList<Map<String, Object>> renderedPersonalCollections = renderDataForCrudTable(abstractModels);
-        showView(new HomepageTest(this, renderedPersonalCollections));
+        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModels);
+        showView(new HomepageGUI(this, renderedPersonalCollections));
     }
 
     public void getUserPersonalCollections() {
@@ -113,16 +111,16 @@ public class AppController {
 
         this.personalCollections.clear();
         for (CollectionResultInterface result: results) {
-            Collection collection = new Collection(result.getId(), result.getName(), loggedUser.getUsername(), Collection.Visibility.PRIVATE);
+            Collection collection = new Collection(result.getId(), result.getName(), loggedUser.getUsername(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
             this.personalCollections.add(collection);
         }
     }
 
     /**
-     * Funzione che renderizza i dati per renderli visualizzabili in una CrudTable
+     * Funzione che renderizza i dati per renderli visualizzabili in una view
      * @see CrudTable
      */
-    public ArrayList<Map<String, Object>> renderDataForCrudTable(ArrayList<AbstractModel> objects) {
+    public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
         ArrayList<Map<String, Object>> renderedData = new ArrayList<>();
         objects.forEach(object -> {
             renderedData.add(object.getData());
@@ -130,11 +128,39 @@ public class AppController {
         return renderedData;
     }
 
-    public boolean removeCollectionFromDatabase(int index, String id) {
-        if (collectionDAO.deleteCollectionById(Integer.parseInt(id))) {
-            personalCollections.remove(index);
+    public boolean removeCollectionFromDatabase(int id) {
+        if (collectionDAO.deleteCollectionById(id)) {
+            for (Collection personalCollection: personalCollections) {
+                if (personalCollection.getId() == id) {
+                    personalCollections.remove(personalCollection);
+                    break;
+                }
+            }
             return true;
         }
         return false;
+    }
+
+    public boolean savePersonalCollectionIntoDatabase(ArrayList<String> data) {
+        if (data.get(1).equals("") || data.get(2).equals("")) {
+            return false;
+        }
+        String name = data.get(1);
+        Collection.Visibility visibility = Collection.Visibility.valueOf(data.get(2).toUpperCase());
+        if (!data.get(0).equals("")) {
+            int id = Integer.parseInt(data.get(0));
+            if (collectionDAO.updateCollectionById(id, name, visibility, loggedUser.getUsername())) {
+                for (Collection personalCollection: personalCollections) {
+                    if (personalCollection.getId() == id) {
+                        personalCollection.setName(name);
+                        personalCollection.setVisibility(visibility);
+                        break;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        return collectionDAO.insertCollection(name, visibility, loggedUser.getUsername());
     }
 }

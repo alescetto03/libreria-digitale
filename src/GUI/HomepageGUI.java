@@ -9,9 +9,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class HomepageTest extends AppView{
+public class HomepageGUI extends AppView{
     JPanel contentPane = new JPanel();
-    public HomepageTest(AppController appController, ArrayList<Map<String, Object>> personalCollections) {
+    public HomepageGUI(AppController appController, ArrayList<Map<String, Object>> personalCollections) {
         super(appController);
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
@@ -37,11 +37,11 @@ public class HomepageTest extends AppView{
         buttonsWrapper.add(notifyButton);
         buttonsWrapper.add(adminButton);
 
-        CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "proprietario", "visibilita"}, personalCollections);
+        CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, personalCollections);
         contentPane.add(personalCollectionsTable);
 
-        CrudTable savedCollections = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario", "visibilita"}, personalCollections);
-        contentPane.add(savedCollections);
+        //CrudTable savedCollections = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario", "visibilita"}, personalCollections);
+        //contentPane.add(savedCollections);
     }
 
     @Override

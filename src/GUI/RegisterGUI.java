@@ -62,7 +62,11 @@ public class RegisterGUI extends AppView{
                 // Analizza la stringa per ottenere un oggetto java.util.Date
                 java.util.Date utilDate = birthdateField.getDate();
 
-                getAppController().registerUser(username, email, password, name, surname, utilDate);
+                if (getAppController().registerUser(username, email, password, name, surname, utilDate)) {
+                    getAppController().switchView(new HomePage(appController));
+                } else {
+                    JOptionPane.showMessageDialog(this.getContentPane(), "Oops, qualcosa è andato storto durante la registrazione, riprova!", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this.getContentPane(), "Le password non coincidono", "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -73,7 +77,6 @@ public class RegisterGUI extends AppView{
             getAppController().switchView(new LoginGUI(getAppController()));
         });
     }
-
 
     private void createUIComponents() {
         birthdateField = new JDateChooser();

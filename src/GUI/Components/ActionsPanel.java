@@ -1,20 +1,29 @@
 package GUI.Components;
 
+import Controller.AppController;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class ActionsPanel extends JPanel{
     private ActionButton viewButton;
     private ActionButton saveButton;
-    private ActionButton createButton;
     private ActionButton deleteButton;
     private CrudTable crudTable;
+    boolean displayCreateButton;
+    boolean displayViewButton;
+    boolean displaySaveButton;
+    boolean displayDeleteButton;
 
-    public ActionsPanel(CrudTable crudTable, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
+    public ActionsPanel(CrudTable crudTable, boolean displayCreateButton, boolean displayViewButton, boolean displaySaveButton, boolean displayDeleteButton) {
         this.crudTable = crudTable;
+        this.displayCreateButton = displayCreateButton;
+        this.displayViewButton = displayViewButton;
+        this.displaySaveButton = displaySaveButton;
+        this.displayDeleteButton = displayDeleteButton;
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
@@ -29,23 +38,16 @@ public class ActionsPanel extends JPanel{
             saveButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/save.png")));
             add(saveButton, gbc);
             saveButton.addActionListener((ActionEvent e) -> {
-                JTable table = (JTable) ((JViewport) ((JScrollPane) crudTable.getComponent(1)).getComponent(0)).getComponent(0);
-                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-            });
-        }
-        if (displayCreateButton) {
-            createButton = new ActionButton();
-            createButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/create.png")));
-            add(createButton, gbc);
-            createButton.addActionListener((ActionEvent e) -> {
-                JTable table = (JTable) ((JViewport) ((JScrollPane) crudTable.getComponent(1)).getComponent(0)).getComponent(0);
-                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-                int columnCount = table.getColumnCount();
-                String[] emptyRow = new String[columnCount];
-                Arrays.fill(emptyRow, "");
-                tableModel.insertRow(0, emptyRow);
+                JTable table = (JTable) saveButton.getParent().getParent();
+                int row = table.getEditingRow();
+                ArrayList<String> data = new ArrayList<>();
+                for (int i = 0; i < table.getColumnCount() - 1; i++) {
+                    data.add(String.valueOf(table.getValueAt(row, i)));
+                }
+                System.out.println(data);
+                if (!crudTable.onSaveButton(data)) {
+                    JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+                }
             });
         }
         if (displayDeleteButton) {
@@ -53,14 +55,11 @@ public class ActionsPanel extends JPanel{
             deleteButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/delete.png")));
             add(deleteButton, gbc);
             deleteButton.addActionListener((ActionEvent e) -> {
-                JTable table = (JTable) ((JViewport) ((JScrollPane) crudTable.getComponent(1)).getComponent(0)).getComponent(0);
-                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-                for (int row: table.getSelectedRows()) {
-                    String id = (String) table.getValueAt(row, 0);
-                    if (id.equals("") || crudTable.onRemoveButton(row, id)) {
-                        tableModel.removeRow(row);
-                    }
+                JTable table = (JTable) deleteButton.getParent().getParent();
+                int row = table.getEditingRow();
+                String id = String.valueOf(table.getValueAt(row, 0));
+                if (id.equals("") || crudTable.onRemoveButton(Integer.parseInt(id))) {
+                    ((DefaultTableModel) table.getModel()).removeRow(row);
                 }
             });
         }

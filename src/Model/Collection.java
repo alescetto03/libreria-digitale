@@ -10,8 +10,8 @@ public class Collection extends AbstractModel {
     private String name;
     private String owner;
     public enum Visibility{
-        PRIVATE,
-        PUBLIC
+        PRIVATA,
+        PUBBLICA
     }
     private Visibility visibility;
 
