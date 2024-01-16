@@ -13,13 +13,12 @@ public abstract class CrudTable extends JPanel {
     protected ArrayList<Map<String, Object>> data;
     protected JTable items = new JTable();
     protected abstract DefaultTableModel getModel();
-    public abstract boolean onRemoveButton(int id);
+    protected abstract boolean onRemoveButton(int id);
     protected abstract boolean onSaveButton(ArrayList<String> data);
     private boolean displayViewButton;
     private boolean displaySaveButton;
     private boolean displayCreateButton;
     private boolean displayDeleteButton;
-
 
     public CrudTable(String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         this.columns = columns;
