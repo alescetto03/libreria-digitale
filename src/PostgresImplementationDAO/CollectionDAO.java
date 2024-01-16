@@ -54,12 +54,51 @@ public class CollectionDAO implements CollectionDAOInterface {
         return null;
     }
 
+    @Override
+    public ArrayList<CollectionResultInterface> getUserSavedCollections(String username) {
+        final String query = "SELECT r.cod_raccolta, r.nome, r.visibilita, r.proprietario " +
+                             "FROM Raccolta AS r JOIN Utente_Salvataggio_Raccolta AS usr ON r.cod_raccolta = usr.raccolta " +
+                             "WHERE usr.utente = ?";
+        try(
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)
+        ) {
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<CollectionResultInterface> savedCollectionList = new ArrayList<CollectionResultInterface>();
+            while (result.next()) {
+                CollectionResult collectionResult = new CollectionResult(result);
+                savedCollectionList.add(collectionResult);
+            }
+            return savedCollectionList;
+        } catch (SQLException e) {
+            System.out.println("Errore:" + e.getMessage());
+        }
+        return null;
+
+    }
+
     public boolean deleteCollectionById(int collectionId) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("DELETE FROM raccolta WHERE cod_raccolta = ?");
         ) {
             statement.setInt(1, collectionId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteSavedCollectionById(int collectionId, String username){
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM utente_salvataggio_raccolta WHERE raccolta = ? AND utente = ?");
+        ) {
+            statement.setInt(1, collectionId);
+            statement.setString(2, username);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -98,4 +137,6 @@ public class CollectionDAO implements CollectionDAOInterface {
             return false;
         }
     }
+
+
 }
