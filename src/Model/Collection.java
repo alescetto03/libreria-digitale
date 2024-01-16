@@ -1,17 +1,16 @@
 package Model;
 
-import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-public class Collection extends AbstractModel {
+public class Collection extends AbstractModel{
     private int id;
     private String name;
     private String owner;
+
     public enum Visibility{
-        PRIVATA,
-        PUBBLICA
+        PUBBLICA,
+        PRIVATA
     }
     private Visibility visibility;
 
@@ -23,15 +22,7 @@ public class Collection extends AbstractModel {
         this.visibility = visibility;
     }
 
-    @Override
-    public Map<String, Object> getData() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("id", getId());
-        data.put("name", getName());
-        data.put("owner", getOwner());
-        data.put("visibility", getVisibility());
-        return data;
-    }
+
 
     public int getId() {
         return id;
@@ -63,5 +54,16 @@ public class Collection extends AbstractModel {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+
+    @Override
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", getId());
+        data.put("name", getName());
+        data.put("owner", getOwner());
+        data.put("visibility", getVisibility());
+        return data;
     }
 }

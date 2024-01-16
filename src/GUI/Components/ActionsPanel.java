@@ -9,9 +9,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class ActionsPanel extends JPanel{
-    private ActionButton viewButton;
-    private ActionButton saveButton;
-    private ActionButton deleteButton;
+    private IconButton viewButton;
+    private IconButton saveButton;
+    private IconButton deleteButton;
     private CrudTable crudTable;
     boolean displayCreateButton;
     boolean displayViewButton;
@@ -29,13 +29,11 @@ public class ActionsPanel extends JPanel{
         gbc.insets = new Insets(0, 5, 0, 5);
 
         if (displayViewButton) {
-            viewButton = new ActionButton();
-            viewButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/view.png")));
+            viewButton = new IconButton("/GUI/images/view.png", 18, 18, Image.SCALE_SMOOTH);
             add(viewButton, gbc);
         }
         if (displaySaveButton) {
-            saveButton = new ActionButton();
-            saveButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/save.png")));
+            saveButton = new IconButton("/GUI/images/save.png", 18, 18, Image.SCALE_SMOOTH);
             add(saveButton, gbc);
             saveButton.addActionListener((ActionEvent e) -> {
                 JTable table = (JTable) saveButton.getParent().getParent();
@@ -51,8 +49,7 @@ public class ActionsPanel extends JPanel{
             });
         }
         if (displayDeleteButton) {
-            deleteButton = new ActionButton();
-            deleteButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/delete.png")));
+            deleteButton = new IconButton("/GUI/images/delete.png", 18, 18, Image.SCALE_SMOOTH);
             add(deleteButton, gbc);
             deleteButton.addActionListener((ActionEvent e) -> {
                 JTable table = (JTable) deleteButton.getParent().getParent();

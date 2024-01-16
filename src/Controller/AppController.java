@@ -1,18 +1,11 @@
 package Controller;
 
-import DAO.CollectionDAOInterface;
-import DAO.CollectionResultInterface;
-import DAO.UserDAOInterface;
-import DAO.UserResultInterface;
-import GUI.AppView;
-import GUI.Components.CrudTable;
-import GUI.HomepageGUI;
-import GUI.LoginGUI;
-import Model.AbstractModel;
-import Model.Collection;
-import Model.User;
+import DAO.*;
+import GUI.*;
+import Model.*;
+import GUI.Components.*;
 import PostgresImplementationDAO.CollectionDAO;
-import PostgresImplementationDAO.UserDAO;
+import PostgresImplementationDAO.*;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
@@ -20,18 +13,22 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AppController {
     JFrame currentWindow;
     UserDAOInterface userDAO = new UserDAO();
+    NotificationDAOInterface notificationDAO = new NotificationDAO();
+    BookDAOInterface bookDAO = new BookDAO();
+    ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
     CollectionDAOInterface collectionDAO = new CollectionDAO();
+    StoreDAOInterface storeDAO = new StoreDAO();
 
     /**
      * Utente correntemente autenticato all'applicativo
      */
-    //User loggedUser = null;
-    User loggedUser = new User("john_doe", "ciccio", "ciccio", "pippo", LocalDate.of(2000, 10, 3), false);
+    User loggedUser = null;
 
     /**
      * Lista di tutte le raccolte personali dell'utente
@@ -43,8 +40,15 @@ public class AppController {
      */
     ArrayList<Collection> savedCollections = new ArrayList<>();
 
-    //public static void main(String[] args) { (new AppController()).showLogin(); }
-    public static void main(String[] args) { AppController appController = new AppController(); appController.showHomepage(); }
+    ArrayList<Notification> userNotification = new ArrayList<Notification>();
+
+    ArrayList<Book> searchedBook = new ArrayList<Book>();
+    ArrayList<ScientificPublication> searchedPublication = new ArrayList<ScientificPublication>();
+    ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
+    ArrayList<Store> storeCompleteSeries = new ArrayList<Store>();
+
+    public static void main(String[] args) { (new AppController()).showLogin(); }
+    //public static void main(String[] args) { AppController appController = new AppController(); appController.showHomepage(); }
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -101,9 +105,15 @@ public class AppController {
 
     public void showHomepage() {
         getUserPersonalCollections();
-        ArrayList<AbstractModel> abstractModels = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
-        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModels);
-        showView(new HomepageGUI(this, renderedPersonalCollections));
+        getUserNotification();
+
+        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<AbstractModel> abstractModelsNotification = new ArrayList<>(userNotification);
+
+        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModelsCollections);
+        ArrayList<Map<String, Object>> renderedUserNotification = renderData(abstractModelsNotification);
+
+        switchView(new HomepageGUI(this, renderedPersonalCollections, renderedUserNotification));
     }
 
     public void getUserPersonalCollections() {
@@ -127,7 +137,15 @@ public class AppController {
         });
         return renderedData;
     }
-
+    
+    public void getUserNotification(){
+        ArrayList<NotificationResultInterface> results = this.notificationDAO.getUserNotification(loggedUser.getUsername());
+        for(NotificationResultInterface result : results){
+            Notification notification = new Notification(result.getText(), (result.getDate_time()).toLocalDateTime());
+            this.userNotification.add(notification);
+        }
+    }
+    
     public boolean removeCollectionFromDatabase(int id) {
         if (collectionDAO.deleteCollectionById(id)) {
             for (Collection personalCollection: personalCollections) {
@@ -142,7 +160,7 @@ public class AppController {
     }
 
     public boolean savePersonalCollectionIntoDatabase(ArrayList<String> data) {
-        if (data.get(0).equals("") || data.get(2).equals("")) {
+        if (data.get(1).equals("") || data.get(2).equals("")) {
             return false;
         }
         String name = data.get(1);
@@ -162,5 +180,83 @@ public class AppController {
             return false;
         }
         return collectionDAO.insertCollection(name, visibility, loggedUser.getUsername());
+    }
+
+    public void getBookByString(String searchItem){
+        ArrayList<BookResultInterface> results = this.bookDAO.getResearchedBook(searchItem);
+        searchedBook.clear();
+
+        for(BookResultInterface result : results){
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+            this.searchedBook.add(book);
+        }
+    }
+
+    public void getScientificPublicationByString(String searchItem){
+        ArrayList<ScientificPublicationResultInterface> results = this.publicationDAO.getResearchedPublication(searchItem);
+        searchedPublication.clear();
+
+        for(ScientificPublicationResultInterface result : results){
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            this.searchedPublication.add(publication);
+        }
+    }
+
+    public void getCollectionByString(String searchItem){
+        ArrayList<CollectionResultInterface> results = this.collectionDAO.getReasearchedCollection(searchItem);
+        searchedCollection.clear();
+
+        for(CollectionResultInterface result : results){
+            Collection collection = new Collection(result.getId(), result.getName(), result.getOwner(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
+            this.searchedCollection.add(collection);
+        }
+    }
+
+    public ArrayList<String> getSeriesByString(String searchItem){
+        return this.bookDAO.getResearchedSeries(searchItem);
+    }
+
+    public void getStoreCompleteSeries(String searchItem){
+        ArrayList<StoreResultInterface> results = this.storeDAO.storeCompleteSerie(searchItem);
+        storeCompleteSeries.clear();
+
+        for(StoreResultInterface result : results){
+            Store store = new Store(result.getPartita_iva(), result.getName(), result.getAddress(), result.getUrl());
+            this.storeCompleteSeries.add(store);
+        }
+    }
+
+    public void showSearchResults(String searchText){
+        getBookByString(searchText);
+        getScientificPublicationByString(searchText);
+        getCollectionByString(searchText);
+
+        ArrayList<AbstractModel> abstractModelsBook = new ArrayList<>(searchedBook);
+        ArrayList<AbstractModel> abstractModelsPublication = new ArrayList<>(searchedPublication);
+        ArrayList<AbstractModel> abstractModelsCollection = new ArrayList<>(searchedCollection);
+
+        ArrayList<Map<String, Object>> renderedSearchedBook = renderData(abstractModelsBook);
+        ArrayList<Map<String, Object>> renderedSearchedPublication = renderData(abstractModelsPublication);
+        ArrayList<Map<String, Object>> renderedSearchedCollection = renderData(abstractModelsCollection);
+
+        for(Map<String, Object> item : renderedSearchedBook){
+            System.out.println(item.get("title"));
+        }
+        for(Map<String, Object> item : renderedSearchedPublication){
+            System.out.println(item.get("title"));
+        }
+        for(Map<String, Object> item : renderedSearchedCollection){
+            System.out.println(item.get("name"));
+        }
+        Map<String, Map<String, Object>> storeBySeries = new HashMap<>();
+        for(String item : getSeriesByString(searchText)){
+            getStoreCompleteSeries(item);
+            storeBySeries.put(item, storeCompleteSeries.getFirst().getData());
+
+            //System.out.println(item);
+        }
+        System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
+        switchView(new ResultPage(this, renderedSearchedBook));
+
     }
 }

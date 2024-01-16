@@ -1,21 +1,24 @@
 package Model;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Book {
+public class Book extends AbstractModel {
     private String isbn;
     private String title;
     private String publisher;
-    private enum FruitionMode{
-        PAPER,
-        DIGITAL,
-        AUDIOBOOK
+
+    public enum FruitionMode{
+        CARTACEO,
+        DIGITALE,
+        AUDIOLIBRO
     }
     private FruitionMode fruition_mode;
     private int publication_year;
     private BufferedImage cover;
     private String description;
-    private enum BookType {
+    public enum BookType {
         ROMANZO,
         DIDATTICO
     }
@@ -23,6 +26,7 @@ public class Book {
     private String genre;
     private String target;
     private String topic;
+    private String series;
 
     public Book(String isbn, String title, String publisher, FruitionMode fruition_mode, int publication_year, BufferedImage cover, String description, BookType book_type, String genre, String target, String topic){
         this.isbn = isbn;
@@ -38,7 +42,6 @@ public class Book {
         this.topic = topic;
 
     }
-
 
 
 
@@ -128,6 +131,24 @@ public class Book {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+
+    @Override
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("isbn", getIsbn());
+        data.put("title", getTitle());
+        data.put("publisher", getPublisher());
+        data.put("fruition_mode", getFruition_mode());
+        data.put("publication_year", getPublication_year());
+        data.put("cover", getCover());
+        data.put("description", getDescription());
+        data.put("book_type", getBook_type());
+        data.put("genre", getGenre());
+        data.put("target", getTarget());
+        data.put("topic", getTopic());
+        return data;
     }
 
 

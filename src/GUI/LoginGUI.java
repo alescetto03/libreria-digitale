@@ -45,7 +45,7 @@ public class LoginGUI extends AppView{
             String password = String.valueOf(passwordField.getPassword());
 
             if(getAppController().authenticateUser(username, password)){
-                getAppController().switchView(new HomePage(appController));
+                getAppController().showHomepage();
             } else {
                 JOptionPane.showMessageDialog(contentPane, "Oops, qualcosa è andato storto durante il login, riprova!", "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -54,6 +54,7 @@ public class LoginGUI extends AppView{
         //Listener RegisterButton
         registerButton.addActionListener((ActionEvent e) -> {
             getAppController().switchView(new RegisterGUI(appController));
+            getAppController().getUserNotification();
         });
     }
 

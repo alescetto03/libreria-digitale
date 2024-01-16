@@ -1,14 +1,17 @@
 package Model;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ScientificPublication {
+public class ScientificPublication extends AbstractModel{
     private String doi;
     private String title;
-    private enum FruitionMode{
-        PAPER,
-        DIGITAL,
-        AUDIOBOOK
+
+    public enum FruitionMode{
+        CARTACEO,
+        DIGITALE,
+        AUDIOLIBRO
     }
     private FruitionMode fruition_mode;
     private int publication_year;
@@ -83,6 +86,19 @@ public class ScientificPublication {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    @Override
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("doi", getDoi());
+        data.put("title", getTitle());
+        data.put("publisher", getPublisher());
+        data.put("fruition_mode", getFruition_mode());
+        data.put("publication_year", getPublication_year());
+        data.put("cover", getCover());
+        data.put("description", getDescription());
+        return data;
     }
 
 }

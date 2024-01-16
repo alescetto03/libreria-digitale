@@ -1,6 +1,7 @@
 package Model;
 
-public class BookSeries {
+
+public class BookSeries{
     private String issn;
     private String name;
     private String publisher;
@@ -11,8 +12,6 @@ public class BookSeries {
         this.name = name;
         this.publisher = publisher;
     }
-
-
 
 
 
@@ -39,4 +38,5 @@ public class BookSeries {
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
+
 }

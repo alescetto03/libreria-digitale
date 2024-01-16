@@ -63,7 +63,7 @@ public class RegisterGUI extends AppView{
                 java.util.Date utilDate = birthdateField.getDate();
 
                 if (getAppController().registerUser(username, email, password, name, surname, utilDate)) {
-                    getAppController().switchView(new HomePage(appController));
+                    getAppController().showHomepage();
                 } else {
                     JOptionPane.showMessageDialog(this.getContentPane(), "Oops, qualcosa è andato storto durante la registrazione, riprova!", "Errore!!!", JOptionPane.ERROR_MESSAGE);
                 }
