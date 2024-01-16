@@ -27,15 +27,12 @@ public class ResultPage extends AppView {
         bookLabel.setHorizontalAlignment(JLabel.LEFT);
         titleBookPanel.add(bookLabel);
 
-
         bookPanel.setLayout(new BoxLayout(bookPanel, BoxLayout.X_AXIS));
-
         for(Map<String, Object> book : searchedBook){
             bookPanel.add(new BookPanel((String) book.get("title"), (BufferedImage) book.get("cover")));
         }
         bookScrollPane = new JScrollPane(bookPanel);
         bookScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
 
         bookScrollPane.add(titleBookPanel);
         bookScrollPane.setPreferredSize(new Dimension(400, 200));

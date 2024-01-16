@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,10 +44,10 @@ public class AppController {
     ArrayList<Book> searchedBook = new ArrayList<Book>();
     ArrayList<ScientificPublication> searchedPublication = new ArrayList<ScientificPublication>();
     ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
-    ArrayList<Store> storeCompleteSeries = new ArrayList<Store>();
+    ArrayList<Store> storeWithCompleteSeries = new ArrayList<Store>();
 
     public static void main(String[] args) { (new AppController()).showLogin(); }
-    //public static void main(String[] args) { AppController appController = new AppController(); appController.showHomepage(); }
+    //public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -101,6 +100,11 @@ public class AppController {
             return true;
         }
         return false;
+    }
+
+    public void logoutUser() {
+        loggedUser = null;
+        switchView(new LoginGUI(this));
     }
 
     public void showHomepage() {
@@ -244,11 +248,11 @@ public class AppController {
 
     public void getStoreCompleteSeries(String searchItem){
         ArrayList<StoreResultInterface> results = this.storeDAO.storeCompleteSerie(searchItem);
-        storeCompleteSeries.clear();
+        storeWithCompleteSeries.clear();
 
         for(StoreResultInterface result : results){
             Store store = new Store(result.getPartita_iva(), result.getName(), result.getAddress(), result.getUrl());
-            this.storeCompleteSeries.add(store);
+            this.storeWithCompleteSeries.add(store);
         }
     }
 
@@ -257,32 +261,32 @@ public class AppController {
         getScientificPublicationByString(searchText);
         getCollectionByString(searchText);
 
-        ArrayList<AbstractModel> abstractModelsBook = new ArrayList<>(searchedBook);
-        ArrayList<AbstractModel> abstractModelsPublication = new ArrayList<>(searchedPublication);
-        ArrayList<AbstractModel> abstractModelsCollection = new ArrayList<>(searchedCollection);
+        ArrayList<AbstractModel> abstractModelsBooks = new ArrayList<>(searchedBook);
+        ArrayList<AbstractModel> abstractModelsPublications = new ArrayList<>(searchedPublication);
+        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(searchedCollection);
 
-        ArrayList<Map<String, Object>> renderedSearchedBook = renderData(abstractModelsBook);
-        ArrayList<Map<String, Object>> renderedSearchedPublication = renderData(abstractModelsPublication);
-        ArrayList<Map<String, Object>> renderedSearchedCollection = renderData(abstractModelsCollection);
+        ArrayList<Map<String, Object>> renderedSearchedBooks = renderData(abstractModelsBooks);
+        ArrayList<Map<String, Object>> renderedSearchedPublications = renderData(abstractModelsPublications);
+        ArrayList<Map<String, Object>> renderedSearchedCollections = renderData(abstractModelsCollections);
 
-        for(Map<String, Object> item : renderedSearchedBook){
+        for(Map<String, Object> item : renderedSearchedBooks){
             System.out.println(item.get("title"));
         }
-        for(Map<String, Object> item : renderedSearchedPublication){
+        for(Map<String, Object> item : renderedSearchedPublications){
             System.out.println(item.get("title"));
         }
-        for(Map<String, Object> item : renderedSearchedCollection){
+        for(Map<String, Object> item : renderedSearchedCollections){
             System.out.println(item.get("name"));
         }
         Map<String, Map<String, Object>> storeBySeries = new HashMap<>();
         for(String item : getSeriesByString(searchText)){
             getStoreCompleteSeries(item);
-            storeBySeries.put(item, storeCompleteSeries.getFirst().getData());
+            storeBySeries.put(item, storeWithCompleteSeries.get(0).getData());
 
             //System.out.println(item);
         }
         System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
-        switchView(new ResultPage(this, renderedSearchedBook));
+        showView(new ResultPage(this, renderedSearchedBooks));
 
     }
 }

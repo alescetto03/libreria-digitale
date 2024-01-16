@@ -55,7 +55,7 @@ public class HomepageGUI extends AppView{
         });
 
         logoutButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new LoginGUI(appController));
+            appController.logoutUser();
         });
 
         CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, personalCollections);
