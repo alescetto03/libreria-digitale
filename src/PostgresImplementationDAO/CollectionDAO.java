@@ -63,8 +63,8 @@ public class CollectionDAO implements CollectionDAOInterface {
     @Override
     public boolean insertCollection(String name, Collection.Visibility visibility, String owner) {
         try (
-                Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("INSERT INTO raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?)");
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?)");
         ) {
             statement.setString(1, name);
             statement.setObject(2, visibility.name().toLowerCase(), Types.OTHER);
