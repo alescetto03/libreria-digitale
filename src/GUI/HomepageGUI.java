@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class HomepageGUI extends AppView{
     JPanel contentPane = new JPanel();
-    public HomepageGUI(AppController appController, ArrayList<Map<String, Object>> personalCollections, ArrayList<Map<String, Object>> notification) {
+    public HomepageGUI(AppController appController, ArrayList<Map<String, Object>> personalCollections, ArrayList<Map<String, Object>> notification, ArrayList<Map<String, Object>> savedCollections) {
         super(appController);
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
@@ -54,11 +54,15 @@ public class HomepageGUI extends AppView{
             getAppController().showSearchResults(searchText);
         });
 
+        logoutButton.addActionListener((ActionEvent e) -> {
+            appController.switchView(new LoginGUI(appController));
+        });
+
         CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, personalCollections);
         contentPane.add(personalCollectionsTable);
 
-        //CrudTable savedCollections = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario", "visibilita"}, personalCollections);
-        //contentPane.add(savedCollections);
+        CrudTable savedCollectionsTable = new SavedCollectionCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario"}, savedCollections);
+        contentPane.add(savedCollectionsTable);
     }
 
     @Override
