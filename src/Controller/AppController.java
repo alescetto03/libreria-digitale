@@ -3,6 +3,7 @@ package Controller;
 import DAO.*;
 import GUI.*;
 import Model.*;
+import GUI.Components.*;
 import PostgresImplementationDAO.CollectionDAO;
 import PostgresImplementationDAO.*;
 
@@ -28,10 +29,6 @@ public class AppController {
      * Utente correntemente autenticato all'applicativo
      */
     User loggedUser = null;
-
-
-
-
 
     /**
      * Lista di tutte le raccolte personali dell'utente
@@ -108,9 +105,15 @@ public class AppController {
 
     public void showHomepage() {
         getUserPersonalCollections();
-        ArrayList<AbstractModel> abstractModels = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
-        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModels);
-        showView(new HomepageGUI(this, renderedPersonalCollections));
+        getUserNotification();
+
+        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<AbstractModel> abstractModelsNotification = new ArrayList<>(userNotification);
+
+        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModelsCollections);
+        ArrayList<Map<String, Object>> renderedUserNotification = renderData(abstractModelsNotification);
+
+        switchView(new HomepageGUI(this, renderedPersonalCollections, renderedUserNotification));
     }
 
     public void getUserPersonalCollections() {
@@ -184,7 +187,7 @@ public class AppController {
         searchedBook.clear();
 
         for(BookResultInterface result : results){
-            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type()), result.getGenre(), result.getTarget(), result.getTopic());
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
             this.searchedBook.add(book);
         }
     }
@@ -194,7 +197,7 @@ public class AppController {
         searchedPublication.clear();
 
         for(ScientificPublicationResultInterface result : results){
-            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
             this.searchedPublication.add(publication);
         }
     }
@@ -204,7 +207,7 @@ public class AppController {
         searchedCollection.clear();
 
         for(CollectionResultInterface result : results){
-            Collection collection = new Collection(result.getId(), result.getName(), result.getOwner(), Collection.Visibility.valueOf(result.getVisibility()));
+            Collection collection = new Collection(result.getId(), result.getName(), result.getOwner(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
             this.searchedCollection.add(collection);
         }
     }

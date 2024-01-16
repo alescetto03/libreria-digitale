@@ -1,47 +1,66 @@
 package GUI.Components;
 
+import Controller.AppController;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class ActionsPanel extends JPanel{
-    ActionButton viewButton;
-    ActionButton editButton;
-    ActionButton deleteButton;
-    public ActionsPanel(boolean displayViewButton, boolean displayEditButton, boolean displayDeleteButton) {
+    private IconButton viewButton;
+    private IconButton saveButton;
+    private IconButton deleteButton;
+    private CrudTable crudTable;
+    boolean displayCreateButton;
+    boolean displayViewButton;
+    boolean displaySaveButton;
+    boolean displayDeleteButton;
+
+    public ActionsPanel(CrudTable crudTable, boolean displayCreateButton, boolean displayViewButton, boolean displaySaveButton, boolean displayDeleteButton) {
+        this.crudTable = crudTable;
+        this.displayCreateButton = displayCreateButton;
+        this.displayViewButton = displayViewButton;
+        this.displaySaveButton = displaySaveButton;
+        this.displayDeleteButton = displayDeleteButton;
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 5, 0, 5);
+
         if (displayViewButton) {
-            viewButton = new ActionButton("/GUI/images/view.png", 20, 20, Image.SCALE_SMOOTH);
-            add(viewButton);
+            viewButton = new IconButton("/GUI/images/view.png", 18, 18, Image.SCALE_SMOOTH);
+            add(viewButton, gbc);
         }
-        if (displayEditButton) {
-            editButton = new ActionButton("/GUI/images/save.png", 20, 20, Image.SCALE_SMOOTH);
-            add(editButton);
+        if (displaySaveButton) {
+            saveButton = new IconButton("/GUI/images/save.png", 18, 18, Image.SCALE_SMOOTH);
+            add(saveButton, gbc);
+            saveButton.addActionListener((ActionEvent e) -> {
+                JTable table = (JTable) saveButton.getParent().getParent();
+                int row = table.getEditingRow();
+                ArrayList<String> data = new ArrayList<>();
+                for (int i = 0; i < table.getColumnCount() - 1; i++) {
+                    data.add(String.valueOf(table.getValueAt(row, i)));
+                }
+                System.out.println(data);
+                if (!crudTable.onSaveButton(data)) {
+                    JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+                }
+            });
         }
         if (displayDeleteButton) {
-            deleteButton = new ActionButton("/GUI/images/delete.png", 20, 20, Image.SCALE_SMOOTH);
-            add(deleteButton);
+            deleteButton = new IconButton("/GUI/images/delete.png", 18, 18, Image.SCALE_SMOOTH);
+            add(deleteButton, gbc);
+            deleteButton.addActionListener((ActionEvent e) -> {
+                JTable table = (JTable) deleteButton.getParent().getParent();
+                int row = table.getEditingRow();
+                String id = String.valueOf(table.getValueAt(row, 0));
+                if (id.equals("") || crudTable.onRemoveButton(Integer.parseInt(id))) {
+                    ((DefaultTableModel) table.getModel()).removeRow(row);
+                }
+            });
         }
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(viewButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(viewButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
     }
+
+    public CrudTable getCrudTable() { return crudTable; }
 }

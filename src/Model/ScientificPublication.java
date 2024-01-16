@@ -9,9 +9,9 @@ public class ScientificPublication extends AbstractModel{
     private String title;
 
     public enum FruitionMode{
-        cartaceo,
-        digitale,
-        audiolibro
+        CARTACEO,
+        DIGITALE,
+        AUDIOLIBRO
     }
     private FruitionMode fruition_mode;
     private int publication_year;

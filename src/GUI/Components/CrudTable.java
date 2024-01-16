@@ -34,8 +34,7 @@ public abstract class CrudTable extends JPanel {
         JLabel titleLabel = new JLabel(title);
         topBar.add(titleLabel, BorderLayout.LINE_START);
 
-        ActionButton createButton = new ActionButton();
-        createButton.setIcon(new ImageIcon(getClass().getResource("/GUI/images/create.png")));
+        IconButton createButton = new IconButton("/GUI/images/create.png", 18, 18, Image.SCALE_SMOOTH);
         topBar.add(createButton, BorderLayout.LINE_END);
         add(topBar, BorderLayout.NORTH);
 

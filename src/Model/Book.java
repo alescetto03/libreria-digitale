@@ -10,17 +10,17 @@ public class Book extends AbstractModel {
     private String publisher;
 
     public enum FruitionMode{
-        cartaceo,
-        digitale,
-        audiolibro
+        CARTACEO,
+        DIGITALE,
+        AUDIOLIBRO
     }
     private FruitionMode fruition_mode;
     private int publication_year;
     private BufferedImage cover;
     private String description;
     public enum BookType {
-        romanzo,
-        didattico
+        ROMANZO,
+        DIDATTICO
     }
     private BookType book_type;
     private String genre;
