@@ -187,7 +187,7 @@ public class AppController {
             //System.out.println(item);
         }
         System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
-        //switchView(new ResultPage());
+        switchView(new ResultPage(this, renderedSearchedBook));
 
     }
 
