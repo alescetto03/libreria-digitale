@@ -29,6 +29,14 @@ public class ActionsPanel extends JPanel{
         if (displayViewButton) {
             viewButton = new IconButton("/GUI/images/view.png", 18, 18, Image.SCALE_SMOOTH);
             add(viewButton, gbc);
+            viewButton.addActionListener((ActionEvent e) -> {
+                JTable table = (JTable) saveButton.getParent().getParent();
+                int row = table.getEditingRow();
+                String id = String.valueOf(table.getValueAt(row, 0));
+                if (!id.equals("")){
+                    crudTable.onViewButton(id);
+                }
+            });
         }
         if (displaySaveButton) {
             saveButton = new IconButton("/GUI/images/save.png", 18, 18, Image.SCALE_SMOOTH);
@@ -53,7 +61,7 @@ public class ActionsPanel extends JPanel{
                 JTable table = (JTable) deleteButton.getParent().getParent();
                 int row = table.getEditingRow();
                 String id = String.valueOf(table.getValueAt(row, 0));
-                if (id.equals("") || crudTable.onRemoveButton(Integer.parseInt(id))) {
+                if (id.equals("") || crudTable.onRemoveButton(id)) {
                     ((DefaultTableModel) table.getModel()).removeRow(row);
                 }
             });

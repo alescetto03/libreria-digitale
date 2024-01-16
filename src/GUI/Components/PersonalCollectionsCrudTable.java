@@ -41,8 +41,13 @@ public class PersonalCollectionsCrudTable extends CrudTable {
     }
 
     @Override
-    public boolean onRemoveButton(int id) { return appController.removeCollectionFromDatabase(id); }
+    public boolean onRemoveButton(Object id) { return appController.removeCollectionFromDatabase(id); }
 
     @Override
     protected boolean onSaveButton(ArrayList<String> data) { return appController.savePersonalCollectionIntoDatabase(data); }
+
+    @Override
+    protected void onViewButton(Object id) {
+    }
+
 }

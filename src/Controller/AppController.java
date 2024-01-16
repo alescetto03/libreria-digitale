@@ -159,10 +159,11 @@ public class AppController {
         }
     }
     
-    public boolean removeCollectionFromDatabase(int id) {
-        if (collectionDAO.deleteCollectionById(id)) {
+    public boolean removeCollectionFromDatabase(Object id) {
+        int collection_id = Integer.parseInt((String)id);
+        if (collectionDAO.deleteCollectionById(collection_id)) {
             for (Collection personalCollection: personalCollections) {
-                if (personalCollection.getId() == id) {
+                if (personalCollection.getId() == collection_id) {
                     personalCollections.remove(personalCollection);
                     break;
                 }
@@ -172,10 +173,11 @@ public class AppController {
         return false;
     }
 
-    public boolean removeSavedCollectionFromDatabase(int id){
-        if(collectionDAO.deleteSavedCollectionById(id, loggedUser.getUsername())){
+    public boolean removeSavedCollectionFromDatabase(Object id){
+        int collection_id = Integer.parseInt((String)id);
+        if(collectionDAO.deleteSavedCollectionById(collection_id, loggedUser.getUsername())){
             for (Collection savedCollection: savedCollections) {
-                if (savedCollection.getId() == id) {
+                if (savedCollection.getId() == collection_id) {
                     savedCollections.remove(savedCollection);
                     break;
                 }
@@ -251,6 +253,16 @@ public class AppController {
             this.storeCompleteSeries.add(store);
         }
     }
+
+    public void showCollections(Object id){
+        int collection_id = Integer.parseInt((String)id);
+        ArrayList<BookResultInterface> booksInCollection = this.bookDAO.getBooksFromCollection(collection_id);
+        ArrayList<ScientificPublicationResultInterface> publicationsInCollection = this.publicationDAO.getPublicationsFromCollection(collection_id);
+
+
+        switchView(new CollectionsGUI(this, booksInCollection, publicationsInCollection));
+    }
+
 
     public void showSearchResults(String searchText){
         getBookByString(searchText);

@@ -55,4 +55,29 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    @Override
+    public ArrayList<BookResultInterface> getBooksFromCollection(int collectionId) {
+        final String query = "SELECT l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo " +
+                             "FROM Libro AS l JOIN Libro_Contenuto_Raccolta AS lr ON l.isbn = lr.libro " +
+                             "WHERE lr.raccolta = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setInt(1, collectionId);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<BookResultInterface> booksInCollection = new ArrayList<BookResultInterface>();
+            while(result.next()){
+                BookResult book = new BookResult(result);
+                booksInCollection.add(book);
+            }
+
+            return booksInCollection;
+        }catch (SQLException e){
+            System.out.println("Errore: " + e.getMessage());
+            return null;
+        }
+    }
+
 }

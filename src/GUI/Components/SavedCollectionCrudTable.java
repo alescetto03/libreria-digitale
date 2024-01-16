@@ -1,7 +1,7 @@
 package GUI.Components;
 
 import Controller.AppController;
-import Model.Collection;
+
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -37,12 +37,17 @@ public class SavedCollectionCrudTable extends CrudTable{
     }
 
     @Override
-    public boolean onRemoveButton(int id) {
+    public boolean onRemoveButton(Object id) {
         return appController.removeSavedCollectionFromDatabase(id);
     }
 
     @Override
     protected boolean onSaveButton(ArrayList<String> data) {
         return false;
+    }
+
+    @Override
+    protected void onViewButton(Object id) {
+        appController.showCollections(id);
     }
 }
