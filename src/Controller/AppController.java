@@ -142,7 +142,7 @@ public class AppController {
     }
 
     public boolean savePersonalCollectionIntoDatabase(ArrayList<String> data) {
-        if (data.get(1).equals("") || data.get(2).equals("")) {
+        if (data.get(0).equals("") || data.get(2).equals("")) {
             return false;
         }
         String name = data.get(1);
