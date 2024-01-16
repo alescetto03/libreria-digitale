@@ -46,8 +46,8 @@ public class AppController {
     ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
     ArrayList<Store> storeWithCompleteSeries = new ArrayList<Store>();
 
-    //public static void main(String[] args) { (new AppController()).showLogin(); }
-    public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
+    public static void main(String[] args) { (new AppController()).showLogin(); }
+    //public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -100,6 +100,11 @@ public class AppController {
             return true;
         }
         return false;
+    }
+
+    public void logoutUser() {
+        loggedUser = null;
+        switchView(new LoginGUI(this));
     }
 
     public void showHomepage() {
