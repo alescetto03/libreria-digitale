@@ -47,7 +47,7 @@ public class LoginGUI extends AppView{
             if(getAppController().authenticateUser(username, password)){
                 getAppController().showHomePage();
             } else {
-                JOptionPane.showMessageDialog(contentPane, "Non è stato possibile effettuare il login. Riprovare.");
+                JOptionPane.showMessageDialog(contentPane, "Oops, qualcosa è andato storto durante il login, riprova!", "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -57,9 +57,6 @@ public class LoginGUI extends AppView{
             getAppController().getUserNotification();
         });
     }
-
-
-
 
     @Override
     public JPanel getContentPane() {

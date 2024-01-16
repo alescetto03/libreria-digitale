@@ -7,7 +7,7 @@ import java.util.Properties;
 /**
  * Classe che si occupa di prendere le credenziali JDBC salvate all'interno del file config.properties
  */
-public class JdbcCredentialManager {
+public abstract class JdbcCredentialManager {
     private static final Properties properties = new Properties();
     private static String jdbcUrl;
     private static String jdbcUsername;

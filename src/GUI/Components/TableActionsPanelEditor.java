@@ -7,15 +7,23 @@ import java.awt.*;
 import java.util.EventObject;
 
 public class TableActionsPanelEditor extends DefaultCellEditor {
-    private final ActionsPanel actionsPanel;
-    public TableActionsPanelEditor(ActionsPanel actionsPanel) {
+    private boolean displayViewButton;
+    private boolean displaySaveButton;
+    private boolean displayCreateButton;
+    private boolean displayDeleteButton;
+    private CrudTable crudTable;
+    public TableActionsPanelEditor(CrudTable crudTable, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         super(new JCheckBox());
-        this.actionsPanel = actionsPanel;
+        this.displayViewButton = displayViewButton;
+        this.displaySaveButton = displaySaveButton;
+        this.displayCreateButton = displayCreateButton;
+        this.displayDeleteButton = displayDeleteButton;
+        this.crudTable = crudTable;
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        ActionsPanel actionsPanel = new ActionsPanel(true, true, true);
+        ActionsPanel actionsPanel = new ActionsPanel(crudTable, displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton);
         actionsPanel.setBackground(table.getSelectionBackground());
         return actionsPanel;
     }

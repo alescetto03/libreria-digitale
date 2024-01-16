@@ -1,8 +1,9 @@
 package Model;
 
 import java.time.LocalDate;
+import java.util.Map;
 
-public class Author {
+public class Author extends AbstractModel {
     private int id;
     private String name;
     private LocalDate birth_date;
@@ -68,4 +69,8 @@ public class Author {
         this.bio = bio;
     }
 
+    @Override
+    public Map<String, Object> getData() {
+        return null;
+    }
 }
