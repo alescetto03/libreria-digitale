@@ -3,13 +3,14 @@ package Controller;
 import DAO.*;
 import GUI.*;
 import Model.*;
-import Model.User;
+import PostgresImplementationDAO.CollectionDAO;
 import PostgresImplementationDAO.*;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,15 @@ public class AppController {
 
 
 
+    /**
+     * Lista di tutte le raccolte personali dell'utente
+     */
+    ArrayList<Collection> personalCollections = new ArrayList<>();
+
+    /**
+     * Lista di tutte le raccolte salvate dall'utente
+     */
+    ArrayList<Collection> savedCollections = new ArrayList<>();
 
     ArrayList<Notification> userNotification = new ArrayList<Notification>();
 
@@ -40,8 +50,8 @@ public class AppController {
     ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
     ArrayList<Store> storeCompleteSeries = new ArrayList<Store>();
 
-
     public static void main(String[] args) { (new AppController()).showLogin(); }
+    //public static void main(String[] args) { AppController appController = new AppController(); appController.showHomepage(); }
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -85,17 +95,38 @@ public class AppController {
         return false;
     }
 
-    public void registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
+    public boolean registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
         // Converti l'oggetto java.util.Date in java.sql.Date
         java.sql.Date sqlDate = new java.sql.Date(birthdate.getTime());
-        this.userDAO.register(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);
+        UserResultInterface userResult = this.userDAO.register(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);
+        if (userResult != null){
+            loggedUser = new User(userResult.getUsername(), userResult.getEmail(), userResult.getName(), userResult.getSurname(), userResult.getBirthdate(), userResult.isAdmin());
+            return true;
+        }
+        return false;
     }
 
-
-    public void getCollections() {
+    public void showHomepage() {
+        getUserPersonalCollections();
+        ArrayList<AbstractModel> abstractModels = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModels);
+        showView(new HomepageGUI(this, renderedPersonalCollections));
     }
 
+    public void getUserPersonalCollections() {
+        ArrayList<CollectionResultInterface> results = this.collectionDAO.getUserPersonalCollections(loggedUser.getUsername());
 
+        this.personalCollections.clear();
+        for (CollectionResultInterface result: results) {
+            Collection collection = new Collection(result.getId(), result.getName(), loggedUser.getUsername(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
+            this.personalCollections.add(collection);
+        }
+    }
+
+    /**
+     * Funzione che renderizza i dati per renderli visualizzabili in una view
+     * @see CrudTable
+     */
     public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
         ArrayList<Map<String, Object>> renderedData = new ArrayList<>();
         objects.forEach(object -> {
@@ -103,14 +134,49 @@ public class AppController {
         });
         return renderedData;
     }
-
+    
     public void getUserNotification(){
         ArrayList<NotificationResultInterface> results = this.notificationDAO.getUserNotification(loggedUser.getUsername());
-
         for(NotificationResultInterface result : results){
             Notification notification = new Notification(result.getText(), (result.getDate_time()).toLocalDateTime());
             this.userNotification.add(notification);
         }
+    }
+    
+    public boolean removeCollectionFromDatabase(int id) {
+        if (collectionDAO.deleteCollectionById(id)) {
+            for (Collection personalCollection: personalCollections) {
+                if (personalCollection.getId() == id) {
+                    personalCollections.remove(personalCollection);
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean savePersonalCollectionIntoDatabase(ArrayList<String> data) {
+        if (data.get(1).equals("") || data.get(2).equals("")) {
+            return false;
+        }
+        String name = data.get(1);
+        Collection.Visibility visibility = Collection.Visibility.valueOf(data.get(2).toUpperCase());
+        if (!data.get(0).equals("")) {
+            int id = Integer.parseInt(data.get(0));
+            if (collectionDAO.updateCollectionById(id, name, visibility, loggedUser.getUsername())) {
+                for (Collection personalCollection: personalCollections) {
+                    if (personalCollection.getId() == id) {
+                        personalCollection.setName(name);
+                        personalCollection.setVisibility(visibility);
+                        break;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        return collectionDAO.insertCollection(name, visibility, loggedUser.getUsername());
     }
 
     public void getBookByString(String searchItem){
@@ -189,12 +255,5 @@ public class AppController {
         System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
         switchView(new ResultPage(this, renderedSearchedBook));
 
-    }
-
-    public void showHomePage(){
-        getUserNotification();
-        ArrayList<AbstractModel> abstractModels = new ArrayList<>(userNotification); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
-        ArrayList<Map<String, Object>> renderedUserNotification = renderData(abstractModels);
-        switchView(new HomePage(this, renderedUserNotification));
     }
 }
