@@ -46,8 +46,8 @@ public class AppController {
     ArrayList<Collection> searchedCollection = new ArrayList<Collection>();
     ArrayList<Store> storeWithCompleteSeries = new ArrayList<Store>();
 
-    public static void main(String[] args) { (new AppController()).showLogin(); }
-    //public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
+    //public static void main(String[] args) { (new AppController()).showLogin(); }
+    public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -279,14 +279,14 @@ public class AppController {
             System.out.println(item.get("name"));
         }
         Map<String, Map<String, Object>> storeBySeries = new HashMap<>();
-        for(String item : getSeriesByString(searchText)){
-            getStoreCompleteSeries(item);
-            storeBySeries.put(item, storeWithCompleteSeries.get(0).getData());
-
-            //System.out.println(item);
-        }
+        //for(String item : getSeriesByString(searchText)){
+        //    getStoreCompleteSeries(item);
+        //    storeBySeries.put(item, storeWithCompleteSeries.get(0).getData());
+        //
+        //    //System.out.println(item);
+        //}
         System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
-        showView(new ResultPage(this, renderedSearchedBooks));
+        showView(new SearchResultsGUI(this, renderedSearchedBooks, renderedSearchedPublications));
 
     }
 }
