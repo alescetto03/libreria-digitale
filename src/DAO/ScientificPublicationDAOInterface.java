@@ -7,4 +7,6 @@ import java.util.ArrayList;
 public interface ScientificPublicationDAOInterface {
 
     ArrayList<ScientificPublicationResultInterface> getResearchedPublication(String searchedPublication);
+
+    ArrayList<ScientificPublicationResultInterface> getAll();
 }

@@ -6,11 +6,11 @@ public interface BookResultInterface {
     String getIsbn();
     String getTitle();
     String getPublisher();
-    String getFruition_mode();
-    int getPublication_year();
+    String getFruitionMode();
+    int getPublicationYear();
     InputStream getCover();
     String getDescription();
-    String getBook_type();
+    String getBookType();
     String getGenre();
     String getTarget();
     String getTopic();

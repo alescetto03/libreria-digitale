@@ -3,31 +3,37 @@ package Controller;
 import DAO.*;
 import GUI.*;
 import Model.*;
-import GUI.Components.*;
-import PostgresImplementationDAO.CollectionDAO;
 import PostgresImplementationDAO.*;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AppController {
-    JFrame currentWindow;
+    public JFrame currentWindow;
     UserDAOInterface userDAO = new UserDAO();
     NotificationDAOInterface notificationDAO = new NotificationDAO();
     BookDAOInterface bookDAO = new BookDAO();
     ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
+    AuthorDAOInterface authorDAO = new AuthorDAO();
     CollectionDAOInterface collectionDAO = new CollectionDAO();
     StoreDAOInterface storeDAO = new StoreDAO();
+    EditorialCollectionDAOInterface editorialCollectionDAO = new EditorialCollectionDAO();
+    SerieDAOInterface serieDAO = new SerieDAO();
+    JournalDAOInterface journalDAO = new JournalDAO();
+    ConferenceDAOInterface conferenceDAO = new ConferenceDAO();
+    PresentationHallDAOInterface presentationHallDAO = new PresentationHallDAO();
 
     /**
      * Utente correntemente autenticato all'applicativo
      */
-    User loggedUser = null;
+    //User loggedUser = null;
+    User loggedUser = new User("alescetto", "email", "name", "surname", LocalDate.now(), false);
 
     /**
      * Lista di tutte le raccolte personali dell'utente
@@ -47,7 +53,22 @@ public class AppController {
     ArrayList<Store> storeWithCompleteSeries = new ArrayList<Store>();
 
     //public static void main(String[] args) { (new AppController()).showLogin(); }
-    public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
+    //public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
+
+    /**
+    public static void main(String[] args) {
+        AppController appController = new AppController();
+        appController.getUserPersonalCollections();
+        appController.getUserSavedCollections();
+
+        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(appController.personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        ArrayList<AbstractModel> abstractModelsCollectionSaved = new ArrayList<>(appController.savedCollections);
+
+        ArrayList<Map<String, Object>> renderedPersonalCollections = appController.renderData(abstractModelsCollections);
+        ArrayList<Map<String, Object>> renderedPersonalCollectionsSaved = appController.renderData(abstractModelsCollectionSaved);
+
+        appController.showView(new AdminPage(appController, renderedPersonalCollections, renderedPersonalCollectionsSaved));
+    }**/
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -145,7 +166,6 @@ public class AppController {
 
     /**
      * Funzione che renderizza i dati per renderli visualizzabili in una view
-     * @see CrudTable
      */
     public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
         ArrayList<Map<String, Object>> renderedData = new ArrayList<>();
@@ -217,7 +237,7 @@ public class AppController {
         searchedBook.clear();
 
         for(BookResultInterface result : results){
-            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
             this.searchedBook.add(book);
         }
     }
@@ -227,7 +247,7 @@ public class AppController {
         searchedPublication.clear();
 
         for(ScientificPublicationResultInterface result : results){
-            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), result.getPublisher());
             this.searchedPublication.add(publication);
         }
     }
@@ -243,7 +263,7 @@ public class AppController {
     }
 
     public ArrayList<String> getSeriesByString(String searchItem){
-        return this.bookDAO.getResearchedSeries(searchItem);
+        return this.serieDAO.getResearchedSeries(searchItem);
     }
 
     public void getStoreCompleteSeries(String searchItem){
@@ -251,7 +271,7 @@ public class AppController {
         storeWithCompleteSeries.clear();
 
         for(StoreResultInterface result : results){
-            Store store = new Store(result.getPartita_iva(), result.getName(), result.getAddress(), result.getUrl());
+            Store store = new Store(result.getPartitaIva(), result.getName(), result.getAddress(), result.getUrl());
             this.storeWithCompleteSeries.add(store);
         }
     }
@@ -287,6 +307,140 @@ public class AppController {
         //}
         System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
         showView(new SearchResultsGUI(this, renderedSearchedBooks, renderedSearchedPublications));
+    }
 
+    /**
+     * Metodo che restituisce una lista di tutti i libri memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedBooks() {
+        ArrayList<BookResultInterface> bookResults = bookDAO.getAll();
+        ArrayList<AbstractModel> books = new ArrayList<>();
+        for (BookResultInterface bookResult: bookResults) {
+            Book book = new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic());
+            books.add(book);
+        }
+        return renderData(books);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli articoli scientifici memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedScienticPublications() {
+        ArrayList<ScientificPublicationResultInterface> scientificPublicationResults = publicationDAO.getAll();
+        ArrayList<AbstractModel> scientificPublications = new ArrayList<>();
+        for (ScientificPublicationResultInterface scientificPublicationResult: scientificPublicationResults) {
+            ScientificPublication scientificPublication = new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), scientificPublicationResult.getPublicationYear(), null, scientificPublicationResult.getDescription(), scientificPublicationResult.getPublisher());
+            scientificPublications.add(scientificPublication);
+        }
+        return renderData(scientificPublications);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli autori memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedAuthors() {
+        ArrayList<AuthorResultInterface> authorResults = authorDAO.getAll();
+        ArrayList<AbstractModel> authors = new ArrayList<>();
+        for (AuthorResultInterface authorResult: authorResults) {
+            LocalDate deathDate = authorResult.getDeathDate() != null ? authorResult.getDeathDate().toLocalDate() : null;
+            Author author = new Author(authorResult.getId(), authorResult.getName(), authorResult.getBirthDate().toLocalDate(), deathDate, authorResult.getNationality(), authorResult.getBio());
+            authors.add(author);
+        }
+        return renderData(authors);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti i negozi memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedShops() {
+        ArrayList<StoreResultInterface> storeResults = storeDAO.getAll();
+        ArrayList<AbstractModel> stores = new ArrayList<>();
+        for (StoreResultInterface storeResult: storeResults) {
+            Store store = new Store(storeResult.getPartitaIva(), storeResult.getName(), storeResult.getAddress(), storeResult.getUrl());
+            stores.add(store);
+        }
+        return renderData(stores);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le collane memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedEditorialCollections() {
+        ArrayList<EditorialCollectionResultInterface> editorialCollectionResults = editorialCollectionDAO.getAll();
+        ArrayList<AbstractModel> editorialCollections = new ArrayList<>();
+        for (EditorialCollectionResultInterface editorialCollectionResult: editorialCollectionResults) {
+            EditorialCollection editorialCollection = new EditorialCollection(editorialCollectionResult.getIssn(), editorialCollectionResult.getName(), editorialCollectionResult.getPublisher());
+            editorialCollections.add(editorialCollection);
+        }
+        return renderData(editorialCollections);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le serie memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedSeries() {
+        ArrayList<SerieResultInterface> serieResults = serieDAO.getAll();
+        ArrayList<AbstractModel> series = new ArrayList<>();
+        for (SerieResultInterface serieResult: serieResults) {
+            Serie serie = new Serie(serieResult.getName(), serieResult.getPrequel(), serieResult.getSequel());
+            series.add(serie);
+        }
+        return renderData(series);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le riviste memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedJournals() {
+        ArrayList<JournalResultInterface> journalResults = journalDAO.getAll();
+        ArrayList<AbstractModel> journals = new ArrayList<>();
+        for (JournalResultInterface journalResult: journalResults) {
+            Journal journal = new Journal(journalResult.getIssn(), journalResult.getName(), journalResult.getArgument(), journalResult.getPublicationYear(), journalResult.getManager());
+            journals.add(journal);
+        }
+        return renderData(journals);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le serie memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedConferences() {
+        ArrayList<ConferenceResultInterface> conferenceResults = conferenceDAO.getAll();
+        ArrayList<AbstractModel> conferences = new ArrayList<>();
+        for (ConferenceResultInterface conferenceResult: conferenceResults) {
+            Conference conference = new Conference(conferenceResult.getId(), conferenceResult.getPlace(), conferenceResult.getStartDate().toLocalDate(), conferenceResult.getEndDate().toLocalDate(), conferenceResult.getOrganizer(), conferenceResult.getManager());
+            conferences.add(conference);
+        }
+        return renderData(conferences);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le sale memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedPresentationHall() {
+        ArrayList<PresentationHallResultInterface> presentationHallResults = presentationHallDAO.getAll();
+        ArrayList<AbstractModel> presentationHalls = new ArrayList<>();
+        for (PresentationHallResultInterface presentationHallResult: presentationHallResults) {
+            PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
+            presentationHalls.add(presentationHall);
+        }
+        return renderData(presentationHalls);
+    }
+
+    public static void main(String[] args) {
+        AppController appController = new AppController();
+        ArrayList<Map<String, Object>> items = appController.getRenderedPresentationHall();
+        for (Map<String, Object> item: items) {
+            System.out.println(item);
+        }
     }
 }

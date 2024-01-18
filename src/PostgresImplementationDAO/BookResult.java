@@ -61,11 +61,11 @@ public class BookResult implements BookResultInterface {
         return publisher;
     }
 
-    public String getFruition_mode() {
+    public String getFruitionMode() {
         return fruition_mode;
     }
 
-    public int getPublication_year() {
+    public int getPublicationYear() {
         return publication_year;
     }
 
@@ -77,7 +77,7 @@ public class BookResult implements BookResultInterface {
         return description;
     }
 
-    public String getBook_type() {
+    public String getBookType() {
         return book_type;
     }
 

@@ -1,19 +1,27 @@
 package Model;
 
 
-public class BookSeries{
+import java.util.HashMap;
+import java.util.Map;
+
+public class EditorialCollection extends AbstractModel {
     private String issn;
     private String name;
     private String publisher;
 
-
-    public BookSeries(String issn, String name, String publisher){
+    public EditorialCollection(String issn, String name, String publisher){
         this.issn = issn;
         this.name = name;
         this.publisher = publisher;
     }
 
-
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("issn", getIssn());
+        data.put("name", getName());
+        data.put("publisher", getPublisher());
+        return data;
+    }
 
     public String getIssn() {
         return issn;

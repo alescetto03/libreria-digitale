@@ -34,21 +34,20 @@ public class BookDAO implements BookDAOInterface {
     }
 
     @Override
-    public ArrayList<String> getResearchedSeries(String searchedSeries) {
-        final String query = "SELECT DISTINCT Serie.nome FROM Serie WHERE Serie.nome ILIKE '%'|| ? ||'%'";
+    public ArrayList<BookResultInterface> getAll() {
+        final String query = "SELECT * FROM Libro";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
-            statement.setString(1, searchedSeries);
             ResultSet result = statement.executeQuery();
 
-            ArrayList<String> allSeries = new ArrayList<String>();
+            ArrayList<BookResultInterface> bookResults = new ArrayList<>();
             while(result.next()){
-                allSeries.add(result.getString("nome"));
+                BookResultInterface bookResult = new BookResult(result);
+                bookResults.add(bookResult);
             }
-
-            return allSeries;
+            return bookResults;
         }catch (SQLException e){
             System.out.println("Errore: " + e.getMessage());
             return null;

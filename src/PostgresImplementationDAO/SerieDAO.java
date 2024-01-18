@@ -1,7 +1,8 @@
 package PostgresImplementationDAO;
 
-import DAO.StoreDAOInterface;
-import DAO.StoreResultInterface;
+import DAO.BookResultInterface;
+import DAO.SerieDAOInterface;
+import DAO.SerieResultInterface;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,24 +10,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class StoreDAO implements StoreDAOInterface {
+public class SerieDAO implements SerieDAOInterface {
     @Override
-    public ArrayList<StoreResultInterface> storeCompleteSerie(String searchedSerie) {
-        final String query = "SELECT * FROM negoziconseriecomplete WHERE nome_serie ILIKE '%' || ? || '%'";
-        try(
+    public ArrayList<String> getResearchedSeries(String searchedSeries) {
+        final String query = "SELECT DISTINCT Serie.nome FROM Serie WHERE Serie.nome ILIKE '%'|| ? ||'%'";
+        try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
-            statement.setString(1, searchedSerie);
+            statement.setString(1, searchedSeries);
             ResultSet result = statement.executeQuery();
 
-            ArrayList<StoreResultInterface> searchedStore = new ArrayList<StoreResultInterface>();
+            ArrayList<String> allSeries = new ArrayList<String>();
             while(result.next()){
-                StoreResult store = new StoreResult(result.getString("partita_iva"), result.getString("nome_negozio"), result.getString("indirizzo"), result.getString("url"));
-                searchedStore.add(store);
+                allSeries.add(result.getString("nome"));
             }
 
-            return searchedStore;
+            return allSeries;
         }catch (SQLException e){
             System.out.println("Errore: " + e.getMessage());
             return null;
@@ -34,20 +34,20 @@ public class StoreDAO implements StoreDAOInterface {
     }
 
     @Override
-    public ArrayList<StoreResultInterface> getAll() {
-        final String query = "SELECT * FROM Negozio";
+    public ArrayList<SerieResultInterface> getAll() {
+        final String query = "SELECT * FROM Serie";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
             ResultSet result = statement.executeQuery();
 
-            ArrayList<StoreResultInterface> storeResults = new ArrayList<>();
+            ArrayList<SerieResultInterface> serieResults = new ArrayList<>();
             while(result.next()){
-                StoreResultInterface storeResult = new StoreResult(result);
-                storeResults.add(storeResult);
+                SerieResultInterface serieResult = new SerieResult(result);
+                serieResults.add(serieResult);
             }
-            return storeResults;
+            return serieResults;
         }catch (SQLException e){
             System.out.println("Errore: " + e.getMessage());
             return null;
