@@ -18,7 +18,6 @@ public class SavedCollectionCrudTable extends CrudTable{
         idColumn.setMinWidth(0);
         idColumn.setMaxWidth(0);
 
-
     }
 
     @Override
@@ -30,10 +29,14 @@ public class SavedCollectionCrudTable extends CrudTable{
             tableContent[i][0] = rowData.get("id");
             tableContent[i][1] = rowData.get("name");
             tableContent[i][2] = rowData.get("owner");
-
         }
 
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column == getColumnCount() - 1); // Ultima colonna (azioni) è modificabile
+            }
+        };
     }
 
     @Override
@@ -48,6 +51,6 @@ public class SavedCollectionCrudTable extends CrudTable{
 
     @Override
     protected void onViewButton(Object id) {
-        appController.showCollections(id);
+        appController.showCollectionItems(id);
     }
 }

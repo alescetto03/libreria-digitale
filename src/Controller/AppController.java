@@ -50,6 +50,14 @@ public class AppController {
     public static void main(String[] args) { (new AppController()).showLogin(); }
     //public static void main(String[] args) { AppController appController = new AppController(); appController.showHomepage(); }
 
+    public JFrame getCurrentWindow(){
+        return this.currentWindow;
+    }
+
+    public String getLoggedUsername(){
+        return this.loggedUser.getUsername();
+    }
+
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
         currentWindow.add(view.getContentPane());
@@ -254,14 +262,76 @@ public class AppController {
         }
     }
 
-    public void showCollections(Object id){
-        int collection_id = Integer.parseInt((String)id);
-        ArrayList<BookResultInterface> booksInCollection = this.bookDAO.getBooksFromCollection(collection_id);
-        ArrayList<ScientificPublicationResultInterface> publicationsInCollection = this.publicationDAO.getPublicationsFromCollection(collection_id);
+    public ArrayList<Book> getBookListFromCollection(int collection_id){
+        ArrayList<BookResultInterface> resultsBook = this.bookDAO.getBooksFromCollection(collection_id);
+        ArrayList<Book> outputBook = new ArrayList<Book>();
 
-
-        switchView(new CollectionsGUI(this, booksInCollection, publicationsInCollection));
+        for(BookResultInterface result : resultsBook){
+            //SIA QUI CHE SOPRA BISGONA AGGIUSTARE GESTENDO INSERIMENTO DI IMMAGINI
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(),  Book.BookType.valueOf(result.getBook_type().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+            outputBook.add(book);
+        }
+        return outputBook;
     }
+
+    public ArrayList<ScientificPublication> getPublicationListFromCollection(int collection_id){
+        ArrayList<ScientificPublicationResultInterface> resultsPublication = this.publicationDAO.getPublicationsFromCollection(collection_id);
+        ArrayList<ScientificPublication> outputPublication = new ArrayList<ScientificPublication>();
+
+        for(ScientificPublicationResultInterface result : resultsPublication){
+            //SIA QUI CHE SOPRA BISGONA AGGIUSTARE GESTENDO INSERIMENTO DI IMMAGINI
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            outputPublication.add(publication);
+        }
+        return outputPublication;
+    }
+
+    public ArrayList<Collection> getAllFromCollectionById(int collection_id){
+        ArrayList<CollectionResultInterface> resultCollection = this.collectionDAO.getAllByCollectionId(collection_id);
+        ArrayList<Collection> outputCollection = new ArrayList<Collection>();
+
+        for(CollectionResultInterface result : resultCollection){
+            Collection collection = new Collection(result.getId(), result.getName(), result.getOwner(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
+            outputCollection.add(collection);
+        }
+        return outputCollection;
+    }
+    public void showCollectionItems(Object id){
+        int collection_id = Integer.parseInt((String)id);
+
+        ArrayList<Collection> collection_data = getAllFromCollectionById(collection_id);
+        ArrayList<Book> booksInCollection = getBookListFromCollection(collection_id);
+        ArrayList<ScientificPublication> publicationsInCollection = getPublicationListFromCollection(collection_id);
+
+        ArrayList<AbstractModel> abstractModelsBook = new ArrayList<>(booksInCollection);
+        ArrayList<AbstractModel> abstractModelsPublication = new ArrayList<>(publicationsInCollection);
+        ArrayList<AbstractModel> abstractModelsCollection = new ArrayList<>(collection_data);
+
+        ArrayList<Map<String, Object>> renderedBook = renderData(abstractModelsBook);
+        ArrayList<Map<String, Object>> renderedPublication = renderData(abstractModelsPublication);
+        ArrayList<Map<String, Object>> renderedCollection = renderData(abstractModelsCollection);
+
+        switchView(new CollectionsGUI(this, renderedCollection.getFirst(), renderedBook, renderedPublication));
+    }
+
+    public boolean removeBookFromCollection(Object book_isbn, int collection_id){
+        String isbn = (String) book_isbn;
+        if (collectionDAO.deleteBookFromCollection(collection_id, isbn)){
+            getUserSavedCollections();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removePublicationFromCollection(Object publication_doi, int collection_id){
+        String doi = (String) publication_doi;
+        if (collectionDAO.deletePublicationFromCollection(collection_id, doi)){
+            getUserSavedCollections();
+            return true;
+        }
+        return false;
+    }
+
 
 
     public void showSearchResults(String searchText){

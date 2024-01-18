@@ -82,4 +82,6 @@ public abstract class CrudTable extends JPanel {
         scrollPane.setViewportView(items);
         add(scrollPane);
     }
+
+
 }

@@ -30,7 +30,7 @@ public class ActionsPanel extends JPanel{
             viewButton = new IconButton("/GUI/images/view.png", 18, 18, Image.SCALE_SMOOTH);
             add(viewButton, gbc);
             viewButton.addActionListener((ActionEvent e) -> {
-                JTable table = (JTable) saveButton.getParent().getParent();
+                JTable table = (JTable) viewButton.getParent().getParent();
                 int row = table.getEditingRow();
                 String id = String.valueOf(table.getValueAt(row, 0));
                 if (!id.equals("")){

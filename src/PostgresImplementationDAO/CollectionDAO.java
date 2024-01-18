@@ -138,5 +138,55 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
+    @Override
+    public ArrayList<CollectionResultInterface> getAllByCollectionId(int collectionId) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM Raccolta WHERE cod_raccolta = ?");
+        ) {
+            statement.setInt(1, collectionId);
+            ResultSet result = statement.executeQuery();
 
+            ArrayList<CollectionResultInterface> collectionData = new ArrayList<>();
+            while(result.next()){
+                CollectionResult collection = new CollectionResult(result);
+                collectionData.add(collection);
+            }
+
+            return collectionData;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public boolean deleteBookFromCollection(int collectionId, String isbn) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM Libro_Contenuto_Raccolta WHERE raccolta = ? AND libro = ?");
+        ) {
+            statement.setInt(1, collectionId);
+            statement.setString(2, isbn);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deletePublicationFromCollection(int collectionId, String doi) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM Articolo_Contenuto_Raccolta WHERE raccolta = ? AND articolo_scientifico = ?");
+        ) {
+            statement.setInt(1, collectionId);
+            statement.setString(2, doi);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

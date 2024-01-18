@@ -36,8 +36,12 @@ public class PersonalCollectionsCrudTable extends CrudTable {
             tableContent[i][1] = rowData.get("name");
             tableContent[i][2] = ((Collection.Visibility) rowData.get("visibility")).name().toLowerCase();
         }
-
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column == getColumnCount() - 1); // Ultima colonna (azioni) è modificabile
+            }
+        };
     }
 
     @Override
@@ -48,6 +52,7 @@ public class PersonalCollectionsCrudTable extends CrudTable {
 
     @Override
     protected void onViewButton(Object id) {
+        appController.showCollectionItems(id);
     }
 
 }
