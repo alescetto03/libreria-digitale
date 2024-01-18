@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class StoreDAO implements StoreDAOInterface {
     @Override
     public ArrayList<StoreResultInterface> storeCompleteSerie(String searchedSerie) {
-        final String query = "SELECT partita_iva, nome_negozio, indirizzo, url FROM negoziconseriecomplete AS n WHERE n.nome_serie ILIKE '%' || ? || '%'";
+        final String query = "SELECT * FROM negoziconseriecomplete WHERE nome_serie ILIKE '%' || ? || '%'";
         try(
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);

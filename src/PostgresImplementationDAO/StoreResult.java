@@ -20,10 +20,10 @@ public class StoreResult implements StoreResultInterface {
 
     public StoreResult(ResultSet result) throws SQLException {
         this(
-                result.getString("partita_iva"),
-                result.getString("nome"),
-                result.getString("indirizzo"),
-                result.getString("url")
+            result.getString("partita_iva"),
+            result.getString("nome"),
+            result.getString("indirizzo"),
+            result.getString("url")
         );
     }
 
