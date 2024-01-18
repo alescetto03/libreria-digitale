@@ -42,18 +42,18 @@ public abstract class CrudTable extends JPanel {
             topBar.add(createButton, BorderLayout.LINE_END);
         }
         add(topBar, BorderLayout.NORTH);
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(items, BorderLayout.CENTER);
         DefaultTableModel model = getModel();
         items.setModel(model);
         items.getTableHeader().setReorderingAllowed(false);
         items.setRowHeight(40);
         items.setRowSelectionAllowed(false);
+        items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
+        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this, displayViewButton, displaySaveButton, displayDeleteButton));
         items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
-        scrollPane.setViewportView(items);
+        JScrollPane scrollPane = new JScrollPane(items, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(scrollPane);
 
         if (createButton != null) {
@@ -64,21 +64,5 @@ public abstract class CrudTable extends JPanel {
                 model.insertRow(0, emptyRow);
             });
         }
-    }
-
-    private void createTable() {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
-        add(items, BorderLayout.CENTER);
-        DefaultTableModel model = getModel();
-        items.setModel(model);
-        items.getTableHeader().setReorderingAllowed(false);
-        items.setRowHeight(40);
-        items.setRowSelectionAllowed(false);
-        model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
-        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
-        scrollPane.setViewportView(items);
-        add(scrollPane);
     }
 }

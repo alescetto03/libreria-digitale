@@ -1,10 +1,7 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.CrudTable;
-import GUI.Components.IconButton;
-import GUI.Components.PersonalCollectionsCrudTable;
-import GUI.Components.SavedCollectionCrudTable;
+import GUI.Components.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,31 +32,32 @@ public class AdminPage extends AppView {
     ArrayList<Map<String, Object>> savedCollections;
     private CrudTable currentTable;
     private ArrayList<Map<String, Object>> currentData;
-    public AdminPage(AppController appController, ArrayList<Map<String, Object>> personalCollections, ArrayList<Map<String, Object>> savedCollections) {
+    public AdminPage(AppController appController, ArrayList<Map<String, Object>> startData) {
         super(appController);
         this.personalCollections = personalCollections;
         this.savedCollections = savedCollections;
+        currentData = startData;
+        System.out.println(currentData);
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
         booksButton.addActionListener((ActionEvent e) -> {
-            System.out.println("Prima:" + currentTable);
             tableWrapper.remove(currentTable);
-            currentTable = new SavedCollectionCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, personalCollections);
+            currentData = appController.getRenderedBooks();
+            currentTable = new BookCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
-            System.out.println("Dopo:" + currentTable);
         });
         publicationsButton.addActionListener((ActionEvent e) -> {
-            tableWrapper.remove(currentTable);
-            currentTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "visibilita"}, savedCollections);
-            tableWrapper.add(currentTable, BorderLayout.CENTER);
-            tableWrapper.validate();
-            tableWrapper.repaint();
+            //tableWrapper.remove(currentTable);
+            //currentTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "visibilita"}, savedCollections);
+            //tableWrapper.add(currentTable, BorderLayout.CENTER);
+            //tableWrapper.validate();
+            //tableWrapper.repaint();
         });
     }
     public void createUIComponents() {
-        currentTable = new SavedCollectionCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "visibilita"}, savedCollections);
+        currentTable = new BookCrudTable(getAppController(), "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, currentData);
         //button1 = new IconButton("/GUI/images/logout.png",30, 30, Image.SCALE_SMOOTH);
     }
     private void switchPanel() {

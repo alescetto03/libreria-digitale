@@ -55,20 +55,19 @@ public class AppController {
     //public static void main(String[] args) { (new AppController()).showLogin(); }
     //public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
 
-    /**
     public static void main(String[] args) {
         AppController appController = new AppController();
         appController.getUserPersonalCollections();
         appController.getUserSavedCollections();
 
-        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(appController.personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
-        ArrayList<AbstractModel> abstractModelsCollectionSaved = new ArrayList<>(appController.savedCollections);
+        //ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(appController.personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
+        //ArrayList<AbstractModel> abstractModelsCollectionSaved = new ArrayList<>(appController.savedCollections);
 
-        ArrayList<Map<String, Object>> renderedPersonalCollections = appController.renderData(abstractModelsCollections);
-        ArrayList<Map<String, Object>> renderedPersonalCollectionsSaved = appController.renderData(abstractModelsCollectionSaved);
+        //ArrayList<Map<String, Object>> renderedPersonalCollections = appController.renderData(abstractModelsCollections);
+        //ArrayList<Map<String, Object>> renderedPersonalCollectionsSaved = appController.renderData(abstractModelsCollectionSaved);
 
-        appController.showView(new AdminPage(appController, renderedPersonalCollections, renderedPersonalCollectionsSaved));
-    }**/
+        appController.showView(new AdminPage(appController, appController.getRenderedBooks()));
+    }
 
     public void showView(AppView view) {
         currentWindow = new JFrame(view.getTitle());
@@ -434,13 +433,5 @@ public class AppController {
             presentationHalls.add(presentationHall);
         }
         return renderData(presentationHalls);
-    }
-
-    public static void main(String[] args) {
-        AppController appController = new AppController();
-        ArrayList<Map<String, Object>> items = appController.getRenderedPresentationHall();
-        for (Map<String, Object> item: items) {
-            System.out.println(item);
-        }
     }
 }
