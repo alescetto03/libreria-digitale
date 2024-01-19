@@ -1,7 +1,13 @@
 package GUI.Components;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -13,14 +19,13 @@ public abstract class CrudTable extends JPanel {
     protected ArrayList<Map<String, Object>> data;
     protected JTable items = new JTable();
     protected abstract DefaultTableModel getModel();
-    protected abstract boolean onRemoveButton(Object id);
-    protected abstract Object onSaveButton(ArrayList<String> data);
+    protected abstract boolean onRemoveButton(Object id) throws Exception;
+    protected abstract Object onSaveButton(ArrayList<String> data) throws Exception;
     protected abstract void onViewButton(Object id);
-
+    
     private boolean displayViewButton;
     private boolean displaySaveButton;
     private boolean displayDeleteButton;
-
 
     public CrudTable(String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         this.columns = columns;
@@ -43,8 +48,6 @@ public abstract class CrudTable extends JPanel {
             topBar.add(createButton, BorderLayout.LINE_END);
         }
         add(topBar, BorderLayout.NORTH);
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(items, BorderLayout.CENTER);
         DefaultTableModel model = getModel();
         items.setModel(model);
@@ -54,7 +57,8 @@ public abstract class CrudTable extends JPanel {
         model.addColumn("azioni", new Object[model.getRowCount()]);
         items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
         items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
-        scrollPane.setViewportView(items);
+        JScrollPane scrollPane = new JScrollPane(items, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(scrollPane);
 
         if (createButton != null) {
@@ -67,19 +71,7 @@ public abstract class CrudTable extends JPanel {
         }
     }
 
-    private void createTable() {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
-        add(items, BorderLayout.CENTER);
-        DefaultTableModel model = getModel();
-        items.setModel(model);
-        items.getTableHeader().setReorderingAllowed(false);
-        items.setRowHeight(40);
-        items.setRowSelectionAllowed(false);
-        model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
-        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
-        scrollPane.setViewportView(items);
-        add(scrollPane);
+    public void setData(ArrayList<Map<String, Object>> data) {
+        this.data = data;
     }
 }

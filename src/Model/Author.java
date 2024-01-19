@@ -1,6 +1,7 @@
 package Model;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Author extends AbstractModel {
@@ -11,15 +12,14 @@ public class Author extends AbstractModel {
     private String nationality;
     private String bio;
 
-
     public Author(int id, String name, LocalDate birth_date, LocalDate death_date, String nationality, String bio){
+        this.id = id;
         this.name = name;
         this.birth_date = birth_date;
         this.death_date = death_date;
         this.nationality = nationality;
         this.bio = bio;
     }
-
 
     public int getId() {
         return id;
@@ -37,19 +37,19 @@ public class Author extends AbstractModel {
         this.name = name;
     }
 
-    public LocalDate getBirth_date() {
+    public LocalDate getBirthDate() {
         return birth_date;
     }
 
-    public void setBirth_date(LocalDate birth_date) {
+    public void setBirthDate(LocalDate birth_date) {
         this.birth_date = birth_date;
     }
 
-    public LocalDate getDeath_date() {
+    public LocalDate getDeathDate() {
         return death_date;
     }
 
-    public void setDeath_date(LocalDate death_date) {
+    public void setDeathDate(LocalDate death_date) {
         this.death_date = death_date;
     }
 
@@ -71,6 +71,13 @@ public class Author extends AbstractModel {
 
     @Override
     public Map<String, Object> getData() {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", getId());
+        data.put("name", getName());
+        data.put("birth_date", getBirthDate());
+        data.put("death_date", getDeathDate());
+        data.put("nationality", getNationality());
+        data.put("bio", getBio());
+        return data;
     }
 }

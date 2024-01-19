@@ -32,4 +32,39 @@ public class StoreDAO implements StoreDAOInterface {
             return null;
         }
     }
+
+    @Override
+    public ArrayList<StoreResultInterface> getAll() {
+        final String query = "SELECT * FROM Negozio";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<StoreResultInterface> storeResults = new ArrayList<>();
+            while(result.next()){
+                StoreResultInterface storeResult = new StoreResult(result);
+                storeResults.add(storeResult);
+            }
+            return storeResults;
+        }catch (SQLException e){
+            System.out.println("Errore: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public boolean deleteStoreByPartitaIva(String partitaIva) {
+        try (
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM negozio WHERE partita_iva = ?");
+        ) {
+            statement.setString(1, partitaIva);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

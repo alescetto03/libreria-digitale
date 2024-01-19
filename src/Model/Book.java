@@ -26,7 +26,6 @@ public class Book extends AbstractModel {
     private String genre;
     private String target;
     private String topic;
-    private String series;
 
     public Book(String isbn, String title, String publisher, FruitionMode fruition_mode, int publication_year, BufferedImage cover, String description, BookType book_type, String genre, String target, String topic){
         this.isbn = isbn;

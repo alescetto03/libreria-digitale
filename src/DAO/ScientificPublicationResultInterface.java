@@ -5,8 +5,8 @@ import java.io.InputStream;
 public interface ScientificPublicationResultInterface {
     String getDoi();
     String getTitle();
-    String getFruition_mode();
-    int getPublication_year();
+    String getFruitionMode();
+    int getPublicationYear();
     InputStream getCover();
     String getDescription();
     String getPublisher();

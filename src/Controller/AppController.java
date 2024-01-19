@@ -3,17 +3,13 @@ package Controller;
 import DAO.*;
 import GUI.*;
 import Model.*;
-import GUI.Components.*;
-import PostgresImplementationDAO.CollectionDAO;
 import PostgresImplementationDAO.*;
 
 import javax.swing.*;
-import javax.swing.text.View;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +44,7 @@ public class AppController {
      * Interfaccia articoliScientificiDAO per la comunicazione col DB
      */
     ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
+    AuthorDAOInterface authorDAO = new AuthorDAO();
 
     /**
      * Interfaccia raccolteDAO per la comunicazione col DB
@@ -58,6 +55,11 @@ public class AppController {
      * Interfaccia negozioDAO per la comunicazione col DB
      */
     StoreDAOInterface storeDAO = new StoreDAO();
+    EditorialCollectionDAOInterface editorialCollectionDAO = new EditorialCollectionDAO();
+    SerieDAOInterface serieDAO = new SerieDAO();
+    JournalDAOInterface journalDAO = new JournalDAO();
+    ConferenceDAOInterface conferenceDAO = new ConferenceDAO();
+    PresentationHallDAOInterface presentationHallDAO = new PresentationHallDAO();
 
     /**
      * Utente correntemente autenticato all'applicativo
@@ -186,10 +188,6 @@ public class AppController {
 
 
 
-
-
-
-
     /**
      * Funzione per autenticare l'utente, controlla nel DB le credenziali cripatate
      * se l'utente sbaglia credenziali viene mostrato un messaggio di errore, altrimenti
@@ -236,7 +234,7 @@ public class AppController {
     }
 
     /**
-     * Funzione per prendere tutte le collezzioni personali di un utente e caricarle in un ArrayList
+     * Funzione per prendere tutte le collezioni personali di un utente e caricarle in un ArrayList
      */
     public boolean getUserPersonalCollections() {
         ArrayList<CollectionResultInterface> results = this.collectionDAO.getUserPersonalCollections(getLoggedUsername());
@@ -252,7 +250,7 @@ public class AppController {
     }
 
     /**
-     * Funzione per prendere tutte le collezzioni personali di un utente sottoforma di ArrayList in modo tale
+     * Funzione per prendere tutte le collezioni personali di un utente sottoforma di ArrayList in modo tale
      * da passarle alle GUI
      */
     public ArrayList<Map<String, Object>> getUserPersonalCollectionsList(){
@@ -261,7 +259,7 @@ public class AppController {
     }
 
     /**
-     * Funzione per prendere tutte le collezzioni salvate da un utente e inserirle in un ArrayList
+     * Funzione per prendere tutte le collezioni salvate da un utente e inserirle in un ArrayList
      */
     public boolean getUserSavedCollections(){
         ArrayList<CollectionResultInterface> results = this.collectionDAO.getUserSavedCollections(getLoggedUsername());
@@ -339,7 +337,7 @@ public class AppController {
      * un ArrayList con i nomi delle serie risultanti
      */
     public ArrayList<String> getSeriesByString(String searchItem){
-        return this.bookDAO.getResearchedSeries(searchItem);
+        return this.serieDAO.getResearchedSeries(searchItem);
     }
 
     /**
@@ -351,7 +349,7 @@ public class AppController {
         storeWithCompleteSeries.clear();
 
         for(StoreResultInterface result : results){
-            Store store = new Store(result.getPartita_iva(), result.getName(), result.getAddress(), result.getUrl());
+            Store store = new Store(result.getPartitaIva(), result.getName(), result.getAddress(), result.getUrl());
             this.storeWithCompleteSeries.add(store);
         }
     }
@@ -596,6 +594,224 @@ public class AppController {
         }
         //System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
         switchView(new SearchResultsGUI(this, renderedSearchedBooks, renderedSearchedPublications, renderedSearchedCollections, storeBySeries, this.currentView));
+}
 
+    /**
+     * Metodo che restituisce una lista di tutti i libri memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedBooks() {
+        ArrayList<BookResultInterface> bookResults = bookDAO.getAll();
+        ArrayList<AbstractModel> books = new ArrayList<>();
+        for (BookResultInterface bookResult: bookResults) {
+            Book book = new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic());
+            books.add(book);
+        }
+        return renderData(books);
+    }
+
+    /**
+     * Metodo che elimina un libro dal database
+     * @param isbn
+     */
+    public boolean removeBookFromDatabase(String isbn) throws Exception {
+        return bookDAO.deleteBookByIsbn(isbn);
+    }
+
+    /**
+     * Metodo che modifica un libro dal database
+     * @return
+     */
+    public boolean updateBookFromDatabase(ArrayList<String> data) throws Exception {
+        return bookDAO.updateBookByIsbn(data.get(0), data.get(1), data.get(2), Book.FruitionMode.valueOf(data.get(3).toUpperCase()), Integer.parseInt(data.get(4)), data.get(5).getBytes(), data.get(6), data.get(7), data.get(8), data.get(9), Book.BookType.valueOf(data.get(10).toUpperCase()));
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli articoli scientifici memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedScienticPublications() {
+        ArrayList<ScientificPublicationResultInterface> scientificPublicationResults = publicationDAO.getAll();
+        ArrayList<AbstractModel> scientificPublications = new ArrayList<>();
+        for (ScientificPublicationResultInterface scientificPublicationResult: scientificPublicationResults) {
+            ScientificPublication scientificPublication = new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), scientificPublicationResult.getPublicationYear(), null, scientificPublicationResult.getDescription(), scientificPublicationResult.getPublisher());
+            scientificPublications.add(scientificPublication);
+        }
+        return renderData(scientificPublications);
+    }
+
+    /**
+     * Metodo che elimina un articolo scientifico dal database
+     * @param doi
+     */
+    public boolean removeScientificPublicationFromDatabase(String doi) {
+        return publicationDAO.deleteScientificPublicationByDoi(doi);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli autori memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedAuthors() {
+        ArrayList<AuthorResultInterface> authorResults = authorDAO.getAll();
+        ArrayList<AbstractModel> authors = new ArrayList<>();
+        for (AuthorResultInterface authorResult: authorResults) {
+            LocalDate deathDate = authorResult.getDeathDate() != null ? authorResult.getDeathDate().toLocalDate() : null;
+            Author author = new Author(authorResult.getId(), authorResult.getName(), authorResult.getBirthDate().toLocalDate(), deathDate, authorResult.getNationality(), authorResult.getBio());
+            authors.add(author);
+        }
+        return renderData(authors);
+    }
+
+    /**
+     * Metodo che elimina un autore dal database
+     * @param id
+     */
+    public boolean removeAuthorFromDatabase(int id) {
+        return authorDAO.deleteAuthorById(id);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti i negozi memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedStores() {
+        ArrayList<StoreResultInterface> storeResults = storeDAO.getAll();
+        ArrayList<AbstractModel> stores = new ArrayList<>();
+        for (StoreResultInterface storeResult: storeResults) {
+            Store store = new Store(storeResult.getPartitaIva(), storeResult.getName(), storeResult.getAddress(), storeResult.getUrl());
+            stores.add(store);
+        }
+        return renderData(stores);
+    }
+
+    /**
+     * Metodo che elimina un negozio dal database
+     * @param partitaIva
+     */
+    public boolean removeStoreFromDatabase(String partitaIva) {
+        return storeDAO.deleteStoreByPartitaIva(partitaIva);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le collane memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedEditorialCollections() {
+        ArrayList<EditorialCollectionResultInterface> editorialCollectionResults = editorialCollectionDAO.getAll();
+        ArrayList<AbstractModel> editorialCollections = new ArrayList<>();
+        for (EditorialCollectionResultInterface editorialCollectionResult: editorialCollectionResults) {
+            EditorialCollection editorialCollection = new EditorialCollection(editorialCollectionResult.getIssn(), editorialCollectionResult.getName(), editorialCollectionResult.getPublisher());
+            editorialCollections.add(editorialCollection);
+        }
+        return renderData(editorialCollections);
+    }
+
+    /**
+     * Metodo che elimina un negozio dal database
+     * @param issn
+     */
+    public boolean removeEditorialCollectionFromDatabase(String issn) {
+        return editorialCollectionDAO.deleteEditorialCollectonByIssn(issn);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le serie memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedSeries() {
+        ArrayList<SerieResultInterface> serieResults = serieDAO.getAll();
+        ArrayList<AbstractModel> series = new ArrayList<>();
+        for (SerieResultInterface serieResult: serieResults) {
+            Serie serie = new Serie(serieResult.getName(), serieResult.getPrequel(), serieResult.getSequel());
+            series.add(serie);
+        }
+        return renderData(series);
+    }
+
+    /**
+     * Metodo che elimina un libro da una serie dal database
+     * @param prequel
+     */
+    public boolean removeSerieFromDatabase(String prequel) {
+        return serieDAO.deleteSerie(prequel);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le riviste memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedJournals() {
+        ArrayList<JournalResultInterface> journalResults = journalDAO.getAll();
+        ArrayList<AbstractModel> journals = new ArrayList<>();
+        for (JournalResultInterface journalResult: journalResults) {
+            Journal journal = new Journal(journalResult.getIssn(), journalResult.getName(), journalResult.getArgument(), journalResult.getPublicationYear(), journalResult.getManager());
+            journals.add(journal);
+        }
+        return renderData(journals);
+    }
+
+    /**
+     * Metodo che elimina una rivista dal database
+     * @param issn
+     */
+    public boolean removeJournalFromDatabase(String issn) {
+        return journalDAO.deleteJournalByIssn(issn);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le serie memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedConferences() {
+        ArrayList<ConferenceResultInterface> conferenceResults = conferenceDAO.getAll();
+        ArrayList<AbstractModel> conferences = new ArrayList<>();
+        for (ConferenceResultInterface conferenceResult: conferenceResults) {
+            Conference conference = new Conference(conferenceResult.getId(), conferenceResult.getPlace(), conferenceResult.getStartDate().toLocalDate(), conferenceResult.getEndDate().toLocalDate(), conferenceResult.getOrganizer(), conferenceResult.getManager());
+            conferences.add(conference);
+        }
+        return renderData(conferences);
+    }
+
+    /**
+     * Metodo che elimina una conferenza dal database
+     * @param id
+     */
+    public boolean removeConferenceFromDatabase(int id) {
+        return conferenceDAO.deleteConferenceById(id);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le sale memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedPresentationHall() {
+        ArrayList<PresentationHallResultInterface> presentationHallResults = presentationHallDAO.getAll();
+        ArrayList<AbstractModel> presentationHalls = new ArrayList<>();
+        for (PresentationHallResultInterface presentationHallResult: presentationHallResults) {
+            PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
+            presentationHalls.add(presentationHall);
+        }
+        return renderData(presentationHalls);
+    }
+
+    /**
+     * Metodo che elimina una libreria dal database
+     * @param id
+     */
+    public boolean removePresentationHallFromDatabase(int id) {
+        return presentationHallDAO.deletePresentationHallById(id);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli articoli pubblicati dalle riviste memorizzate nel database
+     */
+    public ArrayList<PublicationJournalResultInterface> getScientificPublicationsFromJournals() {
+        ArrayList<PublicationJournalResultInterface> resultSets = journalDAO.getPublicationsFromJournal();
+        ArrayList<AbstractModel> scientificPublicationsFromJournals = new ArrayList<>();
+        for (PublicationJournalResultInterface resultSet: resultSets) {
+            System.out.println(resultSet.getIssn() + " " + resultSet.getJournalName() + " " + resultSet.getPublicationTitle());
+        }
+        return null;
     }
 }

@@ -10,7 +10,6 @@ public class StoreResult implements StoreResultInterface {
     String name;
     String address;
     String url;
-
     public StoreResult(String partita_iva, String name, String address, String url) {
         this.partita_iva = partita_iva;
         this.name = name;
@@ -27,7 +26,7 @@ public class StoreResult implements StoreResultInterface {
         );
     }
 
-    public String getPartita_iva() {
+    public String getPartitaIva() {
         return partita_iva;
     }
 
