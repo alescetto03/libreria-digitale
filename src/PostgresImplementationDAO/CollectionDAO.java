@@ -10,13 +10,14 @@ import java.util.ArrayList;
 
 public class CollectionDAO implements CollectionDAOInterface {
     @Override
-    public ArrayList<CollectionResultInterface> getReasearchedCollection(String searchedCollection) {
-        final String query = "SELECT * FROM Raccolta WHERE Raccolta.visibilita = 'pubblica' AND Raccolta.nome ILIKE '%' || ? || '%'";
+    public ArrayList<CollectionResultInterface> getReasearchedCollection(String searchedCollection, String username) {
+        final String query = "SELECT * FROM Raccolta WHERE Raccolta.visibilita = 'pubblica' AND proprietario <> ? AND Raccolta.nome ILIKE '%' || ? || '%'";
         try(
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
-            statement.setString(1, searchedCollection);
+            statement.setString(1, username);
+            statement.setString(2, searchedCollection);
             ResultSet result = statement.executeQuery();
 
             ArrayList<CollectionResultInterface> searchedCollectionList = new ArrayList<CollectionResultInterface>();
@@ -106,58 +107,64 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
-    public boolean updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner) {
+    public CollectionResult updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("UPDATE raccolta SET nome = ?, visibilita = ?, proprietario = ? WHERE cod_raccolta = ?");
+                PreparedStatement statement = conn.prepareStatement("UPDATE raccolta SET nome = ?, visibilita = ?, proprietario = ? WHERE cod_raccolta = ? RETURNING Raccolta.*");
         ) {
             statement.setString(1, name);
             statement.setObject(2, visibility.name().toLowerCase(), Types.OTHER);
             statement.setString(3, owner);
             statement.setInt(4, collectionId);
-            return statement.executeUpdate() > 0;
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new CollectionResult(result);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return false;
         }
+        return null;
     }
 
     @Override
-    public boolean insertCollection(String name, Collection.Visibility visibility, String owner) {
+    public CollectionResult insertCollection(String name, Collection.Visibility visibility, String owner) {
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO Raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?) RETURNING Raccolta.*");
         ) {
             statement.setString(1, name);
             statement.setObject(2, visibility.name().toLowerCase(), Types.OTHER);
             statement.setString(3, owner);
-            return statement.executeUpdate() > 0;
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new CollectionResult(result);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return false;
         }
+        return null;
     }
 
     @Override
-    public ArrayList<CollectionResultInterface> getAllByCollectionId(int collectionId) {
+    public CollectionResultInterface getAllByCollectionId(int collectionId) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("SELECT * FROM Raccolta WHERE cod_raccolta = ?");
         ) {
             statement.setInt(1, collectionId);
             ResultSet result = statement.executeQuery();
-
-            ArrayList<CollectionResultInterface> collectionData = new ArrayList<>();
-            while(result.next()){
-                CollectionResult collection = new CollectionResult(result);
-                collectionData.add(collection);
+            if(result.next()) {
+                return new CollectionResult(result);
             }
 
-            return collectionData;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return null;
         }
+        return null;
     }
 
     @Override
@@ -188,5 +195,90 @@ public class CollectionDAO implements CollectionDAOInterface {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public boolean saveCollectionById(int collectionId, String username) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Utente_Salvataggio_Raccolta (utente, raccolta) VALUES (?, ?)");
+        ) {
+            statement.setString(1, username);
+            statement.setInt(2, collectionId);
+
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+
+    @Override
+    public boolean isBookInCollection(int collectionId, String bookIsbn) {
+        try(
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM Libro_Contenuto_Raccolta WHERE libro = ? AND raccolta = ?");
+        ){
+            statement.setString(1, bookIsbn);
+            statement.setInt(2, collectionId);
+            ResultSet result = statement.executeQuery();
+
+            return result.next();
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean insertBookInCollection(int collectionId, String bookIsbn) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Libro_Contenuto_Raccolta (libro, raccolta) VALUES (?, ?)");
+        ) {
+            statement.setString(1, bookIsbn);
+            statement.setInt(2, collectionId);
+
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPublicationInCollection(int collectionId, String publicationDoi) {
+        try(
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM Articolo_Contenuto_Raccolta WHERE articolo_scientifico = ? AND raccolta = ?");
+        ){
+            statement.setString(1, publicationDoi);
+            statement.setInt(2, collectionId);
+            ResultSet result = statement.executeQuery();
+
+            return result.next();
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean insertPublicationInCollection(int collectionId, String publicationDoi) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Articolo_Contenuto_Raccolta (articolo_scientifico, raccolta) VALUES (?, ?)");
+        ) {
+            statement.setString(1, publicationDoi);
+            statement.setInt(2, collectionId);
+
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 }

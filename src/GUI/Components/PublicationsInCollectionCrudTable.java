@@ -48,8 +48,8 @@ public class PublicationsInCollectionCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onSaveButton(ArrayList<String> data) {
-        return false;
+    protected Object onSaveButton(ArrayList<String> data) {
+        return null;
     }
 
     @Override

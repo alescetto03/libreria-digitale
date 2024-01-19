@@ -33,7 +33,7 @@ public class ActionsPanel extends JPanel{
                 JTable table = (JTable) viewButton.getParent().getParent();
                 int row = table.getEditingRow();
                 String id = String.valueOf(table.getValueAt(row, 0));
-                if (!id.equals("")){
+                if (!id.isEmpty()){
                     crudTable.onViewButton(id);
                 }
             });
@@ -48,9 +48,13 @@ public class ActionsPanel extends JPanel{
                 for (int i = 0; i < table.getColumnCount() - 1; i++) {
                     data.add(String.valueOf(table.getValueAt(row, i)));
                 }
-                System.out.println(data);
-                if (!crudTable.onSaveButton(data)) {
+                //System.out.println(data);
+                Object saved_data = crudTable.onSaveButton(data);
+                if (saved_data == null) {
                     JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+                }
+                else if (data.getFirst().isEmpty()){
+                    table.setValueAt(saved_data, row, 0);
                 }
             });
         }
@@ -61,7 +65,7 @@ public class ActionsPanel extends JPanel{
                 JTable table = (JTable) deleteButton.getParent().getParent();
                 int row = table.getEditingRow();
                 String id = String.valueOf(table.getValueAt(row, 0));
-                if (id.equals("") || crudTable.onRemoveButton(id)) {
+                if (id.isEmpty() || crudTable.onRemoveButton(id)) {
                     ((DefaultTableModel) table.getModel()).removeRow(row);
                 }
             });

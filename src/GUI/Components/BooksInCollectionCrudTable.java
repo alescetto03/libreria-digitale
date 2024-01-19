@@ -2,10 +2,7 @@ package GUI.Components;
 
 import Controller.AppController;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -56,8 +53,8 @@ public class BooksInCollectionCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onSaveButton(ArrayList<String> data) {
-        return false;
+    protected Object onSaveButton(ArrayList<String> data) {
+        return null;
     }
 
     @Override

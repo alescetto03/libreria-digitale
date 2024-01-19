@@ -3,25 +3,45 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.BookPanel;
+import GUI.Components.CollectionPanel;
+import GUI.Components.PublicationPanel;
 
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class SearchResultsGUI extends AppView {
 
     JPanel contentPane = new JPanel();
+    JPanel topPanel = new JPanel();
+    JScrollPane contentScrollPane = new JScrollPane();
 
-    public SearchResultsGUI(AppController appController, ArrayList<Map<String, Object>> searchedBook, ArrayList<Map<String, Object>> searchedPublications) {
+    public SearchResultsGUI(AppController appController, ArrayList<Map<String, Object>> searchedBook, ArrayList<Map<String, Object>> searchedPublications, ArrayList<Map<String, Object>> searchedCollections, Map<String, String> storeBySeries, AppView previousView) {
         super(appController);
-        //JScrollPane mainScrollpane = new JScrollPane(contentPane);
-        //mainScrollpane.setPreferredSize(new Dimension(400, 300));
+
+        JButton goBackButton = new JButton("Torna indietro");
+        goBackButton.addActionListener((ActionEvent e) -> {
+            appController.switchView(previousView);
+        });
+        goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        topPanel.add(goBackButton);
+        contentPane.add(topPanel);
+
         int marginSize = 10;
+        contentPane.setPreferredSize(new Dimension(1600, 900));
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+
+
+        contentScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        contentScrollPane.setPreferredSize(new Dimension(1500, 850));
+        //contentScrollPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
+        //contentScrollPane.setLayout(new BoxLayout(contentScrollPane, BoxLayout.Y_AXIS));
+
+
         if (!searchedBook.isEmpty()) {
             JPanel searchedBooksContainer = new JPanel();
             searchedBooksContainer.setLayout(new BorderLayout());
@@ -30,14 +50,14 @@ public class SearchResultsGUI extends AppView {
             JPanel searchedBooksScrollpaneViewport = new JPanel();
             searchedBooksScrollpaneViewport.setLayout(new BoxLayout(searchedBooksScrollpaneViewport, BoxLayout.X_AXIS));
             for(Map<String, Object> book : searchedBook){
-                searchedBooksScrollpaneViewport.add(new BookPanel((String) book.get("title"), (BufferedImage) book.get("cover"), "Salva in una raccolta"));
+                searchedBooksScrollpaneViewport.add(new BookPanel(appController, book, "Salva in una raccolta"));
             }
             JScrollPane searchedBooksScrollPane = new JScrollPane(searchedBooksScrollpaneViewport);
             searchedBooksScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
             searchedBooksScrollPane.setPreferredSize(new Dimension(400, 250));
             searchedBooksContainer.add(searchedBooksLabel, BorderLayout.NORTH);
             searchedBooksContainer.add(searchedBooksScrollPane, BorderLayout.CENTER);
-            contentPane.add(searchedBooksContainer);
+            contentScrollPane.add(searchedBooksContainer);
             searchedBooksContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         }
         if (!searchedPublications.isEmpty()) {
@@ -47,17 +67,74 @@ public class SearchResultsGUI extends AppView {
             searchedPublicationsLabel.setHorizontalAlignment(JLabel.LEFT);
             JPanel searchedPublicationsScrollpaneViewport = new JPanel();
             searchedPublicationsScrollpaneViewport.setLayout(new BoxLayout(searchedPublicationsScrollpaneViewport, BoxLayout.X_AXIS));
-            for(Map<String, Object> book : searchedPublications){
-                searchedPublicationsScrollpaneViewport.add(new BookPanel((String) book.get("title"), (BufferedImage) book.get("cover"), "Salva in una raccolta"));
+            for(Map<String, Object> publication : searchedPublications){
+                searchedPublicationsScrollpaneViewport.add(new PublicationPanel(appController, publication, "Salva in una raccolta"));
             }
             JScrollPane searchedPublicationsScrollPane = new JScrollPane(searchedPublicationsScrollpaneViewport);
             searchedPublicationsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
             searchedPublicationsScrollPane.setPreferredSize(new Dimension(400, 250));
             searchedPublicationsContainer.add(searchedPublicationsLabel, BorderLayout.NORTH);
             searchedPublicationsContainer.add(searchedPublicationsScrollPane, BorderLayout.CENTER);
-            contentPane.add(searchedPublicationsContainer);
+            contentScrollPane.add(searchedPublicationsContainer);
             searchedPublicationsContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         }
+        if (!searchedCollections.isEmpty()){
+            JPanel searchedCollectionsContainer = new JPanel();
+            searchedCollectionsContainer.setPreferredSize(new Dimension(950, 200));
+            searchedCollectionsContainer.setLayout(new BorderLayout());
+            JLabel searchedCollectionsLabel = new JLabel("Raccolte:");
+            searchedCollectionsLabel.setHorizontalAlignment(JLabel.LEFT);
+            JPanel searchedCollectionsScrollpaneViewport = new JPanel();
+            searchedCollectionsScrollpaneViewport.setLayout(new BoxLayout(searchedCollectionsScrollpaneViewport, BoxLayout.X_AXIS));
+            for(Map<String, Object> collection : searchedCollections){
+                searchedCollectionsScrollpaneViewport.add(new CollectionPanel(appController, collection, "Salva nei preferiti"));
+            }
+            JScrollPane searchedCollectionsScrollPane = new JScrollPane(searchedCollectionsScrollpaneViewport);
+            searchedCollectionsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            searchedCollectionsScrollPane.setPreferredSize(new Dimension(400, 250));
+            searchedCollectionsContainer.add(searchedCollectionsLabel, BorderLayout.NORTH);
+            searchedCollectionsContainer.add(searchedCollectionsScrollPane, BorderLayout.CENTER);
+            contentScrollPane.add(searchedCollectionsContainer);
+            searchedCollectionsContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        }
+        if (!storeBySeries.isEmpty()){
+            JPanel searchedSeriesContainer = new JPanel();
+            searchedSeriesContainer.setPreferredSize(new Dimension(950, 200));
+            searchedSeriesContainer.setLayout(new BorderLayout());
+            JLabel searchedSeriesLabel = new JLabel("Serie:");
+            searchedSeriesLabel.setHorizontalAlignment(JLabel.LEFT);
+            JPanel searchedSeriesScrollpaneViewport = new JPanel();
+            searchedSeriesScrollpaneViewport.setLayout(new BoxLayout(searchedSeriesScrollpaneViewport, BoxLayout.X_AXIS));
+            for(Map.Entry<String, String> series : storeBySeries.entrySet()){
+                JPanel seriesPanel = new JPanel();
+                seriesPanel.setLayout(new BoxLayout(seriesPanel, BoxLayout.Y_AXIS));
+
+                JLabel seriesNameLabel = new JLabel(series.getKey());
+                seriesNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+                seriesNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                seriesNameLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+                seriesPanel.add(seriesNameLabel);
+
+                JLabel storeNameLabel = new JLabel(series.getValue());
+                storeNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+                storeNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                storeNameLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+                seriesPanel.add(storeNameLabel);
+
+                seriesPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+                searchedSeriesScrollpaneViewport.add(seriesPanel);
+            }
+            JScrollPane searchedSeriesScrollPane = new JScrollPane(searchedSeriesScrollpaneViewport);
+            searchedSeriesScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            searchedSeriesScrollPane.setPreferredSize(new Dimension(400, 250));
+            searchedSeriesContainer.add(searchedSeriesLabel, BorderLayout.NORTH);
+            searchedSeriesContainer.add(searchedSeriesScrollPane, BorderLayout.CENTER);
+            contentScrollPane.add(searchedSeriesContainer);
+            searchedSeriesContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        }
+        contentPane.add(contentScrollPane);
+
     }
 
     @Override

@@ -14,7 +14,7 @@ public abstract class CrudTable extends JPanel {
     protected JTable items = new JTable();
     protected abstract DefaultTableModel getModel();
     protected abstract boolean onRemoveButton(Object id);
-    protected abstract boolean onSaveButton(ArrayList<String> data);
+    protected abstract Object onSaveButton(ArrayList<String> data);
     protected abstract void onViewButton(Object id);
 
     private boolean displayViewButton;

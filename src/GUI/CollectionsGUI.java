@@ -7,19 +7,33 @@ import GUI.Components.PublicationsInCollectionCrudTable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class CollectionsGUI extends AppView{
     JPanel contentPane = new JPanel();
-    JPanel bookPanel = new JPanel();
+    JPanel titlePanel = new JPanel();
     JLabel collectionTitle = new JLabel();
 
-    public CollectionsGUI(AppController appController, Map<String, Object> collection_data, ArrayList<Map<String, Object>> bookFromCollection, ArrayList<Map<String, Object>> publicationFromCollection) {
+    public CollectionsGUI(AppController appController, Map<String, Object> collection_data, ArrayList<Map<String, Object>> bookFromCollection, ArrayList<Map<String, Object>> publicationFromCollection, AppView previousView) {
         super(appController);
 
+        JButton goBackButton = new JButton("Torna indietro");
+        goBackButton.addActionListener((ActionEvent e) -> {
+            appController.switchView(previousView);
+        });
+
+        goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         collectionTitle.setText(collection_data.get("name").toString());
-        contentPane.add(collectionTitle);
+        collectionTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        titlePanel.add(goBackButton);
+        titlePanel.add(collectionTitle);
+
+        contentPane.add(titlePanel);
         contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.setPreferredSize(new Dimension(1000, 700));

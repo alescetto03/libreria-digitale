@@ -4,9 +4,7 @@ import Controller.AppController;
 import Model.Collection;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,19 +34,14 @@ public class PersonalCollectionsCrudTable extends CrudTable {
             tableContent[i][1] = rowData.get("name");
             tableContent[i][2] = ((Collection.Visibility) rowData.get("visibility")).name().toLowerCase();
         }
-        return new DefaultTableModel(tableContent, columns) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return (column == getColumnCount() - 1); // Ultima colonna (azioni) è modificabile
-            }
-        };
+        return new DefaultTableModel(tableContent, columns);
     }
 
     @Override
     public boolean onRemoveButton(Object id) { return appController.removeCollectionFromDatabase(id); }
 
     @Override
-    protected boolean onSaveButton(ArrayList<String> data) { return appController.savePersonalCollectionIntoDatabase(data); }
+    protected Object onSaveButton(ArrayList<String> data) { return appController.savePersonalCollectionIntoDatabase(data); }
 
     @Override
     protected void onViewButton(Object id) {
