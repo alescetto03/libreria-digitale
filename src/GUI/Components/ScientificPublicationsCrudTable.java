@@ -4,7 +4,6 @@ import Controller.AppController;
 import Model.ScientificPublication;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
@@ -53,7 +52,12 @@ public class ScientificPublicationsCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onSaveButton(ArrayList<String> data) {
-        return false;
+    protected Object onSaveButton(ArrayList<String> data) {
+        return null;
+    }
+
+    @Override
+    protected void onViewButton(Object id) {
+
     }
 }

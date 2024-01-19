@@ -63,7 +63,12 @@ public class BooksCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onSaveButton(ArrayList<String> data) throws Exception {
+    protected Object onSaveButton(ArrayList<String> data) throws Exception {
         return appController.updateBookFromDatabase(data);
+    }
+
+    @Override
+    protected void onViewButton(Object id) {
+
     }
 }

@@ -43,7 +43,12 @@ public class JournalsCrudTable extends CrudTable {
     }
 
     @Override
-    protected boolean onSaveButton(ArrayList<String> data) {
-        return false;
+    protected Object onSaveButton(ArrayList<String> data) {
+        return null;
+    }
+
+    @Override
+    protected void onViewButton(Object id) {
+
     }
 }

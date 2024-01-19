@@ -1,13 +1,7 @@
 package GUI.Components;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -22,17 +16,10 @@ public abstract class CrudTable extends JPanel {
     protected abstract boolean onRemoveButton(Object id) throws Exception;
     protected abstract Object onSaveButton(ArrayList<String> data) throws Exception;
     protected abstract void onViewButton(Object id);
-    
-    private boolean displayViewButton;
-    private boolean displaySaveButton;
-    private boolean displayDeleteButton;
 
     public CrudTable(String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         this.columns = columns;
         this.data = data;
-        this.displayViewButton = displayViewButton;
-        this.displaySaveButton = displaySaveButton;
-        this.displayDeleteButton = displayDeleteButton;
 
         setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         setLayout(new BorderLayout());

@@ -56,8 +56,8 @@ public class CollectionDAO implements CollectionDAOInterface {
     @Override
     public ArrayList<CollectionResultInterface> getUserSavedCollections(String username) {
         final String query = "SELECT r.cod_raccolta, r.nome, r.visibilita, r.proprietario " +
-                             "FROM Raccolta AS r JOIN Utente_Salvataggio_Raccolta AS usr ON r.cod_raccolta = usr.raccolta " +
-                             "WHERE usr.utente = ?";
+                "FROM Raccolta AS r JOIN Utente_Salvataggio_Raccolta AS usr ON r.cod_raccolta = usr.raccolta " +
+                "WHERE usr.utente = ?";
         try(
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)
@@ -105,7 +105,7 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
-    public CollectionResult updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner) {
+    public CollectionResultInterface updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("UPDATE raccolta SET nome = ?, visibilita = ?, proprietario = ? WHERE cod_raccolta = ? RETURNING Raccolta.*");
@@ -127,10 +127,10 @@ public class CollectionDAO implements CollectionDAOInterface {
     }
 
     @Override
-    public CollectionResult insertCollection(String name, Collection.Visibility visibility, String owner) {
+    public CollectionResultInterface insertCollection(String name, Collection.Visibility visibility, String owner) {
         try (
-            Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO Raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?) RETURNING Raccolta.*");
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?) RETURNING Raccolta.*");
         ) {
             statement.setString(1, name);
             statement.setObject(2, visibility.name().toLowerCase(), Types.OTHER);
@@ -279,12 +279,11 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
         return false;
     }
-}
 
     public ArrayList<BookEditorialCollectionResultInterface> getBooksFromCollections() {
         final String query = "SELECT isbn, issn, titolo AS titolo_libro, nome AS nome_collana FROM libro_contenuto_collana " +
-                             "JOIN collana c ON c.issn = libro_contenuto_collana.collana " +
-                             "JOIN libro l ON l.isbn = libro_contenuto_collana.libro";
+                "JOIN collana c ON c.issn = libro_contenuto_collana.collana " +
+                "JOIN libro l ON l.isbn = libro_contenuto_collana.libro";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);

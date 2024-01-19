@@ -299,7 +299,7 @@ public class AppController {
         searchedBook.clear();
 
         for(BookResultInterface result : results){
-            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), Book.BookType.valueOf(result.getBook_type().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
             this.searchedBook.add(book);
         }
     }
@@ -313,7 +313,7 @@ public class AppController {
         searchedPublication.clear();
 
         for(ScientificPublicationResultInterface result : results){
-            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), result.getPublisher());
             this.searchedPublication.add(publication);
         }
     }
@@ -364,7 +364,7 @@ public class AppController {
 
         for(BookResultInterface result : resultsBook){
             //SIA QUI CHE SOPRA BISGONA AGGIUSTARE GESTENDO INSERIMENTO DI IMMAGINI
-            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(),  Book.BookType.valueOf(result.getBook_type().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(),  Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
             outputBook.add(book);
         }
         return outputBook;
@@ -380,7 +380,7 @@ public class AppController {
 
         for(ScientificPublicationResultInterface result : resultsPublication){
             //SIA QUI CHE SOPRA BISGONA AGGIUSTARE GESTENDO INSERIMENTO DI IMMAGINI
-            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruition_mode().toUpperCase()), result.getPublication_year(), null, result.getDescription(), result.getPublisher());
+            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), result.getPublisher());
             outputPublication.add(publication);
         }
         return outputPublication;
@@ -524,7 +524,7 @@ public class AppController {
 
     /**
      * Funzione che renderizza i dati per renderli visualizzabili in una view
-     * @see CrudTable
+     * @see GUI.Components.CrudTable
      */
     public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
         ArrayList<Map<String, Object>> renderedData = new ArrayList<>();
@@ -564,7 +564,7 @@ public class AppController {
      * L'utente cerca in base ad un testo le possibili raccolte, libri, articoli e poi
      * le serie con relativi negozi che posseggono quella serie in vendita completa.
      */
-    public void showSearchResults(String searchText){
+    public void showSearchResults(String searchText) {
         getBookByString(searchText);
         getScientificPublicationByString(searchText);
         getCollectionByString(searchText);
@@ -577,19 +577,19 @@ public class AppController {
         ArrayList<Map<String, Object>> renderedSearchedPublications = renderData(abstractModelsPublications);
         ArrayList<Map<String, Object>> renderedSearchedCollections = renderData(abstractModelsCollections);
 
-        for(Map<String, Object> item : renderedSearchedBooks){
+        for (Map<String, Object> item : renderedSearchedBooks) {
             System.out.println(item.get("title"));
         }
-        for(Map<String, Object> item : renderedSearchedPublications){
+        for (Map<String, Object> item : renderedSearchedPublications) {
             System.out.println(item.get("title"));
         }
-        for(Map<String, Object> item : renderedSearchedCollections){
+        for (Map<String, Object> item : renderedSearchedCollections) {
             System.out.println(item.get("name"));
         }
         Map<String, String> storeBySeries = new HashMap<>();
-        for(String item : getSeriesByString(searchText)){
+        for (String item : getSeriesByString(searchText)) {
             getStoreCompleteSeries(item);
-            for(Store store : storeWithCompleteSeries)
+            for (Store store : storeWithCompleteSeries)
                 storeBySeries.put(item, store.getName());
         }
         //System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);

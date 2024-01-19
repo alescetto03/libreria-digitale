@@ -93,12 +93,12 @@ public class BookDAO implements BookDAOInterface {
     }
 
     @Override
-    public boolean updateBookByIsbn(String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception {
+    public BookResultInterface updateBookByIsbn(String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception {
         String query;
         if (type.name().equals("ROMANZO")) {
-             query = "UPDATE libro SET isbn = ?, titolo = ?, editore = ?, modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = ?, tipo = ?, copertina = ?, genere = ? WHERE isbn = ?";
+             query = "UPDATE libro SET isbn = ?, titolo = ?, editore = ?, modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = ?, tipo = ?, copertina = ?, genere = ? WHERE isbn = ? RETURNING *";
         } else {
-             query = "UPDATE libro SET isbn = ?, titolo = ?, editore = ?, modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = ?, tipo = ?, copertina = ?, target = ?, materia = ? WHERE isbn = ?";
+             query = "UPDATE libro SET isbn = ?, titolo = ?, editore = ?, modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = ?, tipo = ?, copertina = ?, target = ?, materia = ? WHERE isbn = ? RETURNING *";
         }
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -120,10 +120,15 @@ public class BookDAO implements BookDAOInterface {
                 statement.setString(10, topic);
                 statement.setString(11, isbn);
             }
-            return statement.executeUpdate() > 0;
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new BookResult(result);
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());
-            return false;
         }
+        return null;
     }
 }

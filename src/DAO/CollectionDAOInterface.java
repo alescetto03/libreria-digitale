@@ -13,8 +13,8 @@ public interface CollectionDAOInterface {
     ArrayList<CollectionResultInterface> getUserSavedCollections(String username);
     boolean deleteCollectionById(int collectionId);
     boolean deleteSavedCollectionById(int collectionId, String username);
-    CollectionResult updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner);
-    CollectionResult insertCollection(String name, Collection.Visibility visibility, String owner);
+    CollectionResultInterface updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner);
+    CollectionResultInterface insertCollection(String name, Collection.Visibility visibility, String owner);
     CollectionResultInterface getAllByCollectionId(int collectionId);
     boolean deleteBookFromCollection(int collectionId, String isbn);
     boolean deletePublicationFromCollection(int collectionId, String doi);

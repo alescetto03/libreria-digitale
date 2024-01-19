@@ -13,6 +13,6 @@ public interface BookDAOInterface {
 
     boolean deleteBookByIsbn(String isbn) throws Exception;
 
-    boolean updateBookByIsbn(String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception;
+    BookResultInterface updateBookByIsbn(String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception;
 
 }

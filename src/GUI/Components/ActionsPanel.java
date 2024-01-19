@@ -49,7 +49,7 @@ public class ActionsPanel extends JPanel{
                     data.add(String.valueOf(table.getValueAt(row, i)));
                 }
                 try {
-                    if (!crudTable.onSaveButton(data)) {
+                    if (crudTable.onSaveButton(data)) {
                         JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception exception) {
