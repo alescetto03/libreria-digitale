@@ -102,9 +102,6 @@ public class AppController {
      */
     ArrayList<Store> storeWithCompleteSeries = new ArrayList<Store>();
 
-    public static void main(String[] args) { (new AppController()).showLogin(); }
-    //public static void main(String[] args) { AppController appController = new AppController(); appController.showSearchResults("signore"); }
-
     /**
      * Funzione che ci permette di reperire la finestra corrente in cui ci troviamo
      * anche se siamo fuori dal controller.
