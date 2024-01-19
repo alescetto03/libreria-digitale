@@ -1,7 +1,13 @@
 package GUI.Components;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -13,8 +19,8 @@ public abstract class CrudTable extends JPanel {
     protected ArrayList<Map<String, Object>> data;
     protected JTable items = new JTable();
     protected abstract DefaultTableModel getModel();
-    protected abstract boolean onRemoveButton(int id);
-    protected abstract boolean onSaveButton(ArrayList<String> data);
+    protected abstract boolean onRemoveButton(Object id) throws Exception;
+    protected abstract boolean onSaveButton(ArrayList<String> data) throws Exception;
     private boolean displayViewButton;
     private boolean displaySaveButton;
     private boolean displayCreateButton;
@@ -48,7 +54,6 @@ public abstract class CrudTable extends JPanel {
         items.getTableHeader().setReorderingAllowed(false);
         items.setRowHeight(40);
         items.setRowSelectionAllowed(false);
-        items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         model.addColumn("azioni", new Object[model.getRowCount()]);
         items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this, displayViewButton, displaySaveButton, displayDeleteButton));
         items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
@@ -64,5 +69,9 @@ public abstract class CrudTable extends JPanel {
                 model.insertRow(0, emptyRow);
             });
         }
+    }
+
+    public void setData(ArrayList<Map<String, Object>> data) {
+        this.data = data;
     }
 }

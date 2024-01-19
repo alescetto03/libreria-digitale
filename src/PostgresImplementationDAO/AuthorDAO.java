@@ -30,4 +30,17 @@ public class AuthorDAO implements AuthorDAOInterface {
             return null;
         }
     }
+
+    public boolean deleteAuthorById(int id) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM autore WHERE cod_autore = ?");
+        ) {
+            statement.setInt(1, id);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

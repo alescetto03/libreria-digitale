@@ -18,11 +18,11 @@ public class Store extends AbstractModel{
     }
 
 
-    public String getPartita_iva() {
+    public String getPartitaIva() {
         return partita_iva;
     }
 
-    public void setPartita_iva(String partita_iva) {
+    public void setPartitaIva(String partita_iva) {
         this.partita_iva = partita_iva;
     }
 
@@ -53,7 +53,7 @@ public class Store extends AbstractModel{
     @Override
     public Map<String, Object> getData() {
         Map<String, Object> data = new HashMap<>();
-        data.put("partita_iva", getPartita_iva());
+        data.put("partita_iva", getPartitaIva());
         data.put("name", getName());
         data.put("address", getAddress());
         data.put("url", getUrl());

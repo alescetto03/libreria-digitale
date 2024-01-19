@@ -30,4 +30,18 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
             return null;
         }
     }
+
+    @Override
+    public boolean deleteEditorialCollectonByIssn(String issn) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM collana WHERE issn = ?");
+        ) {
+            statement.setString(1, issn);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

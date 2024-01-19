@@ -23,7 +23,7 @@ public class Conference extends AbstractModel {
 
     public Map<String, Object> getData() {
         Map<String, Object> data = new HashMap<>();
-        data.put("isbn", getId());
+        data.put("id", getId());
         data.put("location", getLocation());
         data.put("start_date", getStartDate());
         data.put("end_date", getEndDate());

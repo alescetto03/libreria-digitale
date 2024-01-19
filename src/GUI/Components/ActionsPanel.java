@@ -40,9 +40,12 @@ public class ActionsPanel extends JPanel{
                 for (int i = 0; i < table.getColumnCount() - 1; i++) {
                     data.add(String.valueOf(table.getValueAt(row, i)));
                 }
-                System.out.println(data);
-                if (!crudTable.onSaveButton(data)) {
-                    JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+                try {
+                    if (!crudTable.onSaveButton(data)) {
+                        JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(crudTable, exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -53,8 +56,12 @@ public class ActionsPanel extends JPanel{
                 JTable table = (JTable) deleteButton.getParent().getParent();
                 int row = table.getEditingRow();
                 String id = String.valueOf(table.getValueAt(row, 0));
-                if (id.equals("") || crudTable.onRemoveButton(Integer.parseInt(id))) {
-                    ((DefaultTableModel) table.getModel()).removeRow(row);
+                try {
+                    if (id.equals("") || crudTable.onRemoveButton(id)) {
+                        ((DefaultTableModel) table.getModel()).removeRow(row);
+                    }
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(crudTable, exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }

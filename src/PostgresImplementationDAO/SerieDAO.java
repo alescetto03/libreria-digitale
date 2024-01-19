@@ -53,4 +53,18 @@ public class SerieDAO implements SerieDAOInterface {
             return null;
         }
     }
+
+    @Override
+    public boolean deleteSerie(String prequel) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM serie WHERE prequel = ?");
+        ) {
+            statement.setString(1, prequel);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

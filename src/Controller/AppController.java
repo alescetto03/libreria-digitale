@@ -66,7 +66,7 @@ public class AppController {
         //ArrayList<Map<String, Object>> renderedPersonalCollections = appController.renderData(abstractModelsCollections);
         //ArrayList<Map<String, Object>> renderedPersonalCollectionsSaved = appController.renderData(abstractModelsCollectionSaved);
 
-        appController.showView(new AdminPage(appController, appController.getRenderedBooks()));
+        appController.showView(new AdminPageGUI(appController, appController.getRenderedBooks()));
     }
 
     public void showView(AppView view) {
@@ -323,6 +323,22 @@ public class AppController {
     }
 
     /**
+     * Metodo che elimina un libro dal database
+     * @param isbn
+     */
+    public boolean removeBookFromDatabase(String isbn) throws Exception {
+        return bookDAO.deleteBookByIsbn(isbn);
+    }
+
+    /**
+     * Metodo che modifica un libro dal database
+     * @return
+     */
+    public boolean updateBookFromDatabase(ArrayList<String> data) throws Exception {
+        return bookDAO.updateBookByIsbn(data.get(0), data.get(1), data.get(2), Book.FruitionMode.valueOf(data.get(3).toUpperCase()), Integer.parseInt(data.get(4)), data.get(5).getBytes(), data.get(6), data.get(7), data.get(8), data.get(9), Book.BookType.valueOf(data.get(10).toUpperCase()));
+    }
+
+    /**
      * Metodo che restituisce una lista di tutti gli articoli scientifici memorizzati nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
@@ -334,6 +350,14 @@ public class AppController {
             scientificPublications.add(scientificPublication);
         }
         return renderData(scientificPublications);
+    }
+
+    /**
+     * Metodo che elimina un articolo scientifico dal database
+     * @param doi
+     */
+    public boolean removeScientificPublicationFromDatabase(String doi) {
+        return publicationDAO.deleteScientificPublicationByDoi(doi);
     }
 
     /**
@@ -352,10 +376,18 @@ public class AppController {
     }
 
     /**
+     * Metodo che elimina un autore dal database
+     * @param id
+     */
+    public boolean removeAuthorFromDatabase(int id) {
+        return authorDAO.deleteAuthorById(id);
+    }
+
+    /**
      * Metodo che restituisce una lista di tutti i negozi memorizzati nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
-    public ArrayList<Map<String, Object>> getRenderedShops() {
+    public ArrayList<Map<String, Object>> getRenderedStores() {
         ArrayList<StoreResultInterface> storeResults = storeDAO.getAll();
         ArrayList<AbstractModel> stores = new ArrayList<>();
         for (StoreResultInterface storeResult: storeResults) {
@@ -363,6 +395,14 @@ public class AppController {
             stores.add(store);
         }
         return renderData(stores);
+    }
+
+    /**
+     * Metodo che elimina un negozio dal database
+     * @param partitaIva
+     */
+    public boolean removeStoreFromDatabase(String partitaIva) {
+        return storeDAO.deleteStoreByPartitaIva(partitaIva);
     }
 
     /**
@@ -380,6 +420,14 @@ public class AppController {
     }
 
     /**
+     * Metodo che elimina un negozio dal database
+     * @param issn
+     */
+    public boolean removeEditorialCollectionFromDatabase(String issn) {
+        return editorialCollectionDAO.deleteEditorialCollectonByIssn(issn);
+    }
+
+    /**
      * Metodo che restituisce una lista di tutte le serie memorizzate nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
@@ -391,6 +439,14 @@ public class AppController {
             series.add(serie);
         }
         return renderData(series);
+    }
+
+    /**
+     * Metodo che elimina un libro da una serie dal database
+     * @param prequel
+     */
+    public boolean removeSerieFromDatabase(String prequel) {
+        return serieDAO.deleteSerie(prequel);
     }
 
     /**
@@ -408,6 +464,14 @@ public class AppController {
     }
 
     /**
+     * Metodo che elimina una rivista dal database
+     * @param issn
+     */
+    public boolean removeJournalFromDatabase(String issn) {
+        return journalDAO.deleteJournalByIssn(issn);
+    }
+
+    /**
      * Metodo che restituisce una lista di tutte le serie memorizzate nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
@@ -422,6 +486,14 @@ public class AppController {
     }
 
     /**
+     * Metodo che elimina una conferenza dal database
+     * @param id
+     */
+    public boolean removeConferenceFromDatabase(int id) {
+        return conferenceDAO.deleteConferenceById(id);
+    }
+
+    /**
      * Metodo che restituisce una lista di tutte le sale memorizzate nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
@@ -433,5 +505,25 @@ public class AppController {
             presentationHalls.add(presentationHall);
         }
         return renderData(presentationHalls);
+    }
+
+    /**
+     * Metodo che elimina una libreria dal database
+     * @param id
+     */
+    public boolean removePresentationHallFromDatabase(int id) {
+        return presentationHallDAO.deletePresentationHallById(id);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli articoli pubblicati dalle riviste memorizzate nel database
+     */
+    public ArrayList<PublicationJournalResultInterface> getScientificPublicationsFromJournals() {
+        ArrayList<PublicationJournalResultInterface> resultSets = journalDAO.getPublicationsFromJournal();
+        ArrayList<AbstractModel> scientificPublicationsFromJournals = new ArrayList<>();
+        for (PublicationJournalResultInterface resultSet: resultSets) {
+            System.out.println(resultSet.getIssn() + " " + resultSet.getJournalName() + " " + resultSet.getPublicationTitle());
+        }
+        return null;
     }
 }

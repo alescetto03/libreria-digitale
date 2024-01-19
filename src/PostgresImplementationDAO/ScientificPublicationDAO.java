@@ -53,4 +53,17 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
             return null;
         }
     }
+
+    public boolean deleteScientificPublicationByDoi(String doi) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM articolo_scientifico WHERE doi = ?");
+        ) {
+            statement.setString(1, doi);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

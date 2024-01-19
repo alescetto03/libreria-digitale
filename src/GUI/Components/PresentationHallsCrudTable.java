@@ -1,24 +1,20 @@
 package GUI.Components;
 
 import Controller.AppController;
-import Model.Collection;
 
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class SavedCollectionCrudTable extends CrudTable{
+public class PresentationHallsCrudTable extends CrudTable {
     AppController appController;
-    public SavedCollectionCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, true, false, false, true);
+    public PresentationHallsCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(title, columns, data, false, true, true, true);
         this.appController = appController;
-
-        TableColumn idColumn = items.getColumn("id");
-        idColumn.setMinWidth(0);
-        idColumn.setMaxWidth(0);
-
-
+        items.getColumn("id").setMaxWidth(50);
+        items.getColumn("id").setMinWidth(50);
+        items.getColumn("azioni").setMaxWidth(60);
+        items.getColumn("azioni").setMinWidth(60);
     }
 
     @Override
@@ -29,16 +25,14 @@ public class SavedCollectionCrudTable extends CrudTable{
             Map<String, Object> rowData = data.get(i);
             tableContent[i][0] = rowData.get("id");
             tableContent[i][1] = rowData.get("name");
-            tableContent[i][2] = rowData.get("owner");
-
+            tableContent[i][2] = rowData.get("address");
         }
-
         return new DefaultTableModel(tableContent, columns);
     }
 
     @Override
-    public boolean onRemoveButton(Object id) {
-        return appController.removeSavedCollectionFromDatabase((int) id);
+    protected boolean onRemoveButton(Object id) {
+        return appController.removePresentationHallFromDatabase(Integer.parseInt((String) id));
     }
 
     @Override

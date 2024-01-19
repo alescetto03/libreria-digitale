@@ -31,4 +31,18 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
             return null;
         }
     }
+
+    @Override
+    public boolean deletePresentationHallById(int id) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM sala WHERE cod_sala = ?");
+        ) {
+            statement.setInt(1, id);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }
