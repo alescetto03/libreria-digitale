@@ -26,7 +26,7 @@ public class SaveItemInCollectionGUI extends AppView{
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         goBackButton.setLayout(new GridLayout());
 
-        title.setText("Raccolte personali di " + personalCollection.getFirst().get("owner"));
+        title.setText("Raccolte personali di " + personalCollection.get(0).get("owner"));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         //subTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(goBackButton,  BorderLayout.LINE_START);

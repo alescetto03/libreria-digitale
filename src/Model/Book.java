@@ -34,7 +34,7 @@ public class Book extends AbstractModel {
         this.fruition_mode = fruition_mode;
         this.publication_year = publication_year;
         this.cover = cover;
-        this. description = description;
+        this.description = description;
         this.book_type = book_type;
         this.genre = genre;
         this.target = target;

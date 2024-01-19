@@ -6,6 +6,7 @@ import Model.*;
 import PostgresImplementationDAO.*;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -465,8 +466,8 @@ public class AppController {
         String name = data.get(1);
         Collection.Visibility visibility = Collection.Visibility.valueOf(data.get(2).toUpperCase());
         if (!data.get(0).isEmpty()) {
-            int id = Integer.parseInt(data.getFirst());
-            CollectionResult collectionResultUpdated = collectionDAO.updateCollectionById(id, name, visibility, getLoggedUsername());
+            int id = Integer.parseInt(data.get(0));
+            CollectionResultInterface collectionResultUpdated = collectionDAO.updateCollectionById(id, name, visibility, getLoggedUsername());
             if (collectionResultUpdated.getId() != 0) {
                 for (Collection personalCollection : personalCollections) {
                     if (personalCollection.getId() == id) {
@@ -479,7 +480,7 @@ public class AppController {
             }
             return 0;
         }
-        CollectionResult collectionResultInserted = collectionDAO.insertCollection(name, visibility, getLoggedUsername());
+        CollectionResultInterface collectionResultInserted = collectionDAO.insertCollection(name, visibility, getLoggedUsername());
         return collectionResultInserted.getId();
     }
 
@@ -534,10 +535,6 @@ public class AppController {
         return renderedData;
     }
 
-
-
-
-
     /**
      * Funzione che mostra una schermata con tutti i libri contenuti in una raccolta
      */
@@ -556,7 +553,7 @@ public class AppController {
         ArrayList<Map<String, Object>> renderedPublication = renderData(abstractModelsPublication);
         ArrayList<Map<String, Object>> renderedCollection = renderData(abstractModelsCollection);
 
-        switchView(new CollectionsGUI(this, renderedCollection.getFirst(), renderedBook, renderedPublication, this.currentView));
+        switchView(new CollectionsGUI(this, renderedCollection.get(0), renderedBook, renderedPublication, this.currentView));
     }
 
     /**
@@ -622,8 +619,9 @@ public class AppController {
      * Metodo che modifica un libro dal database
      * @return
      */
-    public boolean updateBookFromDatabase(ArrayList<String> data) throws Exception {
-        return bookDAO.updateBookByIsbn(data.get(0), data.get(1), data.get(2), Book.FruitionMode.valueOf(data.get(3).toUpperCase()), Integer.parseInt(data.get(4)), data.get(5).getBytes(), data.get(6), data.get(7), data.get(8), data.get(9), Book.BookType.valueOf(data.get(10).toUpperCase()));
+    public Map<String, Object> updateBookFromDatabase(ArrayList<String> data) throws Exception {
+        BookResultInterface bookResult = bookDAO.updateBookByIsbn(data.get(0), data.get(1), data.get(2), Book.FruitionMode.valueOf(data.get(3).toUpperCase()), Integer.parseInt(data.get(4)), data.get(5).getBytes(), data.get(6), data.get(7), data.get(8), data.get(9), Book.BookType.valueOf(data.get(10).toUpperCase()));
+        return new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic()).getData();
     }
 
     /**
