@@ -1,19 +1,25 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
 import Model.Collection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PersonalCollectionsCrudTable extends CrudTable {
-    AppController appController;
-    public PersonalCollectionsCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, true, true, true, true);
-        this.appController = appController;
+    public PersonalCollectionsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi una raccolta", "Modifica una raccolta");
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = this.createView.getFormData();
+            parentView.getAppController().insertPersonalCollectionIntoDatabase(formData.get("Nome"), formData.get("Visibilità"));
+            parentView.getAppController().showHomepage();
+        });
         TableColumn idColumn = items.getColumn("id");
         idColumn.setMinWidth(0);
         idColumn.setMaxWidth(0);
@@ -36,16 +42,41 @@ public class PersonalCollectionsCrudTable extends CrudTable {
         }
         return new DefaultTableModel(tableContent, columns);
     }
+    protected Map<String, JComponent> getFormSchema() {
+        Map<String, JComponent> schema = new HashMap<>();
+        String[] visibilities = {"pubblica", "privata"};
+        schema.put("Nome", new JTextField());
+        schema.put("Visibilità", new JComboBox<>(visibilities));
+        return schema;
+    }
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        Map<String, JComponent> schema = new HashMap<>();
+        String[] visibilities = {"pubblica", "privata"};
+        JTextField nameField = new JTextField();
+        JComboBox<String> visibilityField = new JComboBox<>(visibilities);
+        nameField.setText(data.get(1));
+        visibilityField.setSelectedItem(data.get(2));
+        schema.put("Nome", nameField);
+        schema.put("Visibilità", visibilityField);
+        return schema;
+    }
 
     @Override
-    public boolean onRemoveButton(Object id) { return appController.removeCollectionFromDatabase(id); }
+    public boolean onRemoveButton(Object id) {
+        boolean isDeleted = parentView.getAppController().removeCollectionFromDatabase((Integer) id);
+        if (isDeleted) {
+            parentView.getAppController().showHomepage();
+        }
+        return isDeleted;
+    }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) { return appController.savePersonalCollectionIntoDatabase(data); }
+    protected Object onUpdateButton(ArrayList<String> data) {
+        return null;
+    }
 
     @Override
     protected void onViewButton(Object id) {
-        appController.showCollectionItems(id);
+        parentView.getAppController().showCollectionItems(id);
     }
-
 }

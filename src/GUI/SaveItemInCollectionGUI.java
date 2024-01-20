@@ -17,7 +17,7 @@ public class SaveItemInCollectionGUI extends AppView{
     JLabel subTitle = new JLabel("Scegli dove vuoi salvare il libro: ");
     public SaveItemInCollectionGUI(AppController appController, String book_isbn, String publication_doi, AppView previousView) {
         super(appController);
-        ArrayList<Map<String, Object>> personalCollection = appController.getUserPersonalCollectionsList();
+        ArrayList<Map<String, Object>> personalCollection = appController.getRenderedPersonalCollections();
 
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {

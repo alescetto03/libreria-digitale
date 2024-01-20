@@ -1,35 +1,43 @@
 package GUI.Components;
 
+import GUI.AppView;
+import GUI.ConfirmDeleteGUI;
+import GUI.ModelManipulationFormGUI;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 public abstract class CrudTable extends JPanel {
     protected String[] columns;
     protected ArrayList<Map<String, Object>> data;
     protected JTable items = new JTable();
+    protected AppView parentView;
+    protected IconButton createButton;
+    protected ModelManipulationFormGUI createView;
+    protected String updateViewTitle;
+    protected JPanel topBar = new JPanel();
     protected abstract DefaultTableModel getModel();
-    protected abstract boolean onRemoveButton(Object id) throws Exception;
-    protected abstract Object onSaveButton(ArrayList<String> data) throws Exception;
+    public abstract boolean onRemoveButton(Object id);
+    protected abstract Object onUpdateButton(ArrayList<String> data);
     protected abstract void onViewButton(Object id);
-
-    public CrudTable(String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
+    protected abstract Map<String, JComponent> getFormSchema();
+    protected abstract Map<String, JComponent> getFormSchema(ArrayList<String> data);
+    public CrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
         this.columns = columns;
         this.data = data;
+        this.parentView = parentView;
 
         setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         setLayout(new BorderLayout());
-        JPanel topBar = new JPanel();
         topBar.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel(title);
         topBar.add(titleLabel, BorderLayout.LINE_START);
 
-        IconButton createButton = null;
         if (displayCreateButton) {
             createButton = new IconButton("/GUI/images/create.png", 18, 18, Image.SCALE_SMOOTH);
             topBar.add(createButton, BorderLayout.LINE_END);
@@ -47,18 +55,22 @@ public abstract class CrudTable extends JPanel {
         JScrollPane scrollPane = new JScrollPane(items, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(scrollPane);
+    }
 
-        if (createButton != null) {
-            createButton.addActionListener((ActionEvent e) -> {
-                int columnCount = items.getColumnCount();
-                String[] emptyRow = new String[columnCount];
-                Arrays.fill(emptyRow, "");
-                model.insertRow(0, emptyRow);
-            });
-        }
+    public CrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton, String createViewTitle, String updateViewTitle) {
+        this(parentView, title, columns, data, displayViewButton, displaySaveButton, displayCreateButton, displayDeleteButton);
+        this.createView = new ModelManipulationFormGUI(parentView.getAppController(), parentView, getFormSchema(), createViewTitle);
+        this.updateViewTitle = updateViewTitle;
+        createButton.addActionListener((ActionEvent e) -> {
+            parentView.getAppController().switchView(createView);
+        });
     }
 
     public void setData(ArrayList<Map<String, Object>> data) {
         this.data = data;
+    }
+
+    public AppView getParentView() {
+        return parentView;
     }
 }

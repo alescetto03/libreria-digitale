@@ -77,7 +77,7 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
-    public boolean deleteBookByIsbn(String isbn) throws Exception {
+    public boolean deleteBookByIsbn(String isbn) {
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement statement = conn.prepareStatement("DELETE FROM libro WHERE isbn = ?");
@@ -85,9 +85,7 @@ public class BookDAO implements BookDAOInterface {
             statement.setString(1, isbn);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23503")) {
-                throw new Exception("Non è possibile eliminare un libro presente in una serie");
-            }
+            System.out.println("Errore: " + e.getMessage());
             return false;
         }
     }

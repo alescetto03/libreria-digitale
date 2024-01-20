@@ -1,28 +1,28 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
 import Model.Book;
+import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class BooksCrudTable extends CrudTable{
-    AppController appController;
-    public BooksCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, false, true, true, true);
-        this.appController = appController;
+    public BooksCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, false, true, true, true, "Aggiungi un libro", "Modifica un libro");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        String[] bookType = {"didattico", "romanzo"};
-        String[] fruitionMode = {"digitale", "cartaceo", "audiolibro"};
 
         TableColumn fruitionModeColumn = items.getColumn("modalità fruizione");
         TableColumn bookTypeColumn = items.getColumn("tipo");
 
-        fruitionModeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(fruitionMode)));
-        bookTypeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(bookType)));
+        String[] fruitionModes = {"cartaceo", "digitale", "audiolibro"};
+        String[] bookTypes = {"romanzo", "didattico"};
+        fruitionModeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(fruitionModes)));
+        bookTypeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(bookTypes)));
         items.getColumn("isbn").setPreferredWidth(100);
         items.getColumn("titolo").setPreferredWidth(280);
         items.getColumn("editore").setPreferredWidth(100);
@@ -58,17 +58,41 @@ public class BooksCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onRemoveButton(Object id) throws Exception {
-        return appController.removeBookFromDatabase((String) id);
+    public boolean onRemoveButton(Object id) {
+        return parentView.getAppController().removeBookFromDatabase((String) id);
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) throws Exception {
-        return appController.updateBookFromDatabase(data);
+    protected Object onUpdateButton(ArrayList<String> data) {
+        //return parentView.getAppController().updateBookFromDatabase(this.data);
+        return null;
     }
 
     @Override
     protected void onViewButton(Object id) {
 
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        Map<String, JComponent> schema = new HashMap<>();
+        String[] types = {"romanzo", "didattico"};
+        String[] fruitionModes = {"romanzo", "didattico"};
+        schema.put("Isbn", new JTextField());
+        schema.put("Titolo", new JTextField());
+        schema.put("Editore", new JTextField());
+        schema.put("Modalità di fruizione", new JComboBox<>(fruitionModes));
+        schema.put("Anno di pubblicazione", new JYearChooser());
+        schema.put("Descrizione", new JTextArea());
+        schema.put("Genere", new JTextField());
+        schema.put("Target", new JTextField());
+        schema.put("Materia", new JTextField());
+        schema.put("Tipo", new JComboBox<>(types));
+        return schema;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

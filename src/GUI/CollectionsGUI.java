@@ -38,10 +38,10 @@ public class CollectionsGUI extends AppView{
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.setPreferredSize(new Dimension(1000, 700));
 
-        CrudTable booksFromCollectionTable = new BooksInCollectionCrudTable(appController, "Libri nella raccolta:", new String[]{"isbn", "titolo", "editore", "modalita fruizione", "anno", "descrizione", "tipo libro", "genere", "target", "argomento"}, bookFromCollection, (Integer)collection_data.get("id"), collection_data.get("owner").toString());
+        CrudTable booksFromCollectionTable = new BooksInCollectionCrudTable(this, "Libri nella raccolta:", new String[]{"isbn", "titolo", "editore", "modalita fruizione", "anno", "descrizione", "tipo libro", "genere", "target", "argomento"}, bookFromCollection, (Integer)collection_data.get("id"), collection_data.get("owner").toString());
         contentPane.add(booksFromCollectionTable);
 
-        CrudTable publicationFromCollectionTable = new PublicationsInCollectionCrudTable(appController, "Articoli Scientifici nella raccolta:", new String[]{"doi", "titolo", "editore", "modalita fruizione", "anno", "descrizione"}, publicationFromCollection, (Integer)collection_data.get("id"), collection_data.get("owner").toString());
+        CrudTable publicationFromCollectionTable = new PublicationsInCollectionCrudTable(this, "Articoli Scientifici nella raccolta:", new String[]{"doi", "titolo", "editore", "modalita fruizione", "anno", "descrizione"}, publicationFromCollection, (Integer)collection_data.get("id"), collection_data.get("owner").toString());
         contentPane.add(publicationFromCollectionTable);
 
     }

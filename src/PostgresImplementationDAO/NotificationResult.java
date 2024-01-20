@@ -27,9 +27,7 @@ public class NotificationResult implements NotificationResultInterface {
         return text;
     }
 
-    public Timestamp getDate_time() {
+    public Timestamp getDateTime() {
         return date_time;
     }
-
-
 }

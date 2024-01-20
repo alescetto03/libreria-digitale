@@ -10,7 +10,6 @@ public class Journal extends AbstractModel {
     private String argument;
     private int publication_year;
     private String manager;
-    private ArrayList<ScientificPublication> publishedScientificPublications = new ArrayList<>();
 
     public Journal(String issn, String name, String argument, int publication_year, String manager) {
         this.issn = issn;
@@ -69,9 +68,5 @@ public class Journal extends AbstractModel {
         data.put("publication_year", getPublicationYear());
         data.put("manager", getManager());
         return data;
-    }
-
-    public void addScientificPublication(ScientificPublication scientificPublication) {
-        publishedScientificPublications.add(scientificPublication);
     }
 }

@@ -1,16 +1,16 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PresentationHallsCrudTable extends CrudTable {
-    AppController appController;
-    public PresentationHallsCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, false, true, true, true);
-        this.appController = appController;
+    public PresentationHallsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, false, true, true, true, "Aggiungi una sala/libreria", "Modifica una sala/libreria");
         items.getColumn("id").setMaxWidth(50);
         items.getColumn("id").setMinWidth(50);
         items.getColumn("azioni").setMaxWidth(60);
@@ -31,17 +31,30 @@ public class PresentationHallsCrudTable extends CrudTable {
     }
 
     @Override
-    protected boolean onRemoveButton(Object id) {
-        return appController.removePresentationHallFromDatabase(Integer.parseInt((String) id));
+    public boolean onRemoveButton(Object id) {
+        return parentView.getAppController().removePresentationHallFromDatabase(Integer.parseInt((String) id));
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) {
+    protected Object onUpdateButton(ArrayList<String> data) {
         return null;
     }
 
     @Override
     protected void onViewButton(Object id) {
 
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        Map<String, JComponent> schema = new HashMap<>();
+        schema.put("Nome", new JTextField());
+        schema.put("Indirizzo", new JTextField());
+        return schema;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

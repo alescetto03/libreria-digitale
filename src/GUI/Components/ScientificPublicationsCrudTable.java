@@ -1,24 +1,25 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
 import Model.ScientificPublication;
+import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ScientificPublicationsCrudTable extends CrudTable{
-    AppController appController;
-    public ScientificPublicationsCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, false, true, true, true);
-        this.appController = appController;
+    public ScientificPublicationsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, false, true, true, true, "Aggiungi un articolo scientifico", "Modifica un articolo scientifico");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        String[] fruitionMode = {"digitale", "cartaceo", "audiolibro"};
+        String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
         TableColumn fruitionModeColumn = items.getColumn("modalità fruizione");
-        fruitionModeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(fruitionMode)));
+        fruitionModeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(fruitionModes)));
 
         items.getColumn("doi").setMinWidth(180);
         items.getColumn("titolo").setMinWidth(320);
@@ -47,17 +48,35 @@ public class ScientificPublicationsCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onRemoveButton(Object id) {
-        return appController.removeScientificPublicationFromDatabase((String) id);
+    public boolean onRemoveButton(Object id) {
+        return parentView.getAppController().removeScientificPublicationFromDatabase((String) id);
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) {
+    protected Object onUpdateButton(ArrayList<String> data) {
         return null;
     }
 
     @Override
     protected void onViewButton(Object id) {
 
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        Map<String, JComponent> schema = new HashMap<>();
+        String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
+        schema.put("Doi", new JTextField());
+        schema.put("Titolo", new JTextField());
+        schema.put("Editore", new JDateChooser());
+        schema.put("Modalità di fruizione", new JComboBox<>(fruitionModes));
+        schema.put("Anno di pubblicazione", new JYearChooser());
+        schema.put("Descrizione", new JTextArea());
+        return schema;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

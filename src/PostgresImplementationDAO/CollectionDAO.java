@@ -128,9 +128,12 @@ public class CollectionDAO implements CollectionDAOInterface {
 
     @Override
     public CollectionResultInterface insertCollection(String name, Collection.Visibility visibility, String owner) {
+        if (name.matches("\\s*")) {
+            name = null;
+        }
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("INSERT INTO Raccolta (nome, visibilita, proprietario) VALUES (?, ?, ?) RETURNING Raccolta.*");
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Raccolta (nome, visibilita, proprietario) VALUES (COALESCE(?, 'nuova_raccolta'), ?, ?) RETURNING Raccolta.*");
         ) {
             statement.setString(1, name);
             statement.setObject(2, visibility.name().toLowerCase(), Types.OTHER);
@@ -142,7 +145,7 @@ public class CollectionDAO implements CollectionDAOInterface {
 
             return new CollectionResult(result);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + " " + e.getSQLState());
         }
         return null;
     }

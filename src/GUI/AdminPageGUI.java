@@ -39,7 +39,7 @@ public class AdminPageGUI extends AppView {
         booksButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedBooks();
-            currentTable = new BooksCrudTable(getAppController(), "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, currentData);
+            currentTable = new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -47,7 +47,7 @@ public class AdminPageGUI extends AppView {
         publicationsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedScienticPublications();
-            currentTable = new ScientificPublicationsCrudTable(getAppController(), "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, currentData);
+            currentTable = new ScientificPublicationsCrudTable(this, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -55,7 +55,7 @@ public class AdminPageGUI extends AppView {
         authorsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedAuthors();
-            currentTable = new AuthorsCrudTable(getAppController(), "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, currentData);
+            currentTable = new AuthorsCrudTable(this, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -63,7 +63,7 @@ public class AdminPageGUI extends AppView {
         shopsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedStores();
-            currentTable = new StoresCrudTable(getAppController(), "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, currentData);
+            currentTable = new StoresCrudTable(this, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -71,7 +71,7 @@ public class AdminPageGUI extends AppView {
         editorialCollections.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedEditorialCollections();
-            currentTable = new EditorialCollectionsCrudTable(getAppController(), "Collane:", new String[]{"issn", "nome", "editore"}, currentData);
+            currentTable = new EditorialCollectionsCrudTable(this, "Collane:", new String[]{"issn", "nome", "editore"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -79,7 +79,7 @@ public class AdminPageGUI extends AppView {
         seriesButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedSeries();
-            currentTable = new SeriesCrudTable(getAppController(), "Serie:", new String[]{"prequel", "sequel", "nome"}, currentData);
+            currentTable = new SeriesCrudTable(this, "Serie:", new String[]{"prequel", "sequel", "nome"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -87,7 +87,7 @@ public class AdminPageGUI extends AppView {
         journalsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedJournals();
-            currentTable = new JournalsCrudTable(getAppController(), "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, currentData);
+            currentTable = new JournalsCrudTable(this, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -95,7 +95,7 @@ public class AdminPageGUI extends AppView {
         conferencesButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedConferences();
-            currentTable = new ConferencesCrudTable(getAppController(), "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, currentData);
+            currentTable = new ConferencesCrudTable(this, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
@@ -103,31 +103,17 @@ public class AdminPageGUI extends AppView {
         presentationHallsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedPresentationHall();
-            currentTable = new PresentationHallsCrudTable(getAppController(), "Librerie:", new String[]{"id", "nome", "indirizzo"}, currentData);
+            currentTable = new PresentationHallsCrudTable(this, "Librerie:", new String[]{"id", "nome", "indirizzo"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
             tableWrapper.repaint();
         });
-
         publicationsJournalsButton.addActionListener((ActionEvent e) -> {
-            appController.getScientificPublicationsFromJournals();
-        });
-        booksEditorialCollectionsButton.addActionListener((ActionEvent e) -> {
-
-        });
-        publicationsConferencesButton.addActionListener((ActionEvent e) -> {
-
-        });
-        booksPresentationHallsButton.addActionListener((ActionEvent e) -> {
-
-        });
-        booksShopsButton.addActionListener((ActionEvent e) -> {
 
         });
     }
     public void createUIComponents() {
-        currentTable = new BooksCrudTable(getAppController(), "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, currentData);
-        //button1 = new IconButton("/GUI/images/logout.png",30, 30, Image.SCALE_SMOOTH);
+        currentTable = new ConferencesCrudTable(this, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, currentData);
     }
     private void switchPanel() {
 

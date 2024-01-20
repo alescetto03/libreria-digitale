@@ -1,18 +1,17 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
 
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class SavedCollectionCrudTable extends CrudTable{
-    AppController appController;
-    public SavedCollectionCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, true, false, false, true);
-        this.appController = appController;
+    public SavedCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, true, false, false, true);
 
         TableColumn idColumn = items.getColumn("id");
         idColumn.setMinWidth(0);
@@ -41,16 +40,26 @@ public class SavedCollectionCrudTable extends CrudTable{
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return appController.removeSavedCollectionFromDatabase(id);
+        return parentView.getAppController().removeSavedCollectionFromDatabase(id);
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) {
+    protected Object onUpdateButton(ArrayList<String> data) {
         return null;
     }
 
     @Override
     protected void onViewButton(Object id) {
-        appController.showCollectionItems(id);
+        parentView.getAppController().showCollectionItems(id);
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        return null;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

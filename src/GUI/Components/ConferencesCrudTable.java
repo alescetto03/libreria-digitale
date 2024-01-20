@@ -1,17 +1,17 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
+import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ConferencesCrudTable extends CrudTable {
-    AppController appController;
-    public ConferencesCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, false, true, true, true);
-        this.appController = appController;
+    public ConferencesCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, false, true, true, true, "Aggiungi una conferenza", "Modifica una conferenza");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         items.getColumn("id").setMaxWidth(50);
@@ -39,17 +39,33 @@ public class ConferencesCrudTable extends CrudTable {
     }
 
     @Override
-    protected boolean onRemoveButton(Object id) {
-        return appController.removeConferenceFromDatabase((Integer.parseInt((String) id)));
+    public boolean onRemoveButton(Object id) {
+        return parentView.getAppController().removeConferenceFromDatabase((Integer.parseInt((String) id)));
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) {
+    protected Object onUpdateButton(ArrayList<String> data) {
         return null;
     }
 
     @Override
     protected void onViewButton(Object id) {
 
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        Map<String, JComponent> schema = new HashMap<>();
+        schema.put("Luogo", new JTextField());
+        schema.put("Data di inizio", new JDateChooser());
+        schema.put("Data di fine", new JDateChooser());
+        schema.put("Organizzatore", new JTextField());
+        schema.put("Responsabile", new JTextField());
+        return schema;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

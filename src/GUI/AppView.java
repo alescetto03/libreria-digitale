@@ -27,7 +27,7 @@ public abstract class AppView {
      * Funzione che restituisce l'AppController che gestisce questa view.
      * @see AppController
      */
-    protected AppController getAppController() {
+    public AppController getAppController() {
         return this.controller;
     }
 

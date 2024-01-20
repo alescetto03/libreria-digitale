@@ -1,9 +1,9 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.ConfirmDeleteGUI;
+import GUI.ModelManipulationFormGUI;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -42,36 +42,37 @@ public class ActionsPanel extends JPanel{
             saveButton = new IconButton("/GUI/images/save.png", 18, 18, Image.SCALE_SMOOTH);
             add(saveButton, gbc);
             saveButton.addActionListener((ActionEvent e) -> {
-                JTable table = (JTable) saveButton.getParent().getParent();
+                int row = crudTable.items.getSelectedRow();
+                Object id = crudTable.items.getValueAt(row, 0);
+                ArrayList<String> data = new ArrayList<>();
+                for (int i = 0; i < crudTable.items.getColumnCount() - 1; i++) {
+                    data.add(String.valueOf(crudTable.items.getValueAt(row, i)));
+                }
+                crudTable.parentView.getAppController().switchView(new ModelManipulationFormGUI(crudTable.parentView.getAppController(), crudTable.parentView, crudTable.getFormSchema(data), crudTable.updateViewTitle));
+                /**
+                 JTable table = (JTable) saveButton.getParent().getParent();
                 int row = table.getEditingRow();
                 ArrayList<String> data = new ArrayList<>();
                 for (int i = 0; i < table.getColumnCount() - 1; i++) {
                     data.add(String.valueOf(table.getValueAt(row, i)));
                 }
                 try {
-                    Object savedData = crudTable.onSaveButton(data);
+                    Object savedData = crudTable.onUpdateButton(data);
                     if (savedData == null) {
                         JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(crudTable, exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
-                }
+                }**/
             });
         }
         if (displayDeleteButton) {
             deleteButton = new IconButton("/GUI/images/delete.png", 18, 18, Image.SCALE_SMOOTH);
             add(deleteButton, gbc);
             deleteButton.addActionListener((ActionEvent e) -> {
-                JTable table = (JTable) deleteButton.getParent().getParent();
-                int row = table.getEditingRow();
-                String id = String.valueOf(table.getValueAt(row, 0));
-                try {
-                    if (id.isEmpty() || crudTable.onRemoveButton(id)) {
-                        ((DefaultTableModel) table.getModel()).removeRow(row);
-                    }
-                } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(crudTable, exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
-                }
+                int row = crudTable.items.getSelectedRow();
+                Object id = crudTable.items.getValueAt(row, 0);
+                crudTable.parentView.getAppController().switchView(new ConfirmDeleteGUI(crudTable, id));
             });
         }
     }

@@ -1,17 +1,17 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
+import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JournalsCrudTable extends CrudTable {
-    AppController appController;
-    public JournalsCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(title, columns, data, false, true, true, true);
-        this.appController = appController;
+    public JournalsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi una rivista", "Modifica una rivista");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         items.getColumn("issn").setMinWidth(70);
         items.getColumn("issn").setMaxWidth(70);
@@ -19,7 +19,6 @@ public class JournalsCrudTable extends CrudTable {
         items.getColumn("argomento").setMinWidth(85);
         items.getColumn("anno di pubblicazione").setMinWidth(125);
         items.getColumn("responsabile").setMinWidth(125);
-
     }
 
     @Override
@@ -38,17 +37,31 @@ public class JournalsCrudTable extends CrudTable {
     }
 
     @Override
-    protected boolean onRemoveButton(Object id) {
-        return appController.removeJournalFromDatabase((String) id);
+    public boolean onRemoveButton(Object id) {
+        return parentView.getAppController().removeJournalFromDatabase((String) id);
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) {
+    protected Object onUpdateButton(ArrayList<String> data) {
         return null;
     }
 
     @Override
-    protected void onViewButton(Object id) {
+    protected void onViewButton(Object id) { parentView.getAppController().showScientificPublicationsInJournal((String) id); }
 
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        Map<String, JComponent> schema = new HashMap<>();
+        schema.put("Issn", new JTextField());
+        schema.put("Nome", new JTextField());
+        schema.put("Argomento", new JTextField());
+        schema.put("Anno di pubblicazione", new JYearChooser());
+        schema.put("Responsabile", new JTextField());
+        return schema;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

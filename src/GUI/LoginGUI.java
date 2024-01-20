@@ -54,7 +54,6 @@ public class LoginGUI extends AppView{
         //Listener RegisterButton
         registerButton.addActionListener((ActionEvent e) -> {
             getAppController().switchView(new RegisterGUI(appController));
-            getAppController().getUserNotification();
         });
     }
 

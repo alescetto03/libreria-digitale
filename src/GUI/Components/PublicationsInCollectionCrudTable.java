@@ -1,20 +1,19 @@
 package GUI.Components;
 
-import Controller.AppController;
+import GUI.AppView;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class PublicationsInCollectionCrudTable extends CrudTable{
-    AppController appController;
     int collectiond_id;
-    public PublicationsInCollectionCrudTable(AppController appController, String title, String[] columns, ArrayList<Map<String, Object>> data, Integer collection_id, String collection_owner) {
-        super(title, columns, data, false, false, false, collection_owner.equals(appController.getLoggedUsername()));
-        this.appController = appController;
+    public PublicationsInCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, Integer collection_id, String collection_owner) {
+        super(parentView, title, columns, data, false, false, false, collection_owner.equals(parentView.getAppController().getLoggedUsername()));
         this.collectiond_id = collection_id;
 
-        if(!collection_owner.equals(appController.getLoggedUsername())) {
+        if(!collection_owner.equals(parentView.getAppController().getLoggedUsername())) {
             items.getColumn("azioni").setMinWidth(0);
             items.getColumn("azioni").setMaxWidth(0);
         }
@@ -43,17 +42,27 @@ public class PublicationsInCollectionCrudTable extends CrudTable{
     }
 
     @Override
-    protected boolean onRemoveButton(Object doi) {
-        return appController.removePublicationFromCollection(doi, this.collectiond_id);
+    public boolean onRemoveButton(Object doi) {
+        return parentView.getAppController().removePublicationFromCollection(doi, this.collectiond_id);
     }
 
     @Override
-    protected Object onSaveButton(ArrayList<String> data) {
+    protected Object onUpdateButton(ArrayList<String> data) {
         return null;
     }
 
     @Override
     protected void onViewButton(Object id) {
 
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema() {
+        return null;
+    }
+
+    @Override
+    protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
+        return null;
     }
 }

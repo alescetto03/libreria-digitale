@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class HomepageGUI extends AppView{
     JPanel contentPane = new JPanel();
-    public HomepageGUI(AppController appController, ArrayList<Map<String, Object>> personalCollections, ArrayList<Map<String, Object>> notification, ArrayList<Map<String, Object>> savedCollections) {
+    public HomepageGUI(AppController appController) {
         super(appController);
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
@@ -41,7 +41,7 @@ public class HomepageGUI extends AppView{
             JPopupMenu popupMenu = new JPopupMenu();
             // Aggiungi elementi al popupMenu per visualizzare le notifiche
 
-            for(Map<String, Object> item : notification){
+            for(Map<String, Object> item : appController.getRenderedNotifications()){
                 popupMenu.add(new JLabel(String.valueOf(item.get("text"))));
             }
             // Mostra il popupMenu
@@ -58,10 +58,10 @@ public class HomepageGUI extends AppView{
             appController.logoutUser();
         });
 
-        CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(getAppController(), "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, personalCollections);
+        CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(this, "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, appController.getRenderedPersonalCollections());
         contentPane.add(personalCollectionsTable);
 
-        CrudTable savedCollectionsTable = new SavedCollectionCrudTable(getAppController(), "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario"}, savedCollections);
+        CrudTable savedCollectionsTable = new SavedCollectionCrudTable(this, "Le tue raccolte salvate:", new String[]{"id", "nome", "proprietario"}, appController.getRenderedSavedCollections());
         contentPane.add(savedCollectionsTable);
     }
 

@@ -134,6 +134,12 @@ public class AppController {
     }
 
     /**
+     * Metodo per settare la view corrente
+     * @param currentView
+     */
+    public void setCurrentView(AppView currentView) { this.currentView = currentView; }
+
+    /**
      * Funzione che ci permette di mostrare la finestra corrente
      */
     public void showView(AppView view) {
@@ -160,21 +166,7 @@ public class AppController {
     /**
      * Funzione per mostrare la schermata di HomepageGUI
      */
-    public void showHomepage() {
-        getUserPersonalCollections();
-        getUserSavedCollections();
-        getUserNotification();
-
-        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(personalCollections); //Effettuo una conversione perché ArrayList<Collection> non è sottotipo di ArrayList<AbstractModel>
-        ArrayList<AbstractModel> abstractModelsCollectionSaved = new ArrayList<>(savedCollections);
-        ArrayList<AbstractModel> abstractModelsNotification = new ArrayList<>(userNotification);
-
-        ArrayList<Map<String, Object>> renderedPersonalCollections = renderData(abstractModelsCollections);
-        ArrayList<Map<String, Object>> renderedPersonalCollectionsSaved = renderData(abstractModelsCollectionSaved);
-        ArrayList<Map<String, Object>> renderedUserNotification = renderData(abstractModelsNotification);
-
-        switchView(new HomepageGUI(this, renderedPersonalCollections, renderedUserNotification, renderedPersonalCollectionsSaved));
-    }
+    public void showHomepage() { switchView(new HomepageGUI(this)); }
 
     /**
      * Funzione per cambiare schermata e chiudere quella precedente, uno switch di finestra in pratica.
@@ -184,12 +176,11 @@ public class AppController {
         showView(destinationView);
     }
 
-
-
     /**
-     * Funzione per autenticare l'utente, controlla nel DB le credenziali cripatate
+     * Metodo che effettua l'autenticazione dell'utente, controlla nel DB le credenziali cripatate
      * se l'utente sbaglia credenziali viene mostrato un messaggio di errore, altrimenti
      * viene rimandato alla HomepageGUI
+     * @see HomepageGUI
      */
     public boolean authenticateUser(String username, String password) {
         MessageDigest digest;
@@ -210,7 +201,7 @@ public class AppController {
     }
 
     /**
-     * Funzione per permettere ad un utente di registrarsi
+     * Metodo che registra un utente all'applicativo
      */
     public boolean registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
         java.sql.Date sqlDate = new java.sql.Date(birthdate.getTime());
@@ -229,22 +220,6 @@ public class AppController {
     public void logoutUser() {
         loggedUser = null;
         switchView(new LoginGUI(this));
-    }
-
-    /**
-     * Funzione per prendere tutte le collezioni personali di un utente e caricarle in un ArrayList
-     */
-    public boolean getUserPersonalCollections() {
-        ArrayList<CollectionResultInterface> results = this.collectionDAO.getUserPersonalCollections(getLoggedUsername());
-        this.personalCollections.clear();
-        if(!results.isEmpty()) {
-            for (CollectionResultInterface result : results) {
-                Collection collection = new Collection(result.getId(), result.getName(), getLoggedUsername(), Collection.Visibility.valueOf(result.getVisibility().toUpperCase()));
-                this.personalCollections.add(collection);
-            }
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -282,7 +257,7 @@ public class AppController {
 
         if(!results.isEmpty()) {
             for (NotificationResultInterface result : results) {
-                Notification notification = new Notification(result.getText(), (result.getDate_time()).toLocalDateTime());
+                Notification notification = new Notification(result.getText(), (result.getDateTime()).toLocalDateTime());
                 this.userNotification.add(notification);
             }
         }
@@ -401,18 +376,8 @@ public class AppController {
     /**
      * Funzione che rimuove dal DB una raccolta dato il suo ID
      */
-    public boolean removeCollectionFromDatabase(Object id) {
-        int collection_id = Integer.parseInt((String)id);
-        if (collectionDAO.deleteCollectionById(collection_id)) {
-            for (Collection personalCollection: personalCollections) {
-                if (personalCollection.getId() == collection_id) {
-                    personalCollections.remove(personalCollection);
-                    break;
-                }
-            }
-            return true;
-        }
-        return false;
+    public boolean removeCollectionFromDatabase(int id) {
+        return collectionDAO.deleteCollectionById(id);
     }
 
     /**
@@ -454,7 +419,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che salva nel DB le collezzioni personali create dall'utente.
+     * Funzione che salva nel DB le collezioni personali create dall'utente.
      */
     public int savePersonalCollectionIntoDatabase(ArrayList<String> data) {
         if (data.get(1).isEmpty() || data.get(2).isEmpty()) {
@@ -479,6 +444,10 @@ public class AppController {
         }
         CollectionResultInterface collectionResultInserted = collectionDAO.insertCollection(name, visibility, getLoggedUsername());
         return collectionResultInserted.getId();
+    }
+
+    public void insertPersonalCollectionIntoDatabase(String name, String visibility) {
+        this.collectionDAO.insertCollection(name, Collection.Visibility.valueOf(visibility.toUpperCase()), loggedUser.getUsername());
     }
 
     /**
@@ -554,7 +523,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che mostra una schermata con tutti i risultati di ricerca.
+     * Metodo che mostra una schermata con tutti i risultati di ricerca.
      * L'utente cerca in base ad un testo le possibili raccolte, libri, articoli e poi
      * le serie con relativi negozi che posseggono quella serie in vendita completa.
      */
@@ -588,7 +557,48 @@ public class AppController {
         }
         //System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
         switchView(new SearchResultsGUI(this, renderedSearchedBooks, renderedSearchedPublications, renderedSearchedCollections, storeBySeries, this.currentView));
-}
+    }
+
+    public ArrayList<Map<String, Object>> getRenderedNotifications() {
+        ArrayList<NotificationResultInterface> notificationResults = this.notificationDAO.getUserNotification(getLoggedUsername());
+        ArrayList<AbstractModel> notifications = new ArrayList<>();
+        for (NotificationResultInterface notificationResult: notificationResults) {
+            Notification notification = new Notification(notificationResult.getText(), notificationResult.getDateTime().toLocalDateTime());
+            notifications.add(notification);
+        }
+        return renderData(notifications);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le raccolte dell'utente loggato memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedPersonalCollections() {
+        ArrayList<CollectionResultInterface> collectionResults = collectionDAO.getUserPersonalCollections(loggedUser.getUsername());
+        return renderCollections(collectionResults);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le raccolte salvate dall'utente loggato memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedSavedCollections() {
+        ArrayList<CollectionResultInterface> collectionResults = collectionDAO.getUserSavedCollections(loggedUser.getUsername());
+        return renderCollections(collectionResults);
+    }
+
+    /**
+     * Subroutine utilizzata per renderizzare le raccolte dell'applicativo
+     * @param collectionResults
+     */
+    private ArrayList<Map<String, Object>> renderCollections(ArrayList<CollectionResultInterface> collectionResults) {
+        ArrayList<AbstractModel> collections = new ArrayList<>();
+        for (CollectionResultInterface collectionResult: collectionResults) {
+            Collection collection = new Collection(collectionResult.getId(), collectionResult.getName(), collectionResult.getOwner(), Collection.Visibility.valueOf(collectionResult.getVisibility().toUpperCase()));
+            collections.add(collection);
+        }
+        return renderData(collections);
+    }
 
     /**
      * Metodo che restituisce una lista di tutti i libri memorizzati nel database
@@ -608,7 +618,7 @@ public class AppController {
      * Metodo che elimina un libro dal database
      * @param isbn
      */
-    public boolean removeBookFromDatabase(String isbn) throws Exception {
+    public boolean removeBookFromDatabase(String isbn) {
         return bookDAO.deleteBookByIsbn(isbn);
     }
 
@@ -799,14 +809,32 @@ public class AppController {
     }
 
     /**
-     * Metodo che restituisce una lista di tutti gli articoli pubblicati dalle riviste memorizzate nel database
+     * Metodo che restituisce una lista di tutti gli articoli pubblicati da una rivista memorizzata nel database
      */
-    public ArrayList<PublicationJournalResultInterface> getScientificPublicationsFromJournals() {
-        ArrayList<PublicationJournalResultInterface> resultSets = journalDAO.getPublicationsFromJournal();
-        ArrayList<AbstractModel> scientificPublicationsFromJournals = new ArrayList<>();
-        for (PublicationJournalResultInterface resultSet: resultSets) {
-            System.out.println(resultSet.getIssn() + " " + resultSet.getJournalName() + " " + resultSet.getPublicationTitle());
+    public ArrayList<Map<String, Object>> getScientificPublicationsFromJournal(String issn) {
+        ArrayList<ScientificPublicationResultInterface> resultSets = journalDAO.getPublicationsFromJournal(issn);
+        ArrayList<AbstractModel> scientificPublications = new ArrayList<>();
+        for (ScientificPublicationResultInterface resultSet: resultSets) {
+            scientificPublications.add(new ScientificPublication(resultSet.getDoi(), resultSet.getTitle(), ScientificPublication.FruitionMode.valueOf(resultSet.getFruitionMode().toUpperCase()), resultSet.getPublicationYear(), null, resultSet.getDescription(), resultSet.getPublisher()));
         }
-        return null;
+        return renderData(scientificPublications);
+    }
+
+    /**
+     * Metodo che mostra a video tutti gli articoli pubblicati da una rivista
+     */
+    public void showScientificPublicationsInJournal(String issn) {
+        System.out.println(issn);
+        JournalResultInterface journalResult = journalDAO.getJournalByIssn(issn);
+        Journal journal = new Journal(journalResult.getIssn(), journalResult.getName(), journalResult.getArgument(), journalResult.getPublicationYear(), journalResult.getManager());
+        switchView(new ScientificPublicationsInJournalGUI(this, journal.getData(), getScientificPublicationsFromJournal(issn), getRenderedScienticPublications()));
+    }
+
+    public void updateScientificPublicationsFromJournal(String issn, String doi, boolean isSelected) {
+        if (isSelected) {
+            journalDAO.insertScientificPublicationIntoJournal(issn, doi);
+        } else {
+            journalDAO.deleteScientificPublicationFromJournal(issn, doi);
+        }
     }
 }

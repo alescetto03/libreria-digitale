@@ -2,7 +2,7 @@ package PostgresImplementationDAO;
 
 import DAO.JournalDAOInterface;
 import DAO.JournalResultInterface;
-import DAO.PublicationJournalResultInterface;
+import DAO.ScientificPublicationResultInterface;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +11,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class JournalDAO implements JournalDAOInterface {
+    @Override
+    public JournalResultInterface getJournalByIssn(String issn) {
+        final String query = "SELECT * FROM Rivista WHERE issn = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, issn);
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            if (result.next()) {
+                return new JournalResult(result);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public ArrayList<JournalResultInterface> getAll() {
         final String query = "SELECT * FROM Rivista";
@@ -46,25 +66,56 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
-    public ArrayList<PublicationJournalResultInterface> getPublicationsFromJournal() {
-        final String query = "SELECT doi, issn, titolo, nome AS titolo_articolo, nome AS nome_rivista FROM articolo_scientifico_pubblicazione_rivista " +
-                "JOIN rivista r ON r.issn = articolo_scientifico_pubblicazione_rivista.rivista " +
-                "JOIN articolo_scientifico a ON a.doi = articolo_scientifico_pubblicazione_rivista.articolo_scientifico";
+    public ArrayList<ScientificPublicationResultInterface> getPublicationsFromJournal(String issn) {
+        final String query = "SELECT a.doi, a.titolo, a.editore, a.modalita_fruizione, a.anno_pubblicazione, a.copertina, a.descrizione FROM articolo_scientifico_pubblicazione_rivista AS ar " +
+                "JOIN articolo_scientifico AS a ON a.doi = ar.articolo_scientifico " +
+                "WHERE ar.rivista = ?";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
+            statement.setString(1, issn);
             ResultSet result = statement.executeQuery();
 
-            ArrayList<PublicationJournalResultInterface> publicationJournalResults = new ArrayList<>();
+            ArrayList<ScientificPublicationResultInterface> scientificPublicationResults = new ArrayList<>();
             while (result.next()) {
-                PublicationJournalResultInterface publicationJournalResult = new PublicationJournalResult(result);
-                publicationJournalResults.add(publicationJournalResult);
+                ScientificPublicationResultInterface scientificPublicationResult = new ScientificPublicationResult(result);
+                scientificPublicationResults.add(scientificPublicationResult);
             }
-            return publicationJournalResults;
+            return scientificPublicationResults;
         } catch (SQLException e) {
             System.out.println("Errore: " + e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public boolean insertScientificPublicationIntoJournal(String scientificPublication, String journal) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO articolo_scientifico_pubblicazione_rivista VALUES (?,?)");
+        ) {
+            statement.setString(1, scientificPublication);
+            statement.setString(2, journal);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteScientificPublicationFromJournal(String scientificPublication, String journal) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM articolo_scientifico_pubblicazione_rivista WHERE articolo_scientifico = ? AND rivista = ?");
+        ) {
+            statement.setString(1, scientificPublication);
+            statement.setString(2, journal);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 }

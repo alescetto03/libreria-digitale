@@ -27,13 +27,13 @@ public class ScientificPublicationResult implements ScientificPublicationResultI
 
     public ScientificPublicationResult(ResultSet result) throws SQLException {
         this(
-                result.getString("doi"),
-                result.getString("titolo"),
-                result.getString("editore"),
-                result.getString("modalita_fruizione"),
-                result.getInt("anno_pubblicazione"),
-                result.getBinaryStream("copertina"),
-                result.getString("descrizione")
+            result.getString("doi"),
+            result.getString("titolo"),
+            result.getString("editore"),
+            result.getString("modalita_fruizione"),
+            result.getInt("anno_pubblicazione"),
+            result.getBinaryStream("copertina"),
+            result.getString("descrizione")
         );
     }
 
