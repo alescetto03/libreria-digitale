@@ -129,4 +129,61 @@ public class BookDAO implements BookDAOInterface {
         }
         return null;
     }
+
+    @Override
+    public BookResultInterface insertBookInDb(String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception{
+        String query;
+        if (type.name().equals("ROMANZO")) {
+            query = "INSERT INTO Libro (isbn, titolo, editore, modalita_fruizione, anno_pubblicazione, copertina, descrizione, genere, tipo) VALUES(?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, NULLIF(?, ''), NULLIF(?, ''), NULLIF(?, ''), ?) RETURNING *";
+        } else {
+            query = "INSERT INTO Libro (isbn, titolo, editore, modalita_fruizione, anno_pubblicazione, copertina, descrizione, target, materia, tipo) VALUES(?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, NULLIF(?, ''), NULLIF(?, ''), NULLIF(?, ''), NULLIF(?, ''), ?) RETURNING *";
+        }
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement(query);
+        ) {
+            statement.setString(1, isbn);
+            statement.setString(2, title);
+            statement.setString(3, publisher);
+            statement.setObject(4, fruition_mode.name().toLowerCase(), Types.OTHER);
+            statement.setInt(5, publication_year);
+            statement.setBytes(6, cover);
+            statement.setString(7, description);
+            if (type.name().equals("ROMANZO")) {
+                statement.setString(8, genre);
+                statement.setObject(9, type.name().toLowerCase(), Types.OTHER);
+            } else {
+                statement.setString(8, target);
+                statement.setString(9, topic);
+                statement.setObject(10, type.name().toLowerCase(), Types.OTHER);
+            }
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new BookResult(result);
+        } catch (SQLException exception) {
+//            System.out.println("MESSAGE:" + exception.getMessage());
+//            System.out.println("SQL STATE:" + exception.getSQLState());
+//            System.out.println("ERROR CODE:" + exception.getErrorCode());
+//            System.out.println("LOCALIZED MESSAGE:" + exception.getLocalizedMessage());
+//            System.out.println("NEXT EXCEPTION:" + exception.getNextException());
+//            System.out.println("CAUSE:" + exception.getCause());
+//            System.out.println("STACK TRACE:" + exception.getStackTrace());
+            if (exception.getMessage().contains("isbn_check"))
+                throw new Exception("Un ISBN deve essere una sequenza numerica di 13 o 10 cifre che inizia per '978' o per '979' e non puo' essere nullo.");
+            else if (exception.getMessage().contains("didattico_or_romanzo"))
+                throw new Exception("Un libro non puo' essere sia didattico che romanzo allo stesso tempo.");
+            else if (exception.getMessage().contains("libro_pk"))
+                throw new Exception("Stai inserendo un libro con un isbn gia' esistente.");
+            else if (exception.getMessage().contains("titolo") && exception.getMessage().contains("null value"))
+                throw new Exception("Il titolo non puo' essere nullo.");
+            else if (exception.getMessage().contains("editore") && exception.getMessage().contains("null value"))
+                throw new Exception("L'editore non puo' essere nullo.");
+             else
+                throw new Exception("General Errore For Book");
+        }
+        //return null;
+    }
 }

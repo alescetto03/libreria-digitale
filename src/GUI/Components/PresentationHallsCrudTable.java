@@ -4,6 +4,8 @@ import GUI.AppView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,17 @@ public class PresentationHallsCrudTable extends CrudTable {
         items.getColumn("id").setMinWidth(50);
         items.getColumn("azioni").setMaxWidth(60);
         items.getColumn("azioni").setMinWidth(60);
+
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertPresentationHallIntoDatabase(formData.get("Nome"), formData.get("Indirizzo"));
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
@@ -55,6 +68,9 @@ public class PresentationHallsCrudTable extends CrudTable {
 
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
-        return null;
+        Map<String, JComponent> schema = new HashMap<>();
+        schema.put("Nome", new JTextField(data.getFirst()));
+        schema.put("Indirizzo", new JTextField(data.get(1)));
+        return schema;
     }
 }

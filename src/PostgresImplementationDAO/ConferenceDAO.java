@@ -4,10 +4,7 @@ import DAO.ConferenceDAOInterface;
 import DAO.ConferenceResultInterface;
 import DAO.PublicationConferenceResultInterface;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ConferenceDAO implements ConferenceDAOInterface {
@@ -66,5 +63,41 @@ public class ConferenceDAO implements ConferenceDAOInterface {
             System.out.println("Errore: " + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public ConferenceResultInterface insertConferenceInDb(String location, Date start_date, Date end_date, String organizer, String manager) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Conferenza (luogo, data_inizio, data_fine, organizzatore, responsabile) VALUES (NULLIF(?, ''), ?, ?, NULLIF(?, ''), NULLIF(?, '')) RETURNING Conferenza.*");
+        ) {
+            statement.setString(1, location);
+            statement.setDate(2, start_date);
+            statement.setDate(3, end_date);
+            statement.setString(4, organizer);
+            statement.setString(5, manager);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new ConferenceResult(result);
+        } catch (SQLException e) {
+//            System.out.println("MESSAGE:" + e.getMessage());
+            if (e.getMessage().contains("conferenza_pk"))
+                throw new Exception("Stai inserendo una conferenza che esiste gia'.");
+            else if (e.getMessage().contains("luogo") && e.getMessage().contains("null value"))
+                throw new Exception("Il luogo non puo' essere nullo.");
+            else if (e.getMessage().contains("organizzatore") && e.getMessage().contains("null value"))
+                throw new Exception("L'organizzatore' non puo' essere nullo.");
+            else if (e.getMessage().contains("responsabile") && e.getMessage().contains("null value"))
+                throw new Exception("Il responsabile non puo' essere nullo.");
+            else if (e.getMessage().contains("validita_date"))
+                throw new Exception("La data di inizio deve essere prima di quella di fine.");
+            else
+                throw new Exception("General Error For Conference.");
+        }
+        //return null;
     }
 }

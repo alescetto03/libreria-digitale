@@ -4,6 +4,8 @@ import GUI.AppView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,15 @@ public class StoresCrudTable extends CrudTable {
         items.getColumn("nome").setMinWidth(150);
         items.getColumn("indirizzo").setMinWidth(180);
         items.getColumn("url").setMinWidth(200);
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertStoreIntoDatabase(formData.get("Partita Iva"), formData.get("Nome"), formData.get("Indirizzo"), formData.get("Url"));
+            } catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override

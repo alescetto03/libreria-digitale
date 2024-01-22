@@ -5,6 +5,8 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,19 @@ public class AuthorsCrudTable extends CrudTable {
         items.getColumn("data di morte").setMinWidth(110);
         items.getColumn("nazionalità").setMinWidth(100);
         items.getColumn("biografia").setMinWidth(300);
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                if (!formData.get("Data di morte").isEmpty())
+                    parentView.getAppController().insertAuthorIntoDatabase(formData.get("Nome"), LocalDate.parse(formData.get("Data di nascita")), LocalDate.parse(formData.get("Data di morte")), formData.get("Nazionalità"), formData.get("Biografia"));
+                else
+                    parentView.getAppController().insertAuthorIntoDatabase(formData.get("Nome"), LocalDate.parse(formData.get("Data di nascita")), null, formData.get("Nazionalità"), formData.get("Biografia"));
+            }catch(Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
@@ -59,7 +74,7 @@ public class AuthorsCrudTable extends CrudTable {
         schema.put("Data di nascita", new JDateChooser());
         schema.put("Data di morte", new JDateChooser());
         schema.put("Nazionalità", new JTextField());
-        schema.put("Biografia", new JTextField());
+        schema.put("Biografia", new JTextArea());
         return schema;
     }
 

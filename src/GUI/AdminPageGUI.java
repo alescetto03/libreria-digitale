@@ -113,7 +113,7 @@ public class AdminPageGUI extends AppView {
         });
     }
     public void createUIComponents() {
-        currentTable = new ConferencesCrudTable(this, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, currentData);
+        currentTable = new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, currentData);
     }
     private void switchPanel() {
 

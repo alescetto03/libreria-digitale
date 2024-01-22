@@ -7,6 +7,8 @@ import com.toedter.calendar.JYearChooser;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,16 @@ public class BooksCrudTable extends CrudTable{
         items.getColumn("target").setPreferredWidth(60);
         items.getColumn("materia").setPreferredWidth(80);
         items.getColumn("tipo").setPreferredWidth(80);
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertBookIntoDatabase(formData.get("Isbn"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"), formData.get("Genere"), formData.get("Tipo"), formData.get("Target"), formData.get("Materia"));
+            } catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
@@ -77,7 +89,7 @@ public class BooksCrudTable extends CrudTable{
     protected Map<String, JComponent> getFormSchema() {
         Map<String, JComponent> schema = new HashMap<>();
         String[] types = {"romanzo", "didattico"};
-        String[] fruitionModes = {"romanzo", "didattico"};
+        String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
         schema.put("Isbn", new JTextField());
         schema.put("Titolo", new JTextField());
         schema.put("Editore", new JTextField());
@@ -93,6 +105,27 @@ public class BooksCrudTable extends CrudTable{
 
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
-        return null;
+        Map<String, JComponent> schema = new HashMap<>();
+        String[] types = {"romanzo", "didattico"};
+        String[] fruitionModes = {"romanzo", "didattico"};
+        schema.put("Isbn", new JTextField(data.getFirst()));
+        schema.put("Titolo", new JTextField(data.get(1)));
+        schema.put("Editore", new JTextField(data.get(2)));
+        JComboBox<String> fruitionField = new JComboBox<>(fruitionModes);
+        fruitionField.setSelectedItem(data.get(3));
+        schema.put("Modalità di fruizione", fruitionField);
+        JYearChooser yearField = new JYearChooser();
+        yearField.setYear(Integer.parseInt(data.get(4)));
+        schema.put("Anno di pubblicazione", yearField);
+
+        schema.put("Descrizione", new JTextArea(data.get(6)));
+        schema.put("Genere", new JTextField(data.get(7)));
+        schema.put("Target", new JTextField(data.get(8)));
+        schema.put("Materia", new JTextField(data.get(9)));
+        JComboBox<String> typeField = new JComboBox<>(types);
+        typeField.setSelectedItem(data.get(10));
+        schema.put("Tipo", typeField);
+
+        return schema;
     }
 }

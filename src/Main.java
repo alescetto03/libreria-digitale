@@ -25,6 +25,6 @@ public class Main {
 
     public static void main(String[] args) {
         AppController appController = new AppController();
-        appController.showView(new AdminPageGUI(appController, appController.getRenderedConferences()));
+        appController.showView(new AdminPageGUI(appController, appController.getRenderedBooks()));
     }
 }

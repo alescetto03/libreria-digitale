@@ -118,4 +118,40 @@ public class JournalDAO implements JournalDAOInterface {
             return false;
         }
     }
-}
+
+    @Override
+    public JournalResultInterface insertJournalInDb(String issn, String name, String argument, int publication_year, String manager) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Rivista VALUES (?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, '')) RETURNING Rivista.*");
+        ) {
+            statement.setString(1, issn);
+            statement.setString(2, name);
+            statement.setString(3, argument);
+            statement.setInt(4, publication_year);
+            statement.setString(5, manager);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new JournalResult(result);
+        } catch (SQLException e) {
+            System.out.println("ERRORE:" + e.getMessage());
+            if (e.getMessage().contains("rivista_pk"))
+                throw new Exception("Stai cercando di inserire una rivista con un issn che esiste gia'.");
+            else if (e.getMessage().contains("issn_check"))
+                throw new Exception("Violazione del vincolo di formato per issn di una rivista.");
+            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
+                throw new Exception("Il nome non puo' essere nullo.");
+            else if (e.getMessage().contains("argomento") && e.getMessage().contains("null value"))
+                throw new Exception("L'argomento' non puo' essere nullo.");
+            else if (e.getMessage().contains("responsabile") && e.getMessage().contains("null value"))
+                throw new Exception("Responsabile non puo' essere nullo.");
+            else
+                throw new Exception("General Error For Journal.");
+        }
+        //return null;
+    }
+    }

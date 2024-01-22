@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
 import Model.ScientificPublication;
 import com.toedter.calendar.JDateChooser;
@@ -8,6 +9,7 @@ import com.toedter.calendar.JYearChooser;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,17 @@ public class ScientificPublicationsCrudTable extends CrudTable{
         items.getColumn("modalità fruizione").setMinWidth(120);
         items.getColumn("anno pubblicazione").setMinWidth(120);
         items.getColumn("descrizione").setMinWidth(300);
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertPublicationIntoDatabase(formData.get("Doi"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"));
+            } catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+            //parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), parentView.getAppController().getRenderedBooks()));
+        });
     }
 
     @Override
@@ -68,7 +81,7 @@ public class ScientificPublicationsCrudTable extends CrudTable{
         String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
         schema.put("Doi", new JTextField());
         schema.put("Titolo", new JTextField());
-        schema.put("Editore", new JDateChooser());
+        schema.put("Editore", new JTextField());
         schema.put("Modalità di fruizione", new JComboBox<>(fruitionModes));
         schema.put("Anno di pubblicazione", new JYearChooser());
         schema.put("Descrizione", new JTextArea());
