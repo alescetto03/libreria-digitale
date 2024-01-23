@@ -7,6 +7,8 @@ import GUI.ModelManipulationFormGUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,15 @@ import java.util.Map;
 public class EditorialCollectionsCrudTable extends CrudTable {
     public EditorialCollectionsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una collana", "Modifica una collana");
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertEditorialCollectionIntoDatabase(formData.get("Issn"), formData.get("Nome"), formData.get("Editore"));
+            } catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override

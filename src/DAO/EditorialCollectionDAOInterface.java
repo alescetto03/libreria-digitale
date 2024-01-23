@@ -10,4 +10,5 @@ public interface EditorialCollectionDAOInterface {
     ArrayList<BookResultInterface> getBooksFromEditorialCollection(String issn);
     boolean insertBookIntoEditorialCollection(String book, String editorialCollection);
     boolean deleteBookFromEditorialCollection(String book, String editorialCollection);
+    EditorialCollectionResultInterface insertEditorialCollectionInDb(String issn, String name, String publisher) throws Exception;
 }

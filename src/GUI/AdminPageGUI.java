@@ -2,6 +2,7 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.*;
+import Model.Journal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +24,7 @@ public class AdminPageGUI extends AppView {
     private JPanel buttonsWrapper;
     private JPanel tableWrapper;
     private JButton publicationsJournalsButton;
+    private JButton booksEditorialCollectionsButton;
     private JButton publicationsConferencesButton;
     private JButton booksPresentationHallsButton;
     private JButton booksShopsButton;

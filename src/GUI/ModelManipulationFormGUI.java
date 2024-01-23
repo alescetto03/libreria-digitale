@@ -1,12 +1,15 @@
 package GUI;
 
 import Controller.AppController;
+import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,18 +75,28 @@ public class ModelManipulationFormGUI extends AppView {
 
     public JButton getGoBackButton() { return goBackButton; }
 
-    public Map<String, String> getFormData() {
+    public Map<String, String> getFormData() throws Exception{
         Map<String, String> renderedData = new HashMap<>();
         for (Map.Entry<String, JComponent> entry : data.entrySet()) {
             if (entry.getValue() instanceof JTextField) {
                 renderedData.put(entry.getKey(), ((JTextField) entry.getValue()).getText().trim());
             } else if (entry.getValue() instanceof JComboBox<?>) {
                 renderedData.put(entry.getKey(), (((JComboBox<?>) entry.getValue()).getSelectedItem()).toString());
-            } else if (entry.getValue() instanceof JYearChooser) {
-                renderedData.put(entry.getKey(), String.valueOf(((JYearChooser) entry.getValue()).getYear()));
-            } else if (entry.getValue() instanceof JTextArea) {
-                renderedData.put(entry.getKey(), ((JTextArea) entry.getValue()).getText());
+            } else if (entry.getValue() instanceof JYearChooser){
+                renderedData.put(entry.getKey(), String.valueOf((((JYearChooser) entry.getValue()).getValue())));
+            } else if (entry.getValue() instanceof JTextArea){
+                renderedData.put(entry.getKey(), ((JTextArea) entry.getValue()).getText().trim());
+            } else if (entry.getValue() instanceof JDateChooser){
+                if (((JDateChooser) entry.getValue()).getDate() != null)
+                    renderedData.put(entry.getKey(), String.valueOf((((JDateChooser) entry.getValue()).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
+                else if (entry.getKey().equals("Data di nascita") && ((JDateChooser) entry.getValue()).getDate() == null)
+                    throw new Exception("Il campo data di nascita non puo' essere nullo.");
+                else if ((entry.getKey().equals("Data di inizio") || entry.getKey().equals("Data di fine")) && ((JDateChooser) entry.getValue()).getDate() == null)
+                    throw new Exception("I campi Data di inizio e Data di fine non possono essere nulli.");
+                else
+                    renderedData.put(entry.getKey(), "");
             }
+
         }
         return renderedData;
     }

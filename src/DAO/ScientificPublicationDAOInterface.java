@@ -15,4 +15,6 @@ public interface ScientificPublicationDAOInterface {
     ArrayList<ScientificPublicationResultInterface> getPublicationsFromCollection(int publicationId);
 
     ScientificPublicationResultInterface updateScientificPublicationByDoi(String publicationToUpdate, String doi, String title, String publisher, ScientificPublication.FruitionMode fruitionMode, int publicationYear, String description) throws Exception;
+
+    ScientificPublicationResultInterface insertPublicationInDb(String doi, String title, String publisher, ScientificPublication.FruitionMode fruition_mode, int publication_year, byte[] cover, String description) throws Exception;
 }

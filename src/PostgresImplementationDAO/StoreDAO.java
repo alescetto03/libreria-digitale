@@ -2,7 +2,6 @@ package PostgresImplementationDAO;
 
 import DAO.StoreDAOInterface;
 import DAO.StoreResultInterface;
-import Model.Book;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -101,4 +100,69 @@ public class StoreDAO implements StoreDAOInterface {
         }
         return null;
     }
+
+    @Override
+    public StoreResultInterface insertStoreInDb(String partita_iva, String name, String address, String url) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Negozio VALUES (?, NULLIF(?, ''), NULLIF(?, ''), NULLIF(?, '')) RETURNING Negozio.*");
+        ) {
+            statement.setString(1, partita_iva);
+            statement.setString(2, name);
+            statement.setString(3, address);
+            statement.setString(4, url);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new StoreResult(result);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("validita_negozio"))
+                throw new Exception("Violazione dl vincolo di validita' di negozio, non possono esserci indirizzo e url nulli.");
+            else if (e.getMessage().contains("partita_iva_check"))
+                throw new Exception("Violazione dl vincolo di partita iva, formato errato.");
+            else if (e.getMessage().contains("negozio_pk"))
+                throw new Exception("Stai cercando di inserire un negozio gia' esistente.");
+            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
+                throw new Exception("Il nome non puo' essere nullo.");
+            else
+                throw new Exception("General Error For Store.");
+        }
+    }
+
+    @Override
+    public StoreResultInterface updateStore(String partita_iva, String old_partita_iva, String name, String address, String url) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE Negozio SET partita_iva = ?, nome = NULLIF(?, ''), indirizzo = NULLIF(?, ''), url = NULLIF(?, '') WHERE partita_iva = ? RETURNING *");
+        ) {
+            statement.setString(1, partita_iva);
+            statement.setString(2, name);
+            statement.setString(3, address);
+            statement.setString(4, url);
+            statement.setString(5, old_partita_iva);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new StoreResult(result);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("validita_negozio"))
+                throw new Exception("Violazione dl vincolo di validita' di negozio, non possono esserci indirizzo e url nulli.");
+            else if (e.getMessage().contains("partita_iva_check"))
+                throw new Exception("Violazione dl vincolo di partita iva, formato errato.");
+            else if (e.getMessage().contains("negozio_pk"))
+                throw new Exception("Stai cercando di inserire un negozio gia' esistente.");
+            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
+                throw new Exception("Il nome non puo' essere nullo.");
+            else
+                throw new Exception("General Error For Store.");
+        }
+    }
+
+
 }

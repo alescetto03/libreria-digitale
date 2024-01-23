@@ -9,4 +9,6 @@ public interface JournalDAOInterface {
     ArrayList<ScientificPublicationResultInterface> getPublicationsFromJournal(String issn);
     boolean insertScientificPublicationIntoJournal(String scientificPublication, String journal);
     boolean deleteScientificPublicationFromJournal(String scientificPublication, String journal);
+
+    JournalResultInterface insertJournalInDb(String issn, String name, String argument, int publication_year, String manager) throws Exception;
 }

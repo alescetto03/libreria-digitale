@@ -5,6 +5,8 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,16 @@ public class ConferencesCrudTable extends CrudTable {
         items.getColumn("data di fine").setMinWidth(110);
         items.getColumn("organizzatore").setMinWidth(200);
         items.getColumn("responsabile").setMinWidth(120);
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertConferenceIntoDatabase(formData.get("Luogo"), LocalDate.parse(formData.get("Data di inizio")), LocalDate.parse(formData.get("Data di fine")), formData.get("Organizzatore"), formData.get("Responsabile"));
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override

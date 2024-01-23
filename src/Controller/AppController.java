@@ -11,6 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -448,6 +449,46 @@ public class AppController {
     public void insertPersonalCollectionIntoDatabase(String name, String visibility) {
         this.collectionDAO.insertCollection(name, Collection.Visibility.valueOf(visibility.toUpperCase()), loggedUser.getUsername());
     }
+
+    public void insertBookIntoDatabase(String isbn, String title, String publisher, String fruition_mode, int publication_year, byte[] cover, String description, String genre, String book_type, String target, String topic) throws Exception{
+            this.bookDAO.insertBookInDb(isbn, title, publisher, Book.FruitionMode.valueOf(fruition_mode.toUpperCase()), publication_year, null, description, genre, target, topic, Book.BookType.valueOf(book_type.toUpperCase()));
+    }
+
+    public void insertPublicationIntoDatabase(String doi, String title, String publisher, String fruition_mode, int publication_year, byte[] cover, String description) throws Exception{
+            this.publicationDAO.insertPublicationInDb(doi, title, publisher, ScientificPublication.FruitionMode.valueOf(fruition_mode.toUpperCase()), publication_year, null, description);
+    }
+
+    public void insertAuthorIntoDatabase(String name, LocalDate birth_date, LocalDate death_date, String nationality, String bio) throws Exception{
+        if (death_date != null)
+            this.authorDAO.insertAuthorInDb(name, java.sql.Date.valueOf(birth_date), java.sql.Date.valueOf(death_date), nationality, bio);
+        else
+            this.authorDAO.insertAuthorInDb(name, java.sql.Date.valueOf(birth_date), null, nationality, bio);
+    }
+
+    public void insertStoreIntoDatabase(String partita_iva, String name, String address, String url) throws Exception{
+            this.storeDAO.insertStoreInDb(partita_iva, name, address, url);
+    }
+
+    public void insertEditorialCollectionIntoDatabase(String issn, String name, String publisher) throws Exception{
+            this.editorialCollectionDAO.insertEditorialCollectionInDb(issn, name, publisher);
+    }
+
+    public void insertSeriesIntoDatabase(String prequel, String sequel, String name) throws Exception{
+            this.serieDAO.insertSeriesInDb(prequel, sequel, name);
+    }
+
+    public void insertJournalsIntoDatabase(String issn, String name, String argument, int publication_year, String manager) throws Exception{
+            this.journalDAO.insertJournalInDb(issn, name, argument, publication_year, manager);
+    }
+
+    public void insertConferenceIntoDatabase(String location, LocalDate start_date, LocalDate end_date, String organizer, String manager) throws Exception{
+            this.conferenceDAO.insertConferenceInDb(location, java.sql.Date.valueOf(start_date), java.sql.Date.valueOf(end_date), organizer, manager);
+    }
+
+    public void insertPresentationHallIntoDatabase(String name, String address) throws Exception{
+            this.presentationHallDAO.insertPresentationHallInDb(name, address);
+    }
+
 
     public void updatePersonalCollectionIntoDatabase(int id, String name, String visibility) {
         System.out.println(id + " " +  name + " "  + visibility);

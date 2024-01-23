@@ -114,3 +114,31 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         }
     }
 }
+
+    @Override
+    public PresentationHallResultInterface insertPresentationHallInDb(String name, String address) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Sala (nome, indirizzo) VALUES (NULLIF(?, ''), NULLIF(?, '')) RETURNING Sala.*");
+        ) {
+            statement.setString(1, name);
+            statement.setString(2, address);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new PresentationHallResult(result);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("sala_pk"))
+                throw new Exception("Stai inserendo una sala che esiste gia'.");
+            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
+                throw new Exception("Il nome non puo' essere nullo.");
+            else if (e.getMessage().contains("indirizzo") && e.getMessage().contains("null value"))
+                throw new Exception("L'indirizzo non puo' essere nullo.");
+            else
+                throw new Exception("General Error For Presentation Hall.");
+        }
+    }
+}

@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +16,17 @@ import java.util.Map;
 public class PersonalCollectionsCrudTable extends CrudTable {
     public PersonalCollectionsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una raccolta", "Modifica una raccolta");
+
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            Map<String, String> formData = this.createView.getFormData();
-            parentView.getAppController().insertPersonalCollectionIntoDatabase(formData.get("Nome"), formData.get("Visibilità"));
-            parentView.getAppController().showHomepage();
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertPersonalCollectionIntoDatabase(formData.get("Nome"), formData.get("Visibilità"));
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
         });
+
+
         TableColumn idColumn = items.getColumn("id");
         idColumn.setMinWidth(0);
         idColumn.setMaxWidth(0);

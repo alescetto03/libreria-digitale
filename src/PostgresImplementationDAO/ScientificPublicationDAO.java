@@ -130,4 +130,38 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
         return null;
     }
+
+    @Override
+    public ScientificPublicationResultInterface insertPublicationInDb(String doi, String title, String publisher, ScientificPublication.FruitionMode fruition_mode, int publication_year, byte[] cover, String description) throws Exception {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Articolo_Scientifico VALUES (?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, NULLIF(?, ''), NULLIF(?, '')) RETURNING Articolo_Scientifico.*");
+        ) {
+            statement.setString(1, doi);
+            statement.setString(2, title);
+            statement.setString(3, publisher);
+            statement.setObject(4, fruition_mode.name().toLowerCase(), Types.OTHER);
+            statement.setInt(5, publication_year);
+            statement.setBytes(6, cover);
+            statement.setString(7, description);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new ScientificPublicationResult(result);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("doi_check"))
+                throw new Exception("Un DOI deve essere una sequenza alfanumerica che inizia con '10.' e non puo' essere nulla.");
+            else if (e.getMessage().contains("articolo_scientifico_pk"))
+                throw new Exception("Stai inserendo un articolo con un doi gia' esistente.");
+            else if (e.getMessage().contains("titolo") && e.getMessage().contains("null value"))
+                throw new Exception("Il titolo non puo' essere nullo.");
+            else if (e.getMessage().contains("editore") && e.getMessage().contains("null value"))
+                throw new Exception("L'editore non puo' essere nullo.");
+            else
+                throw new Exception("General Error For Publication");
+        }
+    }
 }

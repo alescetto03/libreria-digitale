@@ -5,6 +5,8 @@ import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,17 @@ public class JournalsCrudTable extends CrudTable {
         items.getColumn("argomento").setMinWidth(85);
         items.getColumn("anno di pubblicazione").setMinWidth(125);
         items.getColumn("responsabile").setMinWidth(125);
+
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertJournalsIntoDatabase(formData.get("Issn"), formData.get("Nome"), formData.get("Argomento"), Integer.parseInt(formData.get("Anno di pubblicazione")), formData.get("Responsabile"));
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override

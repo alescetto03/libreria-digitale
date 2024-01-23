@@ -4,6 +4,8 @@ import GUI.AppView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,17 @@ public class SeriesCrudTable extends CrudTable {
         items.getColumn("sequel").setMinWidth(100);
         items.getColumn("azioni").setMaxWidth(60);
         items.getColumn("azioni").setMinWidth(60);
+
+
+        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            //System.out.println(formData);
+            try {
+                Map<String, String> formData = this.createView.getFormData();
+                parentView.getAppController().insertSeriesIntoDatabase(formData.get("Prequel"), formData.get("Sequel"), formData.get("Nome"));
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
