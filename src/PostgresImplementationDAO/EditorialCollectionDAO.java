@@ -1,15 +1,55 @@
 package PostgresImplementationDAO;
 
+import DAO.BookResultInterface;
 import DAO.EditorialCollectionDAOInterface;
 import DAO.EditorialCollectionResultInterface;
+import Model.EditorialCollection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
+    @Override
+    public EditorialCollectionResultInterface getEditorialCollectionByIssn(String issn) {
+        final String query = "SELECT * FROM collana WHERE issn = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, issn);
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            if (result.next()) {
+                return new EditorialCollectionResult(result);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public EditorialCollectionResultInterface updateEditorialCollectionByIssn(String editorialCollectionToUpdate, String issn, String name, String publisher) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE collana SET issn = ?, nome = ?, editore = ? WHERE issn = ? RETURNING Collana.*");
+        ) {
+            statement.setString(1, issn);
+            statement.setString(2, name);
+            statement.setString(3, publisher);
+            statement.setString(4, editorialCollectionToUpdate);
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            if (result.next()) {
+                return new EditorialCollectionResult(result);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public ArrayList<EditorialCollectionResultInterface> getAll() {
         final String query = "SELECT * FROM Collana";
@@ -38,6 +78,60 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
                 PreparedStatement statement = conn.prepareStatement("DELETE FROM collana WHERE issn = ?");
         ) {
             statement.setString(1, issn);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public ArrayList<BookResultInterface> getBooksFromEditorialCollection(String issn) {
+        final String query = "SELECT l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo FROM libro_contenuto_collana AS lc " +
+                "JOIN libro AS l ON l.isbn = lc.libro " +
+                "WHERE lc.collana = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, issn);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<BookResultInterface> bookResults = new ArrayList<>();
+            while (result.next()) {
+                BookResultInterface booksResult = new BookResult(result);
+                bookResults.add(booksResult);
+            }
+            return bookResults;
+        } catch (SQLException e) {
+            System.out.println("Errore: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public boolean insertBookIntoEditorialCollection(String book, String editorialCollection) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO libro_contenuto_collana VALUES (?,?)");
+        ) {
+            statement.setString(1, book);
+            statement.setString(2, editorialCollection);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteBookFromEditorialCollection(String book, String editorialCollection) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM libro_contenuto_collana WHERE libro = ? AND collana = ?");
+        ) {
+            statement.setString(1, book);
+            statement.setString(2, editorialCollection);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());

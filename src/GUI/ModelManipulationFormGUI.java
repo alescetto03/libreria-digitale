@@ -1,8 +1,10 @@
 package GUI;
 
 import Controller.AppController;
+import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -27,15 +29,13 @@ public class ModelManipulationFormGUI extends AppView {
         for (Map.Entry<String, JComponent> entry : data.entrySet()) {
             JPanel formField = new JPanel();
             formField.setLayout(new BorderLayout());
-
             JLabel label = new JLabel(entry.getKey());
-            entry.getValue().setMaximumSize(new Dimension(300, 50));
-
             formField.add(label, BorderLayout.PAGE_START);
-            formField.add(entry.getValue(), BorderLayout.CENTER);
-            label.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+            formField.add(entry.getValue(), BorderLayout.PAGE_END);
+            formField.setMaximumSize(new Dimension(400, 55));
+
             formField.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-            form.add(formField, BorderLayout.CENTER);
+            form.add(formField);
         }
         confirmButton = new JButton("Conferma");
         JScrollPane scrollPane = new JScrollPane(form);
@@ -79,6 +79,10 @@ public class ModelManipulationFormGUI extends AppView {
                 renderedData.put(entry.getKey(), ((JTextField) entry.getValue()).getText().trim());
             } else if (entry.getValue() instanceof JComboBox<?>) {
                 renderedData.put(entry.getKey(), (((JComboBox<?>) entry.getValue()).getSelectedItem()).toString());
+            } else if (entry.getValue() instanceof JYearChooser) {
+                renderedData.put(entry.getKey(), String.valueOf(((JYearChooser) entry.getValue()).getYear()));
+            } else if (entry.getValue() instanceof JTextArea) {
+                renderedData.put(entry.getKey(), ((JTextArea) entry.getValue()).getText());
             }
         }
         return renderedData;

@@ -58,6 +58,10 @@ public class HomepageGUI extends AppView{
             appController.logoutUser();
         });
 
+        adminButton.addActionListener((ActionEvent e) -> {
+            appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(appController.getCurrentView(), "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
+        });
+
         CrudTable personalCollectionsTable = new PersonalCollectionsCrudTable(this, "Le tue raccolte:", new String[]{"id", "nome", "visibilita"}, appController.getRenderedPersonalCollections());
         contentPane.add(personalCollectionsTable);
 

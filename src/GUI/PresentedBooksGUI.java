@@ -1,8 +1,7 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.*;
-import Model.ScientificPublication;
+import GUI.Components.EditorialCollectionsCrudTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,20 +9,19 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ScientificPublicationsInJournalGUI extends AppView {
+public class PresentedBooksGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel collectionTitle = new JLabel();
-    public ScientificPublicationsInJournalGUI(AppController appController, Map<String, Object> journal, ArrayList<Map<String, Object>> scientificPublicationsInJournal, ArrayList<Map<String, Object>> scientificPublications) {
+    public PresentedBooksGUI(AppController appController, Map<String, Object> presentationHall, ArrayList<Map<String, Object>> presentedBooks, ArrayList<Map<String, Object>> books) {
         super(appController);
-
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new JournalsCrudTable(this, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, appController.getRenderedJournals())));
+            appController.switchView(new AdminPageGUI(appController, new EditorialCollectionsCrudTable(this, "Collane:", new String[]{"issn", "nome", "editore"}, appController.getRenderedEditorialCollections())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        collectionTitle.setText((String) journal.get("name"));
+        collectionTitle.setText((String) presentationHall.get("name"));
         collectionTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titlePanel.add(goBackButton);
@@ -36,17 +34,17 @@ public class ScientificPublicationsInJournalGUI extends AppView {
         itemsWrapper.setLayout(new BoxLayout(itemsWrapper, BoxLayout.Y_AXIS));
         itemsWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
         ArrayList<JPanel> items = new ArrayList<>();
-        for (Map<String, Object> scientificPublication: scientificPublications) {
+        for (Map<String, Object> book: books) {
             JPanel item = new JPanel();
-            JLabel doi = new JLabel((String) scientificPublication.get("doi") + " | ");
-            JLabel title = new JLabel((String) scientificPublication.get("title"));
+            JLabel isbn = new JLabel((String) book.get("isbn") + " | ");
+            JLabel title = new JLabel((String) book.get("title"));
             JCheckBox checkBox = new JCheckBox();
-            checkBox.setSelected(scientificPublicationsInJournal.contains(scientificPublication));
+            checkBox.setSelected(presentedBooks.contains(book));
             checkBox.addActionListener((ActionEvent e) -> {
-                appController.updateScientificPublicationsFromJournal((String) scientificPublication.get("doi"), (String) journal.get("issn"), checkBox.isSelected());
+                appController.updateBooksFromEditorialCollection((String) book.get("isbn"), (String) presentationHall.get("issn"), checkBox.isSelected());
             });
             item.setLayout(new FlowLayout());
-            item.add(doi);
+            item.add(isbn);
             item.add(title);
             item.add(checkBox);
             items.add(item);
@@ -60,6 +58,6 @@ public class ScientificPublicationsInJournalGUI extends AppView {
     }
     @Override
     public JPanel getContentPane() {
-        return contentPane;
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package DAO;
 
+import Model.ScientificPublication;
+
 import java.util.ArrayList;
 
 public interface ScientificPublicationDAOInterface {
@@ -11,4 +13,6 @@ public interface ScientificPublicationDAOInterface {
     boolean deleteScientificPublicationByDoi(String doi);
 
     ArrayList<ScientificPublicationResultInterface> getPublicationsFromCollection(int publicationId);
+
+    ScientificPublicationResultInterface updateScientificPublicationByDoi(String publicationToUpdate, String doi, String title, String publisher, ScientificPublication.FruitionMode fruitionMode, int publicationYear, String description) throws Exception;
 }

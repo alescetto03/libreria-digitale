@@ -2,6 +2,7 @@ package PostgresImplementationDAO;
 
 import DAO.StoreDAOInterface;
 import DAO.StoreResultInterface;
+import Model.Book;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,5 +67,38 @@ public class StoreDAO implements StoreDAOInterface {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public StoreResultInterface updateStoreByPartitaIva(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
+        try (
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement statement = conn.prepareStatement("UPDATE negozio SET partita_iva = ?, nome = ?, indirizzo = ?, url = ? WHERE partita_iva = ?");
+        ) {
+            statement.setString(1, partitaIva);
+            statement.setString(2, name);
+            statement.setString(3, address);
+            statement.setString(4, url);
+            statement.setString(5, storeToUpdate);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            if (resultSet.next()) {
+                return new StoreResult(resultSet.getString("partita_iva"), resultSet.getString("nome"), resultSet.getString("indirizzo"), resultSet.getString("url"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            if (e.getMessage().contains("negozio_pk")) {
+                throw new Exception("Esiste già un libro con quella partita IVA!");
+            } else if (e.getMessage().contains("validita_negozio")) {
+                throw new Exception("Un negozio deve possedere un URL o un indirizzo");
+            } else if (e.getMessage().contains("partita_iva_check")) {
+                throw new Exception(" La partita iva di un Negozio deve essere una sequenza numerica di 11 cifre");
+            } else if (e.getSQLState().equals("23502") && e.getMessage().contains("nome")) {
+                throw new Exception("Il campo \'nome\' non può essere vuoto");
+            } else {
+                throw new Exception("C'è stato un errore durante l'aggiornamento");
+            }
+        }
+        return null;
     }
 }

@@ -1,13 +1,10 @@
 package PostgresImplementationDAO;
 
-import DAO.BookResultInterface;
 import DAO.ScientificPublicationDAOInterface;
 import DAO.ScientificPublicationResultInterface;
+import Model.ScientificPublication;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ScientificPublicationDAO implements ScientificPublicationDAOInterface {
@@ -90,5 +87,47 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
             System.out.println("Errore: " + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public ScientificPublicationResultInterface updateScientificPublicationByDoi(String publicationToUpdate, String doi, String title, String publisher, ScientificPublication.FruitionMode fruitionMode, int publicationYear, String description) throws Exception {
+        final String query = "UPDATE articolo_scientifico SET doi = ?, titolo = ?, editore = ?, modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = ? WHERE doi = ? RETURNING articolo_scientifico.*";
+        try(
+            Connection connection = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, doi);
+            statement.setString(2, title);
+            statement.setString(3, publisher);
+            statement.setObject(4, fruitionMode.name().toLowerCase(), Types.OTHER);
+            statement.setInt(5, publicationYear);
+            statement.setString(6, description);
+            statement.setString(7, publicationToUpdate);
+            statement.execute();
+            ResultSet result = statement.getResultSet();
+            if (result.next()) {
+                return new ScientificPublicationResult(result);
+            }
+        } catch (SQLException e) {
+            System.out.println("Errore: " + e.getMessage());
+            if (e.getMessage().contains("articolo_scientifico_pk")) {
+                throw new Exception("Esiste già un libro con quell'ISBN!");
+            } else if (e.getMessage().contains("doi_check")) {
+                throw new Exception("Un DOI deve essere una sequenza alfanumerica composta da un prefisso e un" +
+                        "suffisso separati da uno slash. Il prefissso di un DOI deve iniziare con \"10.\"" +
+                        "La sequenza alfanumerica accetta i caratteri speciali: punto, dash e underscore, " +
+                        "purché siano succeduti da una stringa alfanumerica di almeno un carattere.\n" +
+                        "Esempio: 10.testo/testo_testo-testo.t");
+            } else if (e.getSQLState().equals("23502") && e.getMessage().contains("titolo")) {
+                throw new Exception("Attenzione, il campo \"titolo\" non può essere vuoto");
+            } else if (e.getSQLState().equals("23502") && e.getMessage().contains("editore")) {
+                throw new Exception("Attenzione, il campo \"editore\" non può essere vuoto");
+            } else if (e.getSQLState().equals("23502") && e.getMessage().contains("descrizione")) {
+                throw new Exception("Attenzione, il campo \"descrizione\" non può essere vuoto");
+            } else {
+                throw new Exception("C'è stato un errore durante la modifica");
+            }
+        }
+        return null;
     }
 }

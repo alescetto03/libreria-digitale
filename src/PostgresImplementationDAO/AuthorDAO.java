@@ -2,12 +2,9 @@ package PostgresImplementationDAO;
 
 import DAO.AuthorDAOInterface;
 import DAO.AuthorResultInterface;
-import DAO.BookResultInterface;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class AuthorDAO implements AuthorDAOInterface {
@@ -43,4 +40,72 @@ public class AuthorDAO implements AuthorDAOInterface {
             return false;
         }
     }
+
+    @Override
+    public AuthorResultInterface updateAuthorById(int authorToUpdate, String name, LocalDate birthDate, LocalDate deathDate, String nationality, String biography) throws Exception {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE autore SET nome = ?, data_nascita = ?, data_morte = ?, nazionalita = ?, biografia = ? WHERE cod_autore = ?");
+        ) {
+            statement.setInt(1, authorToUpdate);
+            statement.setString(2, name);
+            statement.setDate(3, Date.valueOf(birthDate));
+            statement.setDate(4, Date.valueOf(deathDate));
+            statement.setString(5, nationality);
+            statement.setString(6, biography);
+            statement.execute();
+            ResultSet result = statement.getResultSet();
+            if (result.next()) {
+                return new AuthorResult(result);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            if (e.getMessage().contains("coerenza_date_autore"))
+                throw new Exception("La data di morte di un autore deve essere successiva a quella di nascita.");
+            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
+                throw new Exception("Attenzione, il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("data_nascita") && e.getMessage().contains("null value"))
+                throw new Exception("Attenzione, il campo \"data di nascita\" non può essere vuoto");
+            else if (e.getMessage().contains("nazionalita") && e.getMessage().contains("null value"))
+                throw new Exception("Attenzione, il campo \"nazionalità\" non può essere vuoto");
+            else
+                throw new Exception("C'è stato un errore durante la modifica");
+        }
+        return null;
+    }
+
+    public AuthorResultInterface updateAuthorById (int author_id, String name, java.sql.Date birth_date, java.sql.Date death_date, String nationality, String bio) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE Autore SET nome = ?, data_nascita = ?, data_morte = ?, nazionalita = ?, biografia = ? WHERE cod_autore = ? RETURNING *");
+        ) {
+            statement.setString(1, name);
+            statement.setDate(2, birth_date);
+            statement.setDate(3, death_date);
+            statement.setString(4, nationality);
+            statement.setString(5, bio);
+            statement.setInt(6, author_id);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+
+            if (result.next()) {
+                return new AuthorResult(result);
+            }
+        } catch (SQLException e) {
+            if (e.getMessage().contains("coerenza_date_autore"))
+                throw new Exception("La data di morte di un autore deve essere dopo quella di nascita.");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il nome non puo' essere nullo.");
+            else if (e.getMessage().contains("data_nascita") && e.getSQLState().equals("23502"))
+                throw new Exception("La data di nascita non puo' essere nulla.");
+            else if (e.getMessage().contains("nazionalita") && e.getSQLState().equals("23502"))
+                throw new Exception("La nazionalita' non puo' essere nulla.");
+            else
+                throw new Exception("C'è stato un errore durante la modifica");
+        }
+        return null;
+    }
+
 }

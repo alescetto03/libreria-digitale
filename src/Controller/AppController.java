@@ -6,7 +6,6 @@ import Model.*;
 import PostgresImplementationDAO.*;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -414,11 +413,11 @@ public class AppController {
      */
     public boolean removePublicationFromCollection(Object publication_doi, int collection_id){
         String doi = (String) publication_doi;
-        //getUserSavedCollections();
         return this.collectionDAO.deletePublicationFromCollection(collection_id, doi);
     }
 
     /**
+     * TODO::DEPRECATO?
      * Funzione che salva nel DB le collezioni personali create dall'utente.
      */
     public int savePersonalCollectionIntoDatabase(ArrayList<String> data) {
@@ -448,6 +447,11 @@ public class AppController {
 
     public void insertPersonalCollectionIntoDatabase(String name, String visibility) {
         this.collectionDAO.insertCollection(name, Collection.Visibility.valueOf(visibility.toUpperCase()), loggedUser.getUsername());
+    }
+
+    public void updatePersonalCollectionIntoDatabase(int id, String name, String visibility) {
+        System.out.println(id + " " +  name + " "  + visibility);
+        this.collectionDAO.updateCollectionById(id, name, Collection.Visibility.valueOf(visibility.toUpperCase()), loggedUser.getUsername());
     }
 
     /**
@@ -606,6 +610,18 @@ public class AppController {
      */
     public ArrayList<Map<String, Object>> getRenderedBooks() {
         ArrayList<BookResultInterface> bookResults = bookDAO.getAll();
+        return renderBooks(bookResults);
+    }
+    /**
+     * Metodo che restituisce una lista di tutti i libri memorizzati nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedBooksByPublisher(String publisher) {
+        ArrayList<BookResultInterface> bookResults = bookDAO.getBooksByPublisher(publisher);
+        return renderBooks(bookResults);
+    }
+
+    private ArrayList<Map<String, Object>> renderBooks(ArrayList<BookResultInterface> bookResults) {
         ArrayList<AbstractModel> books = new ArrayList<>();
         for (BookResultInterface bookResult: bookResults) {
             Book book = new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic());
@@ -624,18 +640,80 @@ public class AppController {
 
     /**
      * Metodo che modifica un libro dal database
+     * @param bookToUpdate
+     * @param isbn
+     * @param title
+     * @param publisher
+     * @param fruitionMode
+     * @param publicationYear
+     * @param description
+     * @param genre
+     * @param target
+     * @param topic
+     * @param type
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> updateBookFromDatabase(String bookToUpdate, String isbn, String title, String publisher, String fruitionMode, int publicationYear, String description, String genre, String target, String topic, String type) throws Exception {
+        BookResultInterface bookResult = bookDAO.updateBookByIsbn(bookToUpdate, isbn, title, publisher, Book.FruitionMode.valueOf(fruitionMode.toUpperCase()), publicationYear, null, description, genre, target, topic, Book.BookType.valueOf(type.toUpperCase()));
+        if (bookResult != null) {
+            return new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), null, null).getData();
+        }
+        return null;
+    }
+
+    /**
+     * Metodo che modifica un articolo scientifico dal database
+     * @param publicationToUpdate
+     * @param doi
+     * @param title
+     * @param publisher
+     * @param fruitionMode
+     * @param publicationYear
+     * @param description
      * @return
      */
-    public Map<String, Object> updateBookFromDatabase(ArrayList<String> data) throws Exception {
-        BookResultInterface bookResult = bookDAO.updateBookByIsbn(data.get(0), data.get(1), data.get(2), Book.FruitionMode.valueOf(data.get(3).toUpperCase()), Integer.parseInt(data.get(4)), data.get(5).getBytes(), data.get(6), data.get(7), data.get(8), data.get(9), Book.BookType.valueOf(data.get(10).toUpperCase()));
-        return new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic()).getData();
+    public Map<String, Object> updateScientificPublicationFromDatabase(String publicationToUpdate, String doi, String title, String publisher, String fruitionMode, int publicationYear, String description) throws Exception {
+        ScientificPublicationResultInterface scientificPublicationResult = publicationDAO.updateScientificPublicationByDoi(publicationToUpdate, doi, title, publisher, ScientificPublication.FruitionMode.valueOf(fruitionMode.toUpperCase()), publicationYear, description);
+        if (scientificPublicationResult != null) {
+            return new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), publicationYear, null, description, scientificPublicationResult.getPublisher()).getData();
+        }
+        return null;
+    }
+
+    /**
+     * Metodo che aggiorna un autore dal database
+     * @param id
+     * @param name
+     * @param birthDate
+     * @param deathDate
+     * @param nationality
+     * @param biografia
+     */
+    public Map<String, Object> updateAuthorById(int id, String name, LocalDate birthDate, LocalDate deathDate, String nationality, String biografia) throws Exception {
+        AuthorResultInterface resultSet = authorDAO.updateAuthorById(id, name, birthDate, deathDate, nationality, biografia);
+        if (resultSet != null) {
+            return new Author(resultSet.getId(), resultSet.getName(), resultSet.getBirthDate().toLocalDate(), resultSet.getDeathDate().toLocalDate(), resultSet.getNationality(), resultSet.getBio()).getData();
+        }
+        return null;
+    }
+
+    /**
+     * Metodo che aggiorna una collana dal database
+     * @param editorialCollectionToUpdate
+     * @param issn
+     * @param name
+     * @param publisher
+     */
+    public void updateEditorialCollection(String editorialCollectionToUpdate, String issn, String name, String publisher) {
+        EditorialCollectionResultInterface resultSet = editorialCollectionDAO.updateEditorialCollectionByIssn(editorialCollectionToUpdate, issn, name, publisher);
     }
 
     /**
      * Metodo che restituisce una lista di tutti gli articoli scientifici memorizzati nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
-    public ArrayList<Map<String, Object>> getRenderedScienticPublications() {
+    public ArrayList<Map<String, Object>> getRenderedScientificPublications() {
         ArrayList<ScientificPublicationResultInterface> scientificPublicationResults = publicationDAO.getAll();
         ArrayList<AbstractModel> scientificPublications = new ArrayList<>();
         for (ScientificPublicationResultInterface scientificPublicationResult: scientificPublicationResults) {
@@ -821,20 +899,88 @@ public class AppController {
     }
 
     /**
+     * Metodo che restituisce una lista di tutti i libri contenuti in una raccolta memorizzata nel database
+     */
+    public ArrayList<Map<String, Object>> getBooksFromEditorialCollection(String issn) {
+        ArrayList<BookResultInterface> resultSets = editorialCollectionDAO.getBooksFromEditorialCollection(issn);
+        return renderBooks(resultSets);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti i libri presentati in una libreria memorizzata nel database
+     */
+    public ArrayList<Map<String, Object>> getBooksFromPresentationHall(int presentationHallId) {
+        ArrayList<BookResultInterface> resultSets = presentationHallDAO.getPresentedBooks(presentationHallId);
+        return renderBooks(resultSets);
+    }
+
+    /**
      * Metodo che mostra a video tutti gli articoli pubblicati da una rivista
      */
     public void showScientificPublicationsInJournal(String issn) {
-        System.out.println(issn);
         JournalResultInterface journalResult = journalDAO.getJournalByIssn(issn);
         Journal journal = new Journal(journalResult.getIssn(), journalResult.getName(), journalResult.getArgument(), journalResult.getPublicationYear(), journalResult.getManager());
-        switchView(new ScientificPublicationsInJournalGUI(this, journal.getData(), getScientificPublicationsFromJournal(issn), getRenderedScienticPublications()));
+        switchView(new ScientificPublicationsInJournalGUI(this, journal.getData(), getScientificPublicationsFromJournal(issn), getRenderedScientificPublications()));
     }
 
+    /**
+     * Metodo che mostra a video tutti i libri presenti in una collana
+     */
+    public void showBooksInEditorialCollection(String issn) {
+        EditorialCollectionResultInterface editorialCollectionResult = editorialCollectionDAO.getEditorialCollectionByIssn(issn);
+        EditorialCollection editorialCollection = new EditorialCollection(editorialCollectionResult.getIssn(), editorialCollectionResult.getName(), editorialCollectionResult.getPublisher());
+        switchView(new BooksInEditorialCollectionGUI(this, editorialCollection.getData(), getBooksFromEditorialCollection(issn), getRenderedBooksByPublisher(editorialCollection.getPublisher())));
+    }
+
+    /**
+     * Metodo che mostra a video tutti i libri presenti in una libreria
+     */
+    public void showPresentedBooks(int presentationHallId) {
+        PresentationHallResultInterface presentationHallResult = presentationHallDAO.getPresentationhallById(presentationHallId);
+        PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
+        switchView(new BooksInEditorialCollectionGUI(this, presentationHall.getData(), getBooksFromPresentationHall(presentationHallId), getRenderedBooks()));
+    }
+
+    /**
+     * Metodo che aggiorna le relazioni fra articoli scientifici e riviste
+     * @param issn
+     * @param doi
+     * @param isSelected
+     */
     public void updateScientificPublicationsFromJournal(String issn, String doi, boolean isSelected) {
         if (isSelected) {
             journalDAO.insertScientificPublicationIntoJournal(issn, doi);
         } else {
             journalDAO.deleteScientificPublicationFromJournal(issn, doi);
+        }
+    }
+
+    /**
+     *  Metodo che aggiorna le relazioni fra libri e collane
+     * @param issn
+     * @param isbn
+     * @param isSelected
+     */
+    public void updateBooksFromEditorialCollection(String issn, String isbn, boolean isSelected) {
+        if (isSelected) {
+            editorialCollectionDAO.insertBookIntoEditorialCollection(issn, isbn);
+        } else {
+            editorialCollectionDAO.deleteBookFromEditorialCollection(issn, isbn);
+        }
+    }
+
+    /**
+     * Metodo che aggiorna le relazioni fra libri e librerie
+     * @param isbn
+     * @param presentationHallId
+     * @param presentationDate
+     * @param isSelected
+     */
+    public void updatePresentedBooks(String isbn, int presentationHallId, LocalDate presentationDate, boolean isSelected) {
+        if (isSelected) {
+            presentationHallDAO.insertBookIntoPresentationHall(isbn, presentationHallId, presentationDate);
+        } else {
+            presentationHallDAO.deleteBookFromPresentationHall(isbn, presentationHallId);
         }
     }
 }

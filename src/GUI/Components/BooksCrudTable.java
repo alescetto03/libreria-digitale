@@ -1,12 +1,16 @@
 package GUI.Components;
 
 import GUI.AppView;
+import GUI.InsertBookGUI;
+import GUI.UpdateEducationalBook;
+import GUI.UpdateNovelBook;
 import Model.Book;
 import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +37,10 @@ public class BooksCrudTable extends CrudTable{
         items.getColumn("target").setPreferredWidth(60);
         items.getColumn("materia").setPreferredWidth(80);
         items.getColumn("tipo").setPreferredWidth(80);
+        this.createButton.removeActionListener(createButtonListener);
+        this.createButton.addActionListener((ActionEvent e) -> {
+            parentView.getAppController().switchView(new InsertBookGUI(parentView.getAppController()));
+        });
     }
 
     @Override
@@ -63,9 +71,12 @@ public class BooksCrudTable extends CrudTable{
     }
 
     @Override
-    protected Object onUpdateButton(ArrayList<String> data) {
-        //return parentView.getAppController().updateBookFromDatabase(this.data);
-        return null;
+    protected void onUpdateButton(Object id, ArrayList<String> data) {
+        if (data.get(10).equals("romanzo")) {
+            parentView.getAppController().switchView(new UpdateNovelBook(parentView.getAppController(), data, (String) id));
+        } else {
+            parentView.getAppController().switchView(new UpdateEducationalBook(parentView.getAppController(), data, (String) id));
+        }
     }
 
     @Override

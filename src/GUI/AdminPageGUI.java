@@ -2,7 +2,6 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.*;
-import Model.Journal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,16 +23,16 @@ public class AdminPageGUI extends AppView {
     private JPanel buttonsWrapper;
     private JPanel tableWrapper;
     private JButton publicationsJournalsButton;
-    private JButton booksEditorialCollectionsButton;
     private JButton publicationsConferencesButton;
     private JButton booksPresentationHallsButton;
     private JButton booksShopsButton;
     private JPanel currentPanel;
     private CrudTable currentTable;
+    private CrudTable startCrudTable;
     private ArrayList<Map<String, Object>> currentData;
-    public AdminPageGUI(AppController appController, ArrayList<Map<String, Object>> startData) {
+    public AdminPageGUI(AppController appController, CrudTable startCrudTable) {
         super(appController);
-        currentData = startData;
+        this.startCrudTable = startCrudTable;
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
         booksButton.addActionListener((ActionEvent e) -> {
@@ -46,7 +45,7 @@ public class AdminPageGUI extends AppView {
         });
         publicationsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
-            currentData = appController.getRenderedScienticPublications();
+            currentData = appController.getRenderedScientificPublications();
             currentTable = new ScientificPublicationsCrudTable(this, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();
@@ -108,12 +107,9 @@ public class AdminPageGUI extends AppView {
             tableWrapper.validate();
             tableWrapper.repaint();
         });
-        publicationsJournalsButton.addActionListener((ActionEvent e) -> {
-
-        });
     }
     public void createUIComponents() {
-        currentTable = new ConferencesCrudTable(this, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, currentData);
+        currentTable = startCrudTable;
     }
     private void switchPanel() {
 

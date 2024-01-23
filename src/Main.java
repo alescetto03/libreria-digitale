@@ -1,30 +1,23 @@
 import Controller.AppController;
-import GUI.AdminPageGUI;
-import GUI.HomepageGUI;
-import GUI.ModelManipulationFormGUI;
 
 public class Main {
-    //public static void main(String[] args) { (new AppController()).showLogin(); }
+    public static void main(String[] args) { (new AppController()).showLogin(); }
 
     /**
-     public static void main(String[] args) {
-        AppController appController = new AppController();
-        appController.showView(new AdminPageGUI(appController, appController.getRenderedBooks()));
-    }
-    **/
+    public static void main(String[] args)  throws Exception {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO libro VALUES (?,?)");
+        ) {
+            statement.setString(1, "01234591");
+            statement.setString(2, "ciaooo");
+            statement.execute();
 
-    /**public static void main(String[] args) {
-        AppController appController = new AppController();
-        appController.authenticateUser("john_doe", "P@ssw0rd");
-        appController.showHomepage();
+            ResultSet result = statement.getResultSet();
+        } catch (SQLException e) {
+            if (e.getSQLState().contains("isbn_check")) {
+                throw new Exception("Un ISBN deve essere una sequenza numerica di 13 o 10 cifre che inizia per \'978\' o per \'979\'");
+            }
+        }
     }**/
-
-    /**public static void main(String[] args) {
-        AppController appController = new AppController();
-    }**/
-
-    public static void main(String[] args) {
-        AppController appController = new AppController();
-        appController.showView(new AdminPageGUI(appController, appController.getRenderedConferences()));
-    }
 }

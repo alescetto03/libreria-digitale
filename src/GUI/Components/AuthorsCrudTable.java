@@ -1,13 +1,16 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
+import java.util.*;
 
 public class AuthorsCrudTable extends CrudTable {
     public AuthorsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
@@ -43,8 +46,14 @@ public class AuthorsCrudTable extends CrudTable {
     }
 
     @Override
-    protected Object onUpdateButton(ArrayList<String> data) {
-        return null;
+    protected void onUpdateButton(Object id, ArrayList<String> data) {
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
+        this.parentView.getAppController().switchView(this.updateView);
+        this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
+            parentView.getAppController().updatePersonalCollectionIntoDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Visibilità"));
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), this));
+        });
     }
 
     @Override
@@ -59,12 +68,30 @@ public class AuthorsCrudTable extends CrudTable {
         schema.put("Data di nascita", new JDateChooser());
         schema.put("Data di morte", new JDateChooser());
         schema.put("Nazionalità", new JTextField());
-        schema.put("Biografia", new JTextField());
+        schema.put("Biografia", new JTextArea());
         return schema;
     }
 
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
-        return null;
+        Map<String, JComponent> schema = new HashMap<>();
+        JTextField nameField = new JTextField();
+        JDateChooser birthDateField = new JDateChooser();
+        JDateChooser deathDateField = new JDateChooser();
+        JTextField nationalityField = new JTextField();
+        JTextArea biographyField = new JTextArea();
+
+        nameField.setText(data.get(1));
+        birthDateField.setDateFormatString(data.get(2));
+        deathDateField.setDateFormatString(data.get(3));
+        nationalityField.setText(data.get(4));
+        biographyField.setText(data.get(5));
+
+        schema.put("Nome", nameField);
+        schema.put("Data di nascita", birthDateField);
+        schema.put("Data di morte", deathDateField);
+        schema.put("Nazionalità", nationalityField);
+        schema.put("Biografia", biographyField);
+        return schema;
     }
 }

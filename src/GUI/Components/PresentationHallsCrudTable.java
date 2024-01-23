@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class PresentationHallsCrudTable extends CrudTable {
     public PresentationHallsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(parentView, title, columns, data, false, true, true, true, "Aggiungi una sala/libreria", "Modifica una sala/libreria");
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi una sala/libreria", "Modifica una sala/libreria");
         items.getColumn("id").setMaxWidth(50);
         items.getColumn("id").setMinWidth(50);
-        items.getColumn("azioni").setMaxWidth(60);
-        items.getColumn("azioni").setMinWidth(60);
+        items.getColumn("azioni").setMaxWidth(80);
+        items.getColumn("azioni").setMinWidth(80);
     }
 
     @Override
@@ -36,13 +36,12 @@ public class PresentationHallsCrudTable extends CrudTable {
     }
 
     @Override
-    protected Object onUpdateButton(ArrayList<String> data) {
-        return null;
+    protected void onUpdateButton(Object id, ArrayList<String> data) {
     }
 
     @Override
     protected void onViewButton(Object id) {
-
+        parentView.getAppController().showPresentedBooks(Integer.parseInt((String) id));
     }
 
     @Override

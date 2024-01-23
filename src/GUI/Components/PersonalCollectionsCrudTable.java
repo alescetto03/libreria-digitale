@@ -71,8 +71,14 @@ public class PersonalCollectionsCrudTable extends CrudTable {
     }
 
     @Override
-    protected Object onUpdateButton(ArrayList<String> data) {
-        return null;
+    protected void onUpdateButton(Object id, ArrayList<String> data) {
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
+        this.parentView.getAppController().switchView(this.updateView);
+        this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
+            parentView.getAppController().updatePersonalCollectionIntoDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Visibilità"));
+            parentView.getAppController().showHomepage();
+        });
     }
 
     @Override

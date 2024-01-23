@@ -1,7 +1,6 @@
 package GUI.Components;
 
 import GUI.ConfirmDeleteGUI;
-import GUI.ModelManipulationFormGUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,25 +8,25 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class ActionsPanel extends JPanel{
-    private IconButton viewButton;
-    private IconButton saveButton;
-    private IconButton deleteButton;
+    private ActionButton viewButton;
+    private ActionButton editButton;
+    private ActionButton deleteButton;
     private CrudTable crudTable;
     boolean displayViewButton;
-    boolean displaySaveButton;
+    boolean displayEditButton;
     boolean displayDeleteButton;
 
-    public ActionsPanel(CrudTable crudTable, boolean displayViewButton, boolean displaySaveButton, boolean displayDeleteButton) {
+    public ActionsPanel(CrudTable crudTable, boolean displayViewButton, boolean displayEditButton, boolean displayDeleteButton) {
         this.crudTable = crudTable;
         this.displayViewButton = displayViewButton;
-        this.displaySaveButton = displaySaveButton;
+        this.displayEditButton = displayEditButton;
         this.displayDeleteButton = displayDeleteButton;
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
 
         if (displayViewButton) {
-            viewButton = new IconButton("/GUI/images/view.png", 18, 18, Image.SCALE_SMOOTH);
+            viewButton = new ActionButton("/GUI/images/view.png", 18, 18, Image.SCALE_SMOOTH);
             add(viewButton, gbc);
             viewButton.addActionListener((ActionEvent e) -> {
                 JTable table = (JTable) viewButton.getParent().getParent();
@@ -38,36 +37,21 @@ public class ActionsPanel extends JPanel{
                 }
             });
         }
-        if (displaySaveButton) {
-            saveButton = new IconButton("/GUI/images/save.png", 18, 18, Image.SCALE_SMOOTH);
-            add(saveButton, gbc);
-            saveButton.addActionListener((ActionEvent e) -> {
+        if (displayEditButton) {
+            editButton = new ActionButton("/GUI/images/edit.png", 18, 18, Image.SCALE_SMOOTH);
+            add(editButton, gbc);
+            editButton.addActionListener((ActionEvent e) -> {
                 int row = crudTable.items.getSelectedRow();
                 Object id = crudTable.items.getValueAt(row, 0);
                 ArrayList<String> data = new ArrayList<>();
                 for (int i = 0; i < crudTable.items.getColumnCount() - 1; i++) {
                     data.add(String.valueOf(crudTable.items.getValueAt(row, i)));
                 }
-                crudTable.parentView.getAppController().switchView(new ModelManipulationFormGUI(crudTable.parentView.getAppController(), crudTable.parentView, crudTable.getFormSchema(data), crudTable.updateViewTitle));
-                /**
-                 JTable table = (JTable) saveButton.getParent().getParent();
-                int row = table.getEditingRow();
-                ArrayList<String> data = new ArrayList<>();
-                for (int i = 0; i < table.getColumnCount() - 1; i++) {
-                    data.add(String.valueOf(table.getValueAt(row, i)));
-                }
-                try {
-                    Object savedData = crudTable.onUpdateButton(data);
-                    if (savedData == null) {
-                        JOptionPane.showMessageDialog(crudTable, "Errore durante il salvataggio", "Errore!!!", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(crudTable, exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
-                }**/
+                crudTable.onUpdateButton(id, data);
             });
         }
         if (displayDeleteButton) {
-            deleteButton = new IconButton("/GUI/images/delete.png", 18, 18, Image.SCALE_SMOOTH);
+            deleteButton = new ActionButton("/GUI/images/delete.png", 18, 18, Image.SCALE_SMOOTH);
             add(deleteButton, gbc);
             deleteButton.addActionListener((ActionEvent e) -> {
                 int row = crudTable.items.getSelectedRow();

@@ -47,8 +47,7 @@ public class PublicationsInCollectionCrudTable extends CrudTable{
     }
 
     @Override
-    protected Object onUpdateButton(ArrayList<String> data) {
-        return null;
+    protected void onUpdateButton(Object id, ArrayList<String> data) {
     }
 
     @Override
