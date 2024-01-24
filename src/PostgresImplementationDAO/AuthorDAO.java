@@ -44,14 +44,14 @@ public class AuthorDAO implements AuthorDAOInterface {
     public AuthorResultInterface updateAuthorById(int authorToUpdate, String name, java.sql.Date birthDate, java.sql.Date deathDate, String nationality, String biography) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("UPDATE autore SET nome = ?, data_nascita = ?, data_morte = ?, nazionalita = ?, biografia = ? WHERE cod_autore = ?");
+                PreparedStatement statement = conn.prepareStatement("UPDATE autore SET nome = NULLIF(?, ''), data_nascita = ?, data_morte = ?, nazionalita = NULLIF(?, ''), biografia = ? WHERE cod_autore = ? RETURNING Autore.*");
         ) {
-            statement.setInt(1, authorToUpdate);
-            statement.setString(2, name);
-            statement.setDate(3, birthDate);
-            statement.setDate(4, deathDate);
-            statement.setString(5, nationality);
-            statement.setString(6, biography);
+            statement.setString(1, name);
+            statement.setDate(2, birthDate);
+            statement.setDate(3, deathDate);
+            statement.setString(4, nationality);
+            statement.setString(5, biography);
+            statement.setInt(6, authorToUpdate);
             statement.execute();
             ResultSet result = statement.getResultSet();
             if (result.next()) {

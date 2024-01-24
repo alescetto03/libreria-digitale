@@ -72,7 +72,7 @@ public class AuthorsCrudTable extends CrudTable {
                 parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
                 JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "L'autore \"" + renderedData.get("name") + "\" è stato modificato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception) {
-                System.out.println(exception.getMessage());
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
@@ -105,10 +105,10 @@ public class AuthorsCrudTable extends CrudTable {
 
         nameField.setText(data.get(1));
         try {
-            Date formattedBirthDateField = formatter.parse(data.get((2)));
-            Date formattedDeathDateField = formatter.parse(data.get((3)));
-            birthDateField.setDate(formattedBirthDateField);
-            deathDateField.setDate(formattedDeathDateField);
+            Date formattedBirthDateField = !data.get(2).equals("null") ? formatter.parse(data.get(2)) : null;
+            Date formattedDeathDateField = !data.get(3).equals("null") ? formatter.parse(data.get(3)) : null;
+            if (formattedBirthDateField != null) birthDateField.setDate(formattedBirthDateField);
+            if (formattedDeathDateField != null) deathDateField.setDate(formattedDeathDateField);
         } catch (ParseException exception) {
             System.out.println(exception.getMessage());
         }

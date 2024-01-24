@@ -736,7 +736,9 @@ public class AppController {
         java.sql.Date parsedDeathDate = deathDate != null ? java.sql.Date.valueOf(deathDate) : null;
         AuthorResultInterface resultSet = authorDAO.updateAuthorById(id, name, parsedBirthdate, parsedDeathDate, nationality, biografia);
         if (resultSet != null) {
-            return new Author(resultSet.getId(), resultSet.getName(), resultSet.getBirthDate().toLocalDate(), resultSet.getDeathDate().toLocalDate(), resultSet.getNationality(), resultSet.getBio()).getData();
+            LocalDate parsedLocalBirthdate = resultSet.getBirthDate() != null ? resultSet.getBirthDate().toLocalDate() : null;
+            LocalDate parsedLocalDeathDate = resultSet.getDeathDate() != null ? resultSet.getDeathDate().toLocalDate() : null;
+            return new Author(resultSet.getId(), resultSet.getName(), parsedLocalBirthdate, parsedLocalDeathDate, resultSet.getNationality(), resultSet.getBio()).getData();
         }
         return null;
     }
