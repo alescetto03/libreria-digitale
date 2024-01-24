@@ -103,15 +103,15 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
             return new EditorialCollectionResult(result);
         } catch (SQLException e) {
             if (e.getMessage().contains("issn_check"))
-                throw new Exception("Violazione dei vincolo di formato di ISSN per una collana.");
+                throw new Exception("<html>Un ISSN deve essere una sequenza numerica di 8 cifre suddivise in 2 settori da 4 cifre.<br>L’ultima cifra può avere come valore \"X\".</html>");
             else if (e.getMessage().contains("collana_pk"))
-                throw new Exception("Stai cercando di inserire una collana con un issn gia' esistente.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Il nome non puo' essere nullo.");
-            else if (e.getMessage().contains("editore") && e.getMessage().contains("null value"))
-                throw new Exception("L'editore non puo' essere nullo.");
+                throw new Exception("Esiste già una collana con quell'ISSN!");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("editore") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"editore\" non può essere vuoto.");
             else
-                throw new Exception("General Error For Editorial Collection.");
+                throw new Exception("C'è stato un errore durante l'inserimento");
         }
     }
 

@@ -11,7 +11,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -459,10 +458,9 @@ public class AppController {
     }
 
     public void insertAuthorIntoDatabase(String name, LocalDate birth_date, LocalDate death_date, String nationality, String bio) throws Exception{
-        if (death_date != null)
-            this.authorDAO.insertAuthorInDb(name, java.sql.Date.valueOf(birth_date), java.sql.Date.valueOf(death_date), nationality, bio);
-        else
-            this.authorDAO.insertAuthorInDb(name, java.sql.Date.valueOf(birth_date), null, nationality, bio);
+        java.sql.Date parsedBirthdate = birth_date != null ? java.sql.Date.valueOf(birth_date) : null;
+        java.sql.Date parsedDeathDate = death_date != null ? java.sql.Date.valueOf(death_date) : null;
+        this.authorDAO.insertAuthorInDb(name, parsedBirthdate, parsedDeathDate, nationality, bio);
     }
 
     public void insertStoreIntoDatabase(String partita_iva, String name, String address, String url) throws Exception{
@@ -482,7 +480,9 @@ public class AppController {
     }
 
     public void insertConferenceIntoDatabase(String location, LocalDate start_date, LocalDate end_date, String organizer, String manager) throws Exception{
-            this.conferenceDAO.insertConferenceInDb(location, java.sql.Date.valueOf(start_date), java.sql.Date.valueOf(end_date), organizer, manager);
+        java.sql.Date parsedStartDate = start_date != null ? java.sql.Date.valueOf(start_date) : null;
+        java.sql.Date parsedEndDate = end_date != null ? java.sql.Date.valueOf(end_date) : null;
+        this.conferenceDAO.insertConferenceInDb(location, parsedStartDate, parsedEndDate, organizer, manager);
     }
 
     public void insertPresentationHallIntoDatabase(String name, String address) throws Exception{
@@ -731,10 +731,20 @@ public class AppController {
      * @param nationality
      * @param biografia
      */
-    public Map<String, Object> updateAuthorById(int id, String name, LocalDate birthDate, LocalDate deathDate, String nationality, String biografia) throws Exception {
-        AuthorResultInterface resultSet = authorDAO.updateAuthorById(id, name, birthDate, deathDate, nationality, biografia);
+    public Map<String, Object> updateAuthorFromDatabase(int id, String name, LocalDate birthDate, LocalDate deathDate, String nationality, String biografia) throws Exception {
+        java.sql.Date parsedBirthdate = birthDate != null ? java.sql.Date.valueOf(birthDate) : null;
+        java.sql.Date parsedDeathDate = deathDate != null ? java.sql.Date.valueOf(deathDate) : null;
+        AuthorResultInterface resultSet = authorDAO.updateAuthorById(id, name, parsedBirthdate, parsedDeathDate, nationality, biografia);
         if (resultSet != null) {
             return new Author(resultSet.getId(), resultSet.getName(), resultSet.getBirthDate().toLocalDate(), resultSet.getDeathDate().toLocalDate(), resultSet.getNationality(), resultSet.getBio()).getData();
+        }
+        return null;
+    }
+
+    public Map<String, Object> updateStoreStoreFromDatabase(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
+        StoreResultInterface resultSet = storeDAO.updateStoreByPartitaIva(storeToUpdate, partitaIva, name, address, url);
+        if (resultSet != null) {
+
         }
         return null;
     }
@@ -909,7 +919,7 @@ public class AppController {
      * Metodo che restituisce una lista di tutte le sale memorizzate nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
-    public ArrayList<Map<String, Object>> getRenderedPresentationHall() {
+    public ArrayList<Map<String, Object>> getRenderedPresentationHalls() {
         ArrayList<PresentationHallResultInterface> presentationHallResults = presentationHallDAO.getAll();
         ArrayList<AbstractModel> presentationHalls = new ArrayList<>();
         for (PresentationHallResultInterface presentationHallResult: presentationHallResults) {

@@ -140,18 +140,17 @@ public class JournalDAO implements JournalDAOInterface {
         } catch (SQLException e) {
             System.out.println("ERRORE:" + e.getMessage());
             if (e.getMessage().contains("rivista_pk"))
-                throw new Exception("Stai cercando di inserire una rivista con un issn che esiste gia'.");
+                throw new Exception("Esiste già una rivista con quell'ISSN!");
             else if (e.getMessage().contains("issn_check"))
-                throw new Exception("Violazione del vincolo di formato per issn di una rivista.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Il nome non puo' essere nullo.");
-            else if (e.getMessage().contains("argomento") && e.getMessage().contains("null value"))
-                throw new Exception("L'argomento' non puo' essere nullo.");
-            else if (e.getMessage().contains("responsabile") && e.getMessage().contains("null value"))
-                throw new Exception("Responsabile non puo' essere nullo.");
+                throw new Exception("<html>Un ISSN deve essere una sequenza numerica di 8 cifre suddivise in 2 settori da 4 cifre.<br>L’ultima cifra può avere come valore ”X”.</html>");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("argomento") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"argomento\" non può essere vuoto.");
+            else if (e.getMessage().contains("responsabile") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"responsabile\" non può essere vuoto.");
             else
-                throw new Exception("General Error For Journal.");
+                throw new Exception("C'è stato un errore durante l'inserimento.");
         }
-        //return null;
     }
-    }
+}

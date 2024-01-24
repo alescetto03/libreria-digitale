@@ -113,7 +113,6 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
             return false;
         }
     }
-}
 
     @Override
     public PresentationHallResultInterface insertPresentationHallInDb(String name, String address) throws Exception{
@@ -132,13 +131,13 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
             return new PresentationHallResult(result);
         } catch (SQLException e) {
             if (e.getMessage().contains("sala_pk"))
-                throw new Exception("Stai inserendo una sala che esiste gia'.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Il nome non puo' essere nullo.");
-            else if (e.getMessage().contains("indirizzo") && e.getMessage().contains("null value"))
-                throw new Exception("L'indirizzo non puo' essere nullo.");
+                throw new Exception("Stai inserendo una sala che esiste già.");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto.");
+            else if (e.getMessage().contains("indirizzo") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"indirizzo\" non può essere vuoto.");
             else
-                throw new Exception("General Error For Presentation Hall.");
+                throw new Exception("C'è stato un errore durante l'inserimento");
         }
     }
 }

@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
 import GUI.ModelManipulationFormGUI;
 import Model.Collection;
@@ -21,7 +22,8 @@ public class PersonalCollectionsCrudTable extends CrudTable {
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertPersonalCollectionIntoDatabase(formData.get("Nome"), formData.get("Visibilità"));
-            }catch (Exception exception){
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -83,8 +85,12 @@ public class PersonalCollectionsCrudTable extends CrudTable {
         this.parentView.getAppController().switchView(this.updateView);
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
             Map<String, String> formData = updateView.getFormData();
-            parentView.getAppController().updatePersonalCollectionIntoDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Visibilità"));
-            parentView.getAppController().showHomepage();
+            try {
+                parentView.getAppController().updatePersonalCollectionIntoDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Visibilità"));
+                parentView.getAppController().showHomepage();
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+            }
         });
     }
 

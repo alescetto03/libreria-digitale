@@ -2,7 +2,6 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.*;
-import Model.Journal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,7 +102,7 @@ public class AdminPageGUI extends AppView {
         });
         presentationHallsButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
-            currentData = appController.getRenderedPresentationHall();
+            currentData = appController.getRenderedPresentationHalls();
             currentTable = new PresentationHallsCrudTable(this, "Librerie:", new String[]{"id", "nome", "indirizzo"}, currentData);
             tableWrapper.add(currentTable, BorderLayout.CENTER);
             tableWrapper.validate();

@@ -10,10 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ModelManipulationFormGUI extends AppView {
     private JButton confirmButton;
@@ -75,7 +72,7 @@ public class ModelManipulationFormGUI extends AppView {
 
     public JButton getGoBackButton() { return goBackButton; }
 
-    public Map<String, String> getFormData() throws Exception{
+    public Map<String, String> getFormData() {
         Map<String, String> renderedData = new HashMap<>();
         for (Map.Entry<String, JComponent> entry : data.entrySet()) {
             if (entry.getValue() instanceof JTextField) {
@@ -87,14 +84,12 @@ public class ModelManipulationFormGUI extends AppView {
             } else if (entry.getValue() instanceof JTextArea){
                 renderedData.put(entry.getKey(), ((JTextArea) entry.getValue()).getText().trim());
             } else if (entry.getValue() instanceof JDateChooser){
-                if (((JDateChooser) entry.getValue()).getDate() != null)
-                    renderedData.put(entry.getKey(), String.valueOf((((JDateChooser) entry.getValue()).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())));
-                else if (entry.getKey().equals("Data di nascita") && ((JDateChooser) entry.getValue()).getDate() == null)
-                    throw new Exception("Il campo data di nascita non puo' essere nullo.");
-                else if ((entry.getKey().equals("Data di inizio") || entry.getKey().equals("Data di fine")) && ((JDateChooser) entry.getValue()).getDate() == null)
-                    throw new Exception("I campi Data di inizio e Data di fine non possono essere nulli.");
-                else
-                    renderedData.put(entry.getKey(), "");
+                Date formDate = ((JDateChooser) entry.getValue()).getDate();
+                if (formDate != null)
+                    renderedData.put(entry.getKey(), String.valueOf(((formDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))));
+                else {
+                    renderedData.put(entry.getKey(), null);
+                }
             }
 
         }

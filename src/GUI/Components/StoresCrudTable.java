@@ -1,6 +1,8 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +26,8 @@ public class StoresCrudTable extends CrudTable {
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertStoreIntoDatabase(formData.get("Partita Iva"), formData.get("Nome"), formData.get("Indirizzo"), formData.get("Url"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new StoresCrudTable(parentView, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, parentView.getAppController().getRenderedStores())));
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -51,7 +55,18 @@ public class StoresCrudTable extends CrudTable {
 
     @Override
     protected void onUpdateButton(Object id, ArrayList<String> data) {
-
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(), this.updateViewTitle);
+        this.parentView.getAppController().switchView(this.updateView);
+        this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
+            try {
+                Map<String, Object> renderedData = parentView.getAppController().updateStoreStoreFromDatabase(data.get(0), formData.get("Partita Iva"), formData.get("Nome"), formData.get("Indirizzo"), formData.get("Url"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new StoresCrudTable(parentView, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, parentView.getAppController().getRenderedStores())));
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentView().getContentPane(), "Il negozio " + renderedData.get("partita_iva") + " - " + renderedData.get("name") + " è stato modificato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(this.updateView.getContentPane(), exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override

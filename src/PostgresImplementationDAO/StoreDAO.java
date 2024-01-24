@@ -72,7 +72,7 @@ public class StoreDAO implements StoreDAOInterface {
     public StoreResultInterface updateStoreByPartitaIva(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement statement = conn.prepareStatement("UPDATE negozio SET partita_iva = ?, nome = ?, indirizzo = ?, url = ? WHERE partita_iva = ?");
+            PreparedStatement statement = conn.prepareStatement("UPDATE negozio SET partita_iva = ?, nome = NULLIF(?, ''), indirizzo = NULLIF(?, ''), url = NULLIF(?, '') WHERE partita_iva = ?");
         ) {
             statement.setString(1, partitaIva);
             statement.setString(2, name);
@@ -91,9 +91,9 @@ public class StoreDAO implements StoreDAOInterface {
             } else if (e.getMessage().contains("validita_negozio")) {
                 throw new Exception("Un negozio deve possedere un URL o un indirizzo");
             } else if (e.getMessage().contains("partita_iva_check")) {
-                throw new Exception(" La partita iva di un Negozio deve essere una sequenza numerica di 11 cifre");
+                throw new Exception(" La \"partita iva\" di un Negozio deve essere una sequenza numerica di 11 cifre");
             } else if (e.getSQLState().equals("23502") && e.getMessage().contains("nome")) {
-                throw new Exception("Il campo \'nome\' non può essere vuoto");
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
             } else {
                 throw new Exception("C'è stato un errore durante l'aggiornamento");
             }
@@ -120,49 +120,15 @@ public class StoreDAO implements StoreDAOInterface {
             return new StoreResult(result);
         } catch (SQLException e) {
             if (e.getMessage().contains("validita_negozio"))
-                throw new Exception("Violazione dl vincolo di validita' di negozio, non possono esserci indirizzo e url nulli.");
+                throw new Exception("I campi \"indirizzo\" e \"url\" non possono essere entrambi null");
             else if (e.getMessage().contains("partita_iva_check"))
-                throw new Exception("Violazione dl vincolo di partita iva, formato errato.");
+                throw new Exception("La partita IVA di un negozio deve essere una sequenza numerica di 11 cifre.");
             else if (e.getMessage().contains("negozio_pk"))
-                throw new Exception("Stai cercando di inserire un negozio gia' esistente.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Il nome non puo' essere nullo.");
+                throw new Exception("Esiste già un negozio con quella partita IVA!");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
             else
-                throw new Exception("General Error For Store.");
+                throw new Exception("C'è stato un errore durante la modifica");
         }
     }
-
-    @Override
-    public StoreResultInterface updateStore(String partita_iva, String old_partita_iva, String name, String address, String url) throws Exception{
-        try (
-                Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("UPDATE Negozio SET partita_iva = ?, nome = NULLIF(?, ''), indirizzo = NULLIF(?, ''), url = NULLIF(?, '') WHERE partita_iva = ? RETURNING *");
-        ) {
-            statement.setString(1, partita_iva);
-            statement.setString(2, name);
-            statement.setString(3, address);
-            statement.setString(4, url);
-            statement.setString(5, old_partita_iva);
-
-            statement.execute();
-
-            ResultSet result = statement.getResultSet();
-            result.next();
-
-            return new StoreResult(result);
-        } catch (SQLException e) {
-            if (e.getMessage().contains("validita_negozio"))
-                throw new Exception("Violazione dl vincolo di validita' di negozio, non possono esserci indirizzo e url nulli.");
-            else if (e.getMessage().contains("partita_iva_check"))
-                throw new Exception("Violazione dl vincolo di partita iva, formato errato.");
-            else if (e.getMessage().contains("negozio_pk"))
-                throw new Exception("Stai cercando di inserire un negozio gia' esistente.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Il nome non puo' essere nullo.");
-            else
-                throw new Exception("General Error For Store.");
-        }
-    }
-
-
 }

@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
 import com.toedter.calendar.JDateChooser;
 
@@ -27,8 +28,12 @@ public class ConferencesCrudTable extends CrudTable {
             //System.out.println(formData);
             try {
                 Map<String, String> formData = this.createView.getFormData();
-                parentView.getAppController().insertConferenceIntoDatabase(formData.get("Luogo"), LocalDate.parse(formData.get("Data di inizio")), LocalDate.parse(formData.get("Data di fine")), formData.get("Organizzatore"), formData.get("Responsabile"));
-            }catch (Exception exception){
+                LocalDate parsedStartDate = formData.get("Data di inizio") != null ? LocalDate.parse(formData.get("Data di inizio")) : null;
+                LocalDate parsedEndDate = formData.get("Data di fine") != null ? LocalDate.parse(formData.get("Data di fine")) : null;
+                parentView.getAppController().insertConferenceIntoDatabase(formData.get("Luogo"), parsedStartDate, parsedEndDate, formData.get("Organizzatore"), formData.get("Responsabile"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new ConferencesCrudTable(parentView, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, parentView.getAppController().getRenderedConferences())));
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });

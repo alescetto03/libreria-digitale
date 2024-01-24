@@ -4,7 +4,6 @@ import DAO.AuthorDAOInterface;
 import DAO.AuthorResultInterface;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class AuthorDAO implements AuthorDAOInterface {
@@ -42,15 +41,15 @@ public class AuthorDAO implements AuthorDAOInterface {
     }
 
     @Override
-    public AuthorResultInterface updateAuthorById(int authorToUpdate, String name, LocalDate birthDate, LocalDate deathDate, String nationality, String biography) throws Exception {
+    public AuthorResultInterface updateAuthorById(int authorToUpdate, String name, java.sql.Date birthDate, java.sql.Date deathDate, String nationality, String biography) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("UPDATE autore SET nome = ?, data_nascita = ?, data_morte = ?, nazionalita = ?, biografia = ? WHERE cod_autore = ?");
         ) {
             statement.setInt(1, authorToUpdate);
             statement.setString(2, name);
-            statement.setDate(3, Date.valueOf(birthDate));
-            statement.setDate(4, Date.valueOf(deathDate));
+            statement.setDate(3, birthDate);
+            statement.setDate(4, deathDate);
             statement.setString(5, nationality);
             statement.setString(6, biography);
             statement.execute();
@@ -60,14 +59,16 @@ public class AuthorDAO implements AuthorDAOInterface {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            if (e.getMessage().contains("coerenza_date_autore"))
+            if (e.getMessage().contains("check_coerenza_date"))
                 throw new Exception("La data di morte di un autore deve essere successiva a quella di nascita.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Attenzione, il campo \"nome\" non può essere vuoto");
-            else if (e.getMessage().contains("data_nascita") && e.getMessage().contains("null value"))
-                throw new Exception("Attenzione, il campo \"data di nascita\" non può essere vuoto");
-            else if (e.getMessage().contains("nazionalita") && e.getMessage().contains("null value"))
-                throw new Exception("Attenzione, il campo \"nazionalità\" non può essere vuoto");
+            else if (e.getMessage().contains("autore_pk"))
+                throw new Exception("Stai cercando di inserire un autore già esistente.");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("data_nascita") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"data di nascita\" non può essere vuoto");
+            else if (e.getMessage().contains("nazionalita") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nazionalità\" non può essere vuoto");
             else
                 throw new Exception("C'è stato un errore durante la modifica");
         }
@@ -93,18 +94,19 @@ public class AuthorDAO implements AuthorDAOInterface {
 
             return new AuthorResult(result);
         } catch (SQLException e) {
-            if (e.getMessage().contains("coerenza_date_autore"))
-                throw new Exception("La data di morte di un autore deve essere dopo quella di nascita.");
+            System.out.println(e.getMessage());
+            if (e.getMessage().contains("check_coerenza_date"))
+                throw new Exception("La data di morte di un autore deve essere successiva a quella di nascita.");
             else if (e.getMessage().contains("autore_pk"))
-                throw new Exception("Stai cercando di inserire un autore gia' esistente.");
-            else if (e.getMessage().contains("nome") && e.getMessage().contains("null value"))
-                throw new Exception("Il nome non puo' essere nullo.");
-            else if (e.getMessage().contains("data_nascita") && e.getMessage().contains("null value"))
-                throw new Exception("La data di nascita non puo' essere nulla.");
-            else if (e.getMessage().contains("nazionalita") && e.getMessage().contains("null value"))
-                throw new Exception("La nazionalita' non puo' essere nulla.");
+                throw new Exception("Stai cercando di inserire un autore già esistente.");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("data_nascita") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"data di nascita\" non può essere vuoto");
+            else if (e.getMessage().contains("nazionalita") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nazionalità\" non può essere vuoto");
             else
-                throw new Exception("General Error For Author.");
+                throw new Exception("C'è stato un errore durante l'inserimento");
         }
     }
 }

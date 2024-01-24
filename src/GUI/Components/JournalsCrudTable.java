@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
 import com.toedter.calendar.JYearChooser;
 
@@ -24,10 +25,11 @@ public class JournalsCrudTable extends CrudTable {
 
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            //System.out.println(formData);
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertJournalsIntoDatabase(formData.get("Issn"), formData.get("Nome"), formData.get("Argomento"), Integer.parseInt(formData.get("Anno di pubblicazione")), formData.get("Responsabile"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new JournalsCrudTable(parentView, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, parentView.getAppController().getRenderedJournals())));
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             }catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }

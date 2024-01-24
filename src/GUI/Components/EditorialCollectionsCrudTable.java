@@ -21,6 +21,8 @@ public class EditorialCollectionsCrudTable extends CrudTable {
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertEditorialCollectionIntoDatabase(formData.get("Issn"), formData.get("Nome"), formData.get("Editore"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new EditorialCollectionsCrudTable(parentView, "Collane:", new String[]{"issn", "nome", "editore"}, parentView.getAppController().getRenderedEditorialCollections())));
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -51,8 +53,12 @@ public class EditorialCollectionsCrudTable extends CrudTable {
         this.parentView.getAppController().switchView(this.updateView);
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
             Map<String, String> formData = updateView.getFormData();
-            parentView.getAppController().updateEditorialCollection(data.get(0), formData.get("Issn"), formData.get("Nome"), formData.get("Editore"));
-            parentView.getAppController().showHomepage();
+            try {
+                parentView.getAppController().updateEditorialCollection(data.get(0), formData.get("Issn"), formData.get("Nome"), formData.get("Editore"));
+                parentView.getAppController().showHomepage();
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+            }
         });
     }
 

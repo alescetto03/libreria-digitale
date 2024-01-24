@@ -31,14 +31,14 @@ public class ScientificPublicationsCrudTable extends CrudTable {
         items.getColumn("descrizione").setMinWidth(300);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            //System.out.println(formData);
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertPublicationIntoDatabase(formData.get("Doi"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
-            //parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), parentView.getAppController().getRenderedBooks()));
         });
     }
 
@@ -74,7 +74,6 @@ public class ScientificPublicationsCrudTable extends CrudTable {
             try {
                 Map<String, Object> renderedData = parentView.getAppController().updateScientificPublicationFromDatabase((String) id, formData.get("Doi"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), formData.get("Descrizione"));
                 parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new ScientificPublicationsCrudTable(parentView, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, parentView.getAppController().getRenderedScientificPublications())));
-
                 JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "L'articolo " + renderedData.get("doi") + " - " + renderedData.get("title") + " è stato modificato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(this.updateView.getContentPane(), exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);

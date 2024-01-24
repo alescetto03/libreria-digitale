@@ -84,20 +84,22 @@ public class ConferenceDAO implements ConferenceDAOInterface {
 
             return new ConferenceResult(result);
         } catch (SQLException e) {
-//            System.out.println("MESSAGE:" + e.getMessage());
             if (e.getMessage().contains("conferenza_pk"))
-                throw new Exception("Stai inserendo una conferenza che esiste gia'.");
-            else if (e.getMessage().contains("luogo") && e.getMessage().contains("null value"))
-                throw new Exception("Il luogo non puo' essere nullo.");
-            else if (e.getMessage().contains("organizzatore") && e.getMessage().contains("null value"))
-                throw new Exception("L'organizzatore' non puo' essere nullo.");
-            else if (e.getMessage().contains("responsabile") && e.getMessage().contains("null value"))
-                throw new Exception("Il responsabile non puo' essere nullo.");
+                throw new Exception("Stai inserendo una conferenza che esiste già.");
+            else if (e.getMessage().contains("luogo") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"luogo\" non può essere vuoto.");
+            else if (e.getMessage().contains("organizzatore") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"organizzatore\" non può essere vuoto.");
+            else if (e.getMessage().contains("responsabile") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"responsabile\" non può essere vuoto.");
+            else if (e.getMessage().contains("data_inizio") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"data di inizio\" non può essere vuoto.");
+            else if (e.getMessage().contains("data_fine") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"data di fine\" non può essere vuoto.");
             else if (e.getMessage().contains("validita_date"))
-                throw new Exception("La data di inizio deve essere prima di quella di fine.");
+                throw new Exception("La data di inizio deve essere precedente a quella di quella di fine.");
             else
-                throw new Exception("General Error For Conference.");
+                throw new Exception("C'è stato un errore durante l'inserimento");
         }
-        //return null;
     }
 }

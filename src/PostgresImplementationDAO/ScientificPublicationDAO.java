@@ -91,7 +91,7 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
 
     @Override
     public ScientificPublicationResultInterface updateScientificPublicationByDoi(String publicationToUpdate, String doi, String title, String publisher, ScientificPublication.FruitionMode fruitionMode, int publicationYear, String description) throws Exception {
-        final String query = "UPDATE articolo_scientifico SET doi = ?, titolo = ?, editore = ?, modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = ? WHERE doi = ? RETURNING articolo_scientifico.*";
+        final String query = "UPDATE articolo_scientifico SET doi = ?, titolo = NULLIF(?, ''), editore = NULLIF(?, ''), modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = NULLIF(?, '') WHERE doi = ? RETURNING articolo_scientifico.*";
         try(
             Connection connection = DatabaseConnection.getInstance().getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
@@ -111,19 +111,17 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         } catch (SQLException e) {
             System.out.println("Errore: " + e.getMessage());
             if (e.getMessage().contains("articolo_scientifico_pk")) {
-                throw new Exception("Esiste già un libro con quell'ISBN!");
+                throw new Exception("Esiste già un articolo con quel DOI!");
             } else if (e.getMessage().contains("doi_check")) {
-                throw new Exception("Un DOI deve essere una sequenza alfanumerica composta da un prefisso e un" +
-                        "suffisso separati da uno slash. Il prefissso di un DOI deve iniziare con \"10.\"" +
-                        "La sequenza alfanumerica accetta i caratteri speciali: punto, dash e underscore, " +
-                        "purché siano succeduti da una stringa alfanumerica di almeno un carattere.\n" +
-                        "Esempio: 10.testo/testo_testo-testo.t");
+                throw new Exception("<html>Un DOI deve essere una sequenza alfanumerica composta da un prefisso e un<br>" +
+                        "suffisso separati da uno slash. Il prefissso di un DOI deve iniziare con \"10.\"<br>" +
+                        "La sequenza alfanumerica accetta i caratteri speciali: punto, dash e underscore,<br>" +
+                        "purché siano succeduti da una stringa alfanumerica di almeno un carattere.<br><br>" +
+                        "Esempio: 10.testo/testo_testo-testo.t</html>");
             } else if (e.getSQLState().equals("23502") && e.getMessage().contains("titolo")) {
-                throw new Exception("Attenzione, il campo \"titolo\" non può essere vuoto");
+                throw new Exception("Il campo \"titolo\" non può essere vuoto");
             } else if (e.getSQLState().equals("23502") && e.getMessage().contains("editore")) {
-                throw new Exception("Attenzione, il campo \"editore\" non può essere vuoto");
-            } else if (e.getSQLState().equals("23502") && e.getMessage().contains("descrizione")) {
-                throw new Exception("Attenzione, il campo \"descrizione\" non può essere vuoto");
+                throw new Exception("Il campo \"editore\" non può essere vuoto");
             } else {
                 throw new Exception("C'è stato un errore durante la modifica");
             }
@@ -152,16 +150,21 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
 
             return new ScientificPublicationResult(result);
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             if (e.getMessage().contains("doi_check"))
-                throw new Exception("Un DOI deve essere una sequenza alfanumerica che inizia con '10.' e non puo' essere nulla.");
+                throw new Exception("<html>Un DOI deve essere una sequenza alfanumerica composta da un prefisso e un<br>" +
+                        "suffisso separati da uno slash. Il prefissso di un DOI deve iniziare con \"10.\"<br>" +
+                        "La sequenza alfanumerica accetta i caratteri speciali: punto, dash e underscore,<br>" +
+                        "purché siano succeduti da una stringa alfanumerica di almeno un carattere.<br><br>" +
+                        "Esempio: 10.testo/testo_testo-testo.t</html>");
             else if (e.getMessage().contains("articolo_scientifico_pk"))
-                throw new Exception("Stai inserendo un articolo con un doi gia' esistente.");
-            else if (e.getMessage().contains("titolo") && e.getMessage().contains("null value"))
-                throw new Exception("Il titolo non puo' essere nullo.");
-            else if (e.getMessage().contains("editore") && e.getMessage().contains("null value"))
-                throw new Exception("L'editore non puo' essere nullo.");
+                throw new Exception("Esiste già un articolo con quel DOI!");
+            else if (e.getMessage().contains("titolo") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"titolo\" non può essere vuoto");
+            else if (e.getMessage().contains("editore") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"editore\" non può essere vuoto");
             else
-                throw new Exception("General Error For Publication");
+                throw new Exception("C'è stato un errore durante l'inserimento");
         }
     }
 }

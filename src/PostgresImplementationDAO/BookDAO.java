@@ -110,7 +110,7 @@ public class BookDAO implements BookDAOInterface {
             statement.setString(6, description);
             statement.setObject(7, type.name().toLowerCase(), Types.OTHER);
             statement.setBytes(8, cover);
-
+            System.out.println(statement);
             if (type.name().equals("ROMANZO")) {
                 statement.setString(9, genre);
                 statement.setString(10, bookToUpdate);
@@ -132,11 +132,13 @@ public class BookDAO implements BookDAOInterface {
             } else if (e.getMessage().contains("isbn_check")) {
                 throw new Exception("Un ISBN deve essere una sequenza numerica di 13 o 10 cifre che inizia per \'978\' o per \'979\'");
             } else if (e.getSQLState().equals("23502") && e.getMessage().contains("titolo")) {
-                throw new Exception("Attenzione, il campo \"titolo\" non può essere vuoto");
+                throw new Exception("Il campo \"titolo\" non può essere vuoto");
             } else if (e.getSQLState().equals("23502") && e.getMessage().contains("editore")) {
-                throw new Exception("Attenzione, il campo \"editore\" non può essere vuoto");
-            } else if (e.getSQLState().equals("23502") && e.getMessage().contains("descrizione")) {
-                throw new Exception("Attenzione, il campo \"descrizione\" non può essere vuoto");
+                throw new Exception("Il campo \"editore\" non può essere vuoto");
+            } else if (type.name().equalsIgnoreCase("didattico") && e.getMessage().contains("didattico_or_romanzo")) {
+                throw new Exception("I campi \"target\" e \"materia\" non possono essere vuoti");
+            } else if (type.name().equalsIgnoreCase("romanzo") && e.getMessage().contains("didattico_or_romanzo")) {
+                throw new Exception("Il campo \"genere\" non può essere vuoto");
             } else {
                 throw new Exception("C'è stato un errore durante la modifica");
             }
@@ -199,26 +201,22 @@ public class BookDAO implements BookDAOInterface {
 
             return new BookResult(result);
         } catch (SQLException exception) {
-//            System.out.println("MESSAGE:" + exception.getMessage());
-//            System.out.println("SQL STATE:" + exception.getSQLState());
-//            System.out.println("ERROR CODE:" + exception.getErrorCode());
-//            System.out.println("LOCALIZED MESSAGE:" + exception.getLocalizedMessage());
-//            System.out.println("NEXT EXCEPTION:" + exception.getNextException());
-//            System.out.println("CAUSE:" + exception.getCause());
-//            System.out.println("STACK TRACE:" + exception.getStackTrace());
+            System.out.println(exception.getMessage());
             if (exception.getMessage().contains("isbn_check"))
                 throw new Exception("Un ISBN deve essere una sequenza numerica di 13 o 10 cifre che inizia per '978' o per '979' e non puo' essere nullo.");
-            else if (exception.getMessage().contains("didattico_or_romanzo"))
-                throw new Exception("Un libro non puo' essere sia didattico che romanzo allo stesso tempo.");
+            else if (exception.getMessage().contains("didattico_or_romanzo") && type.name().equalsIgnoreCase("didattico"))
+                throw new Exception("I campi \"target\" e \"materia\" non possono essere vuoti");
+            else if (exception.getMessage().contains("didattico_or_romanzo") && type.name().equalsIgnoreCase("romanzo"))
+                throw new Exception("Il campo \"genere\" non può essere vuoto");
             else if (exception.getMessage().contains("libro_pk"))
-                throw new Exception("Stai inserendo un libro con un isbn gia' esistente.");
-            else if (exception.getMessage().contains("titolo") && exception.getMessage().contains("null value"))
-                throw new Exception("Il titolo non puo' essere nullo.");
-            else if (exception.getMessage().contains("editore") && exception.getMessage().contains("null value"))
-                throw new Exception("L'editore non puo' essere nullo.");
+                throw new Exception("Esiste già un libro con quell'ISBN!");
+            else if (exception.getMessage().contains("titolo") && exception.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"titolo\" non può essere vuoto.");
+            else if (exception.getMessage().contains("editore") && exception.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"editore\" non può essere vuoto.");
              else
-                throw new Exception("General Errore For Book");
+                throw new Exception("C'è stato un errore durante l'inserimento!");
         }
-        //return null;
+
     }
 }

@@ -4,11 +4,12 @@ import GUI.AdminPageGUI;
 import GUI.AppView;
 import GUI.ModelManipulationFormGUI;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,14 +25,14 @@ public class AuthorsCrudTable extends CrudTable {
         items.getColumn("biografia").setMinWidth(300);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            //System.out.println(formData);
             try {
                 Map<String, String> formData = this.createView.getFormData();
-                if (!formData.get("Data di morte").isEmpty())
-                    parentView.getAppController().insertAuthorIntoDatabase(formData.get("Nome"), LocalDate.parse(formData.get("Data di nascita")), LocalDate.parse(formData.get("Data di morte")), formData.get("Nazionalità"), formData.get("Biografia"));
-                else
-                    parentView.getAppController().insertAuthorIntoDatabase(formData.get("Nome"), LocalDate.parse(formData.get("Data di nascita")), null, formData.get("Nazionalità"), formData.get("Biografia"));
-            }catch(Exception exception){
+                LocalDate parsedBirthdate = formData.get("Data di nascita") != null ? LocalDate.parse(formData.get("Data di nascita")) : null;
+                LocalDate parseDeathDate = formData.get("Data di morte") != null ? LocalDate.parse(formData.get("Data di morte")) : null;
+                parentView.getAppController().insertAuthorIntoDatabase(formData.get("Nome"), parsedBirthdate, parseDeathDate, formData.get("Nazionalità"), formData.get("Biografia"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
+                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch(Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -62,10 +63,17 @@ public class AuthorsCrudTable extends CrudTable {
     protected void onUpdateButton(Object id, ArrayList<String> data) {
         this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
         this.parentView.getAppController().switchView(this.updateView);
+        Map<String, String> formData = updateView.getFormData();
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            Map<String, String> formData = updateView.getFormData();
-            parentView.getAppController().updatePersonalCollectionIntoDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Visibilità"));
-            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), this));
+            try {
+                LocalDate parsedBirthdate = formData.get("Data di nascita") != null ? LocalDate.parse(formData.get("Data di nascita")) : null;
+                LocalDate parseDeathDate = formData.get("Data di morte") != null ? LocalDate.parse(formData.get("Data di morte")) : null;
+                Map<String, Object> renderedData = parentView.getAppController().updateAuthorFromDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), parsedBirthdate, parseDeathDate, formData.get("Nazionalità"), formData.get("Biografia"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "L'autore \"" + renderedData.get("name") + "\" è stato modificato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+            }
         });
     }
 
@@ -93,10 +101,17 @@ public class AuthorsCrudTable extends CrudTable {
         JDateChooser deathDateField = new JDateChooser();
         JTextField nationalityField = new JTextField();
         JTextArea biographyField = new JTextArea();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         nameField.setText(data.get(1));
-        birthDateField.setDateFormatString(data.get(2));
-        deathDateField.setDateFormatString(data.get(3));
+        try {
+            Date formattedBirthDateField = formatter.parse(data.get((2)));
+            Date formattedDeathDateField = formatter.parse(data.get((3)));
+            birthDateField.setDate(formattedBirthDateField);
+            deathDateField.setDate(formattedDeathDateField);
+        } catch (ParseException exception) {
+            System.out.println(exception.getMessage());
+        }
         nationalityField.setText(data.get(4));
         biographyField.setText(data.get(5));
 

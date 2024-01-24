@@ -47,7 +47,26 @@ public class InsertBookGUI extends AppView {
             appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
         });
         confirmButton.addActionListener((ActionEvent e) -> {
-
+            String isbn = isbnField.getText().trim();
+            String title = titleField.getText().trim();
+            String publisher = publisherField.getText().trim();
+            String fruitionMode = String.valueOf(fruitionModeField.getSelectedItem());
+            int publicationYear = publicationYearField.getValue();
+            String description = descriptionField.getText().trim();
+            String target = targetField.getText().trim();
+            String topic =  topicField.getText().trim();
+            String genre = genreField.getText().trim();
+            try {
+                if (educationalRadioButton.isSelected()) {
+                    appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, null, description, null, "didattico", target, topic);
+                } else {
+                    appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, null, description, genre, "romanzo", null, null);
+                }
+                appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
+                JOptionPane.showMessageDialog(appController.getCurrentView().getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(appController.getCurrentView().getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
         });
     }
 

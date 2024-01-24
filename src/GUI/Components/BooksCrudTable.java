@@ -1,9 +1,6 @@
 package GUI.Components;
 
-import GUI.AppView;
-import GUI.InsertBookGUI;
-import GUI.UpdateEducationalBook;
-import GUI.UpdateNovelBook;
+import GUI.*;
 import Model.Book;
 import com.toedter.calendar.JYearChooser;
 
@@ -44,10 +41,11 @@ public class BooksCrudTable extends CrudTable{
         });
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            //System.out.println(formData);
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertBookIntoDatabase(formData.get("Isbn"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"), formData.get("Genere"), formData.get("Tipo"), formData.get("Target"), formData.get("Materia"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new BooksCrudTable(parentView, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, parentView.getAppController().getRenderedBooks())));
+                JOptionPane.showMessageDialog(parentView.getAppController().getCurrentView().getContentPane(), "Libro inserito con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -118,7 +116,7 @@ public class BooksCrudTable extends CrudTable{
         Map<String, JComponent> schema = new HashMap<>();
         String[] types = {"romanzo", "didattico"};
         String[] fruitionModes = {"romanzo", "didattico"};
-        schema.put("Isbn", new JTextField(data.getFirst()));
+        schema.put("Isbn", new JTextField(data.get(0)));
         schema.put("Titolo", new JTextField(data.get(1)));
         schema.put("Editore", new JTextField(data.get(2)));
         JComboBox<String> fruitionField = new JComboBox<>(fruitionModes);
