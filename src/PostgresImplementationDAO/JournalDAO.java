@@ -153,4 +153,40 @@ public class JournalDAO implements JournalDAOInterface {
                 throw new Exception("C'è stato un errore durante l'inserimento.");
         }
     }
+
+    @Override
+    public JournalResultInterface updateJournalByIssn(String issn, String issnToUpdate, String name, String argument, int publication_year, String manager) throws Exception {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE Rivista SET issn = ?, nome = NULLIF(?, ''), argomento = NULLIF(?, ''), anno_pubblicazione = ?, responsabile = NULLIF(?, '') WHERE issn = ? RETURNING Rivista.*");
+        ) {
+            statement.setString(1, issn);
+            statement.setString(2, name);
+            statement.setString(3, argument);
+            statement.setInt(4, publication_year);
+            statement.setString(5, manager);
+            statement.setString(6, issnToUpdate);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new JournalResult(result);
+        } catch (SQLException e) {
+            System.out.println("ERRORE:" + e.getMessage());
+            if (e.getMessage().contains("rivista_pk"))
+                throw new Exception("Esiste già una rivista con quell'ISSN!");
+            else if (e.getMessage().contains("issn_check"))
+                throw new Exception("<html>Un ISSN deve essere una sequenza numerica di 8 cifre suddivise in 2 settori da 4 cifre.<br>L’ultima cifra può avere come valore ”X”.</html>");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("argomento") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"argomento\" non può essere vuoto.");
+            else if (e.getMessage().contains("responsabile") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"responsabile\" non può essere vuoto.");
+            else
+                throw new Exception("C'è stato un errore durante l'inserimento.");
+        }
+    }
 }

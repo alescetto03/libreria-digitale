@@ -11,4 +11,5 @@ public interface JournalDAOInterface {
     boolean deleteScientificPublicationFromJournal(String scientificPublication, String journal);
 
     JournalResultInterface insertJournalInDb(String issn, String name, String argument, int publication_year, String manager) throws Exception;
+    JournalResultInterface updateJournalByIssn(String issn, String issnToUpdate, String name, String argument, int publication_year, String manager) throws Exception;
 }

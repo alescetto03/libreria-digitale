@@ -102,4 +102,46 @@ public class ConferenceDAO implements ConferenceDAOInterface {
                 throw new Exception("C'è stato un errore durante l'inserimento");
         }
     }
+
+
+    @Override
+    public ConferenceResultInterface updateConferenceById(int conferenceId, String location, Date start_date, Date end_date, String organizer, String manager) throws Exception {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE Conferenza SET luogo = NULLIF(?, ''), data_inizio = ?, data_fine = ?, organizzatore = NULLIF(?, ''), responsabile = NULLIF(?, '') WHERE cod_conferenza = ? RETURNING Conferenza.*");
+        ) {
+            statement.setString(1, location);
+            statement.setDate(2, start_date);
+            statement.setDate(3, end_date);
+            statement.setString(4, organizer);
+            statement.setString(5, manager);
+            statement.setInt(6, conferenceId);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new ConferenceResult(result);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("conferenza_pk"))
+                throw new Exception("Stai inserendo una conferenza che esiste già.");
+            else if (e.getMessage().contains("luogo") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"luogo\" non può essere vuoto.");
+            else if (e.getMessage().contains("organizzatore") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"organizzatore\" non può essere vuoto.");
+            else if (e.getMessage().contains("responsabile") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"responsabile\" non può essere vuoto.");
+            else if (e.getMessage().contains("data_inizio") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"data di inizio\" non può essere vuoto.");
+            else if (e.getMessage().contains("data_fine") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"data di fine\" non può essere vuoto.");
+            else if (e.getMessage().contains("validita_date"))
+                throw new Exception("La data di inizio deve essere precedente a quella di quella di fine.");
+            else
+                throw new Exception("C'è stato un errore durante l'inserimento");
+        }
+    }
+
+
 }
