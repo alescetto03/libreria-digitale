@@ -758,7 +758,7 @@ public class AppController {
      * @param name
      * @param publisher
      */
-    public void updateEditorialCollection(String editorialCollectionToUpdate, String issn, String name, String publisher) {
+    public void updateEditorialCollection(String editorialCollectionToUpdate, String issn, String name, String publisher) throws Exception{
         EditorialCollectionResultInterface resultSet = editorialCollectionDAO.updateEditorialCollectionByIssn(editorialCollectionToUpdate, issn, name, publisher);
     }
 

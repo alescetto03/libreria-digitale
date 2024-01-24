@@ -3,7 +3,6 @@ package PostgresImplementationDAO;
 import DAO.BookResultInterface;
 import DAO.EditorialCollectionDAOInterface;
 import DAO.EditorialCollectionResultInterface;
-import Model.EditorialCollection;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,27 +16,6 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
                 PreparedStatement statement = connection.prepareStatement(query);
         ) {
             statement.setString(1, issn);
-            statement.execute();
-
-            ResultSet result = statement.getResultSet();
-            if (result.next()) {
-                return new EditorialCollectionResult(result);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-    public EditorialCollectionResultInterface updateEditorialCollectionByIssn(String editorialCollectionToUpdate, String issn, String name, String publisher) {
-        try (
-                Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("UPDATE collana SET issn = ?, nome = ?, editore = ? WHERE issn = ? RETURNING Collana.*");
-        ) {
-            statement.setString(1, issn);
-            statement.setString(2, name);
-            statement.setString(3, publisher);
-            statement.setString(4, editorialCollectionToUpdate);
             statement.execute();
 
             ResultSet result = statement.getResultSet();
@@ -168,4 +146,41 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
             return false;
         }
     }
+
+
+    @Override
+    public EditorialCollectionResultInterface updateEditorialCollectionByIssn(String issn, String issnToUpdate, String name, String publisher) throws Exception {
+        final String query = "UPDATE Collana SET issn = ?, nome = NULLIF(?, ''), editore = NULLIF(?, '') WHERE issn = ? RETURNING Collana.*";
+        try(
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, issn);
+            statement.setString(2, name);
+            statement.setString(3, publisher);
+            statement.setString(4, issnToUpdate);
+
+            statement.execute();
+            ResultSet result = statement.getResultSet();
+            if (result.next()) {
+                return new EditorialCollectionResult(result);
+            }
+        } catch (SQLException e) {
+            System.out.println("Errore: " + e.getMessage());
+            if (e.getMessage().contains("issn_check"))
+                throw new Exception("<html>Un ISSN deve essere una sequenza numerica di 8 cifre suddivise in 2 settori da 4 cifre.<br>L’ultima cifra può avere come valore \"X\".</html>");
+            else if (e.getMessage().contains("collana_pk"))
+                throw new Exception("Esiste già una collana con quell'ISSN!");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto");
+            else if (e.getMessage().contains("editore") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"editore\" non può essere vuoto.");
+            else
+                throw new Exception("C'è stato un errore durante l'inserimento");
+        }
+        return null;
+    }
+
+
+
 }

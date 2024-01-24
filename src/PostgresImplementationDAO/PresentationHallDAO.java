@@ -140,4 +140,32 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
                 throw new Exception("C'è stato un errore durante l'inserimento");
         }
     }
+
+    @Override
+    public PresentationHallResultInterface updatePresentationHallById(int id, String name, String address) throws Exception{
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("UPDATE Sala SET nome = NULLIF(?, ''), indirizzo = NULLIF(?, '') WHERE cod_sala = ? RETURNING Sala.*");
+        ) {
+            statement.setString(1, name);
+            statement.setString(2, address);
+            statement.setInt(3, id);
+
+            statement.execute();
+
+            ResultSet result = statement.getResultSet();
+            result.next();
+
+            return new PresentationHallResult(result);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("sala_pk"))
+                throw new Exception("Stai inserendo una sala che esiste già.");
+            else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"nome\" non può essere vuoto.");
+            else if (e.getMessage().contains("indirizzo") && e.getSQLState().equals("23502"))
+                throw new Exception("Il campo \"indirizzo\" non può essere vuoto.");
+            else
+                throw new Exception("C'è stato un errore durante l'inserimento");
+        }
+    }
 }

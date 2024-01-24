@@ -1,6 +1,7 @@
 package PostgresImplementationDAO;
 
 import DAO.BookResultInterface;
+import DAO.EditorialCollectionResultInterface;
 import DAO.SerieDAOInterface;
 import DAO.SerieResultInterface;
 
@@ -112,4 +113,8 @@ public class SerieDAO implements SerieDAOInterface {
             }
             //return null;
         }
+
+
+
+
     }
