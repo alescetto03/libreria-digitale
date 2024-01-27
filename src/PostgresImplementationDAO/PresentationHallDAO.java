@@ -29,7 +29,7 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
 
     @Override
     public ArrayList<PresentationHallResultInterface> getAll() {
-        final String query = "SELECT * FROM Sala";
+        final String query = "SELECT * FROM Sala ORDER BY cod_sala";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -165,7 +165,7 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
             else if (e.getMessage().contains("indirizzo") && e.getSQLState().equals("23502"))
                 throw new Exception("Il campo \"indirizzo\" non può essere vuoto.");
             else
-                throw new Exception("C'è stato un errore durante l'inserimento");
+                throw new Exception("C'è stato un errore durante la modifica.");
         }
     }
 }

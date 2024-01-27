@@ -10,5 +10,5 @@ public interface EditorialCollectionDAOInterface {
     boolean insertBookIntoEditorialCollection(String book, String editorialCollection);
     boolean deleteBookFromEditorialCollection(String book, String editorialCollection);
     EditorialCollectionResultInterface insertEditorialCollectionInDb(String issn, String name, String publisher) throws Exception;
-    EditorialCollectionResultInterface updateEditorialCollectionByIssn(String issn, String issnToUpdate, String name, String publisher) throws Exception;
+    EditorialCollectionResultInterface updateEditorialCollectionByIssn(String editorialCollectionToUpdate, String issn, String name, String publisher) throws Exception;
 }

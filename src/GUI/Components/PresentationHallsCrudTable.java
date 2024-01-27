@@ -2,6 +2,7 @@ package GUI.Components;
 
 import GUI.AdminPageGUI;
 import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -50,6 +51,18 @@ public class PresentationHallsCrudTable extends CrudTable {
 
     @Override
     protected void onUpdateButton(Object id, ArrayList<String> data) {
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
+        this.parentView.getAppController().switchView(this.updateView);
+        this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
+            try {
+                Map<String, Object> renderedData = parentView.getAppController().updatePresentationHallFromDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Indirizzo"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new PresentationHallsCrudTable(parentView, "Librerie:", new String[]{"id", "nome", "indirizzo"}, parentView.getAppController().getRenderedPresentationHalls())));
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "La collana \"" + renderedData.get("name") + " - " + renderedData.get("address") + "\" è stata modificata con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
@@ -68,8 +81,8 @@ public class PresentationHallsCrudTable extends CrudTable {
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
         Map<String, JComponent> schema = new HashMap<>();
-        schema.put("Nome", new JTextField(data.get(0)));
-        schema.put("Indirizzo", new JTextField(data.get(1)));
+        schema.put("Nome", new JTextField(data.get(1)));
+        schema.put("Indirizzo", new JTextField(data.get(2)));
         return schema;
     }
 }

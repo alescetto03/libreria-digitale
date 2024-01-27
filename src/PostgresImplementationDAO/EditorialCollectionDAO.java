@@ -30,7 +30,7 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
 
     @Override
     public ArrayList<EditorialCollectionResultInterface> getAll() {
-        final String query = "SELECT * FROM Collana";
+        final String query = "SELECT * FROM Collana ORDER BY issn";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -149,7 +149,7 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
 
 
     @Override
-    public EditorialCollectionResultInterface updateEditorialCollectionByIssn(String issn, String issnToUpdate, String name, String publisher) throws Exception {
+    public EditorialCollectionResultInterface updateEditorialCollectionByIssn(String editorialCollectionToUpdate, String issn, String name, String publisher) throws Exception {
         final String query = "UPDATE Collana SET issn = ?, nome = NULLIF(?, ''), editore = NULLIF(?, '') WHERE issn = ? RETURNING Collana.*";
         try(
                 Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -158,10 +158,10 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
             statement.setString(1, issn);
             statement.setString(2, name);
             statement.setString(3, publisher);
-            statement.setString(4, issnToUpdate);
-
+            statement.setString(4, editorialCollectionToUpdate);
             statement.execute();
             ResultSet result = statement.getResultSet();
+
             if (result.next()) {
                 return new EditorialCollectionResult(result);
             }
@@ -172,11 +172,13 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
             else if (e.getMessage().contains("collana_pk"))
                 throw new Exception("Esiste già una collana con quell'ISSN!");
             else if (e.getMessage().contains("nome") && e.getSQLState().equals("23502"))
-                throw new Exception("Il campo \"nome\" non può essere vuoto");
+                throw new Exception("Il campo \"nome\" non può essere vuoto.");
             else if (e.getMessage().contains("editore") && e.getSQLState().equals("23502"))
                 throw new Exception("Il campo \"editore\" non può essere vuoto.");
+            else if (e.getSQLState().equals("P0001"))
+                throw new Exception("Non si può modificare l'editore di una collana non vuota.");
             else
-                throw new Exception("C'è stato un errore durante l'inserimento");
+                throw new Exception("C'è stato un errore durante la modifica");
         }
         return null;
     }

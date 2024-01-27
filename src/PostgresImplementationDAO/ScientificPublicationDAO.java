@@ -32,7 +32,7 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
     }
 
     public ArrayList<ScientificPublicationResultInterface> getAll() {
-        final String query = "SELECT * FROM Articolo_Scientifico";
+        final String query = "SELECT * FROM Articolo_Scientifico ORDER BY doi";
         try(
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);

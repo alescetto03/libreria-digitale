@@ -4,7 +4,9 @@
     <constraints>
       <xy x="20" y="-8" width="500" height="796"/>
     </constraints>
-    <properties/>
+    <properties>
+      <preferredSize width="400" height="500"/>
+    </properties>
     <border type="empty">
       <size top="10" left="10" bottom="10" right="10"/>
     </border>
@@ -195,7 +197,9 @@
                   </grid>
                 </constraints>
                 <properties>
+                  <lineWrap value="true"/>
                   <text value=""/>
+                  <wrapStyleWord value="true"/>
                 </properties>
               </component>
               <component id="dcb47" class="javax.swing.JLabel">

@@ -2,6 +2,7 @@ package GUI.Components;
 
 import GUI.AdminPageGUI;
 import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
 import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
@@ -58,6 +59,18 @@ public class JournalsCrudTable extends CrudTable {
 
     @Override
     protected void onUpdateButton(Object id, ArrayList<String> data) {
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
+        this.parentView.getAppController().switchView(this.updateView);
+        this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
+            try {
+                Map<String, Object> renderedData = parentView.getAppController().updateJournalFromDatabase(data.get(0), formData.get("Issn"), formData.get("Nome"), formData.get("Argomento"), Integer.parseInt(formData.get("Anno di pubblicazione")), formData.get("Responsabile"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new JournalsCrudTable(parentView, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, parentView.getAppController().getRenderedJournals())));
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "La rivista \"" + renderedData.get("issn") + " - " + renderedData.get("name") + "\" è stata modificata con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
@@ -76,6 +89,24 @@ public class JournalsCrudTable extends CrudTable {
 
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
-        return null;
+        Map<String, JComponent> schema = new HashMap<>();
+        JTextField issnField = new JTextField();
+        JTextField nameField = new JTextField();
+        JTextField argumentField = new JTextField();
+        JYearChooser publicationYearField = new JYearChooser();
+        JTextField managerField = new JTextField();
+
+        issnField.setText(data.get(0));
+        nameField.setText(data.get(1));
+        argumentField.setText(data.get(2));
+        publicationYearField.setYear(Integer.parseInt(data.get(3)));
+        managerField.setText(data.get(4));
+
+        schema.put("Issn", issnField);
+        schema.put("Nome", nameField);
+        schema.put("Argomento", argumentField);
+        schema.put("Anno di pubblicazione", publicationYearField);
+        schema.put("Responsabile", managerField);
+        return schema;
     }
 }

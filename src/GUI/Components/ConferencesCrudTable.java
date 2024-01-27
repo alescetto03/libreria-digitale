@@ -2,13 +2,17 @@ package GUI.Components;
 
 import GUI.AdminPageGUI;
 import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,12 +66,24 @@ public class ConferencesCrudTable extends CrudTable {
 
     @Override
     protected void onUpdateButton(Object id, ArrayList<String> data) {
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
+        this.parentView.getAppController().switchView(this.updateView);
+        this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
+            try {
+                LocalDate parsedStartDate = formData.get("Data di inizio") != null ? LocalDate.parse(formData.get("Data di inizio")) : null;
+                LocalDate parsedEndDate = formData.get("Data di fine") != null ? LocalDate.parse(formData.get("Data di fine")) : null;
+                Map<String, Object> renderedData = parentView.getAppController().updateConferenceFromDatabase(Integer.parseInt(data.get(0)), formData.get("Luogo"), parsedStartDate, parsedEndDate, formData.get("Organizzatore"), formData.get("Responsabile"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new ConferencesCrudTable(parentView, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, parentView.getAppController().getRenderedConferences())));
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "La conferenza \"" + renderedData.get("location") + " - " + renderedData.get("organizer")  + " - " + renderedData.get("manager") + "\" è stata modificata con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     @Override
-    protected void onViewButton(Object id) {
-
-    }
+    protected void onViewButton(Object id) {}
 
     @Override
     protected Map<String, JComponent> getFormSchema() {
@@ -82,6 +98,31 @@ public class ConferencesCrudTable extends CrudTable {
 
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
-        return null;
+        Map<String, JComponent> schema = new HashMap<>();
+        JTextField locationField = new JTextField();
+        JDateChooser startDateField = new JDateChooser();
+        JDateChooser endDateField = new JDateChooser();
+        JTextField organizerField = new JTextField();
+        JTextField managerField = new JTextField();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        locationField.setText(data.get(1));
+        try {
+            Date formattedStartDateField = !data.get(2).equals("null") ? formatter.parse(data.get(2)) : null;
+            Date formattedEndDateField = !data.get(3).equals("null") ? formatter.parse(data.get(3)) : null;
+            if (formattedStartDateField != null) startDateField.setDate(formattedStartDateField);
+            if (formattedEndDateField != null) endDateField.setDate(formattedEndDateField);
+        } catch (ParseException exception) {
+            System.out.println(exception.getMessage());
+        }
+        organizerField.setText(data.get(4));
+        managerField.setText(data.get(5));
+
+        schema.put("Luogo", locationField);
+        schema.put("Data di inizio", startDateField);
+        schema.put("Data di fine", endDateField);
+        schema.put("Organizzatore", organizerField);
+        schema.put("Responsabile", managerField);
+        return schema;
     }
 }

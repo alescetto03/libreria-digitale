@@ -7,6 +7,7 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,8 +64,8 @@ public class AuthorsCrudTable extends CrudTable {
     protected void onUpdateButton(Object id, ArrayList<String> data) {
         this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
         this.parentView.getAppController().switchView(this.updateView);
-        Map<String, String> formData = updateView.getFormData();
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = updateView.getFormData();
             try {
                 LocalDate parsedBirthdate = formData.get("Data di nascita") != null ? LocalDate.parse(formData.get("Data di nascita")) : null;
                 LocalDate parseDeathDate = formData.get("Data di morte") != null ? LocalDate.parse(formData.get("Data di morte")) : null;
@@ -84,12 +85,16 @@ public class AuthorsCrudTable extends CrudTable {
 
     @Override
     protected Map<String, JComponent> getFormSchema() {
+        JTextArea biographyField = new JTextArea();
+        biographyField.setLineWrap(true);
+        biographyField.setWrapStyleWord(true);
+
         Map<String, JComponent> schema = new HashMap<>();
         schema.put("Nome", new JTextField());
         schema.put("Data di nascita", new JDateChooser());
         schema.put("Data di morte", new JDateChooser());
         schema.put("Nazionalità", new JTextField());
-        schema.put("Biografia", new JTextArea());
+        schema.put("Biografia", biographyField);
         return schema;
     }
 
@@ -100,8 +105,11 @@ public class AuthorsCrudTable extends CrudTable {
         JDateChooser birthDateField = new JDateChooser();
         JDateChooser deathDateField = new JDateChooser();
         JTextField nationalityField = new JTextField();
-        JTextArea biographyField = new JTextArea();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        JTextArea biographyField = new JTextArea();
+        biographyField.setLineWrap(true);
+        biographyField.setWrapStyleWord(true);
 
         nameField.setText(data.get(1));
         try {

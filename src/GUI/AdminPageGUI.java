@@ -29,6 +29,7 @@ public class AdminPageGUI extends AppView {
     private JButton booksShopsButton;
     private JPanel currentPanel;
     private CrudTable currentTable;
+    private JButton goBackButton;
     private CrudTable startCrudTable;
     private ArrayList<Map<String, Object>> currentData;
     public AdminPageGUI(AppController appController, CrudTable startCrudTable) {
@@ -36,6 +37,9 @@ public class AdminPageGUI extends AppView {
         this.startCrudTable = startCrudTable;
         int marginSize = 10;
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
+        goBackButton.addActionListener((ActionEvent e) -> {
+            appController.switchView(new HomepageGUI(appController));
+        });
         booksButton.addActionListener((ActionEvent e) -> {
             tableWrapper.remove(currentTable);
             currentData = appController.getRenderedBooks();

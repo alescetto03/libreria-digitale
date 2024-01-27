@@ -33,7 +33,7 @@ public class JournalDAO implements JournalDAOInterface {
 
     @Override
     public ArrayList<JournalResultInterface> getAll() {
-        final String query = "SELECT * FROM Rivista";
+        final String query = "SELECT * FROM Rivista ORDER BY issn";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -120,7 +120,7 @@ public class JournalDAO implements JournalDAOInterface {
     }
 
     @Override
-    public JournalResultInterface insertJournalInDb(String issn, String name, String argument, int publication_year, String manager) throws Exception{
+    public JournalResultInterface insertJournalInDb(String issn, String name, String argument, int publicationYear, String manager) throws Exception{
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("INSERT INTO Rivista VALUES (?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, '')) RETURNING Rivista.*");
@@ -128,7 +128,7 @@ public class JournalDAO implements JournalDAOInterface {
             statement.setString(1, issn);
             statement.setString(2, name);
             statement.setString(3, argument);
-            statement.setInt(4, publication_year);
+            statement.setInt(4, publicationYear);
             statement.setString(5, manager);
 
             statement.execute();
@@ -155,7 +155,7 @@ public class JournalDAO implements JournalDAOInterface {
     }
 
     @Override
-    public JournalResultInterface updateJournalByIssn(String issn, String issnToUpdate, String name, String argument, int publication_year, String manager) throws Exception {
+    public JournalResultInterface updateJournalByIssn(String journalToUpdate, String issn, String name, String argument, int publication_year, String manager) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("UPDATE Rivista SET issn = ?, nome = NULLIF(?, ''), argomento = NULLIF(?, ''), anno_pubblicazione = ?, responsabile = NULLIF(?, '') WHERE issn = ? RETURNING Rivista.*");
@@ -165,7 +165,7 @@ public class JournalDAO implements JournalDAOInterface {
             statement.setString(3, argument);
             statement.setInt(4, publication_year);
             statement.setString(5, manager);
-            statement.setString(6, issnToUpdate);
+            statement.setString(6, journalToUpdate);
 
             statement.execute();
 
@@ -186,7 +186,7 @@ public class JournalDAO implements JournalDAOInterface {
             else if (e.getMessage().contains("responsabile") && e.getSQLState().equals("23502"))
                 throw new Exception("Il campo \"responsabile\" non può essere vuoto.");
             else
-                throw new Exception("C'è stato un errore durante l'inserimento.");
+                throw new Exception("C'è stato un errore durante la modifica.");
         }
     }
 }

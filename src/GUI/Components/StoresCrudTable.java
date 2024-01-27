@@ -55,7 +55,7 @@ public class StoresCrudTable extends CrudTable {
 
     @Override
     protected void onUpdateButton(Object id, ArrayList<String> data) {
-        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(), this.updateViewTitle);
+        this.updateView = new ModelManipulationFormGUI(this.parentView.getAppController(), this.parentView, this.getFormSchema(data), this.updateViewTitle);
         this.parentView.getAppController().switchView(this.updateView);
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
             Map<String, String> formData = updateView.getFormData();
@@ -86,6 +86,21 @@ public class StoresCrudTable extends CrudTable {
 
     @Override
     protected Map<String, JComponent> getFormSchema(ArrayList<String> data) {
-        return null;
+        Map<String, JComponent> schema = new HashMap<>();
+        JTextField partitaIvaField = new JTextField();
+        JTextField nameField = new JTextField();
+        JTextField addressField = new JTextField();
+        JTextField urlField = new JTextField();
+
+        partitaIvaField.setText(data.get(0));
+        nameField.setText(data.get(1));
+        addressField.setText(data.get(2));
+        urlField.setText(data.get(3));
+
+        schema.put("Partita Iva", partitaIvaField);
+        schema.put("Nome", nameField);
+        schema.put("Indirizzo", addressField);
+        schema.put("Url", urlField);
+        return schema;
     }
 }

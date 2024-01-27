@@ -54,10 +54,11 @@ public class EditorialCollectionsCrudTable extends CrudTable {
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
             Map<String, String> formData = updateView.getFormData();
             try {
-                parentView.getAppController().updateEditorialCollection(data.get(0), formData.get("Issn"), formData.get("Nome"), formData.get("Editore"));
-                parentView.getAppController().showHomepage();
+                Map<String, Object> renderedData = parentView.getAppController().updateEditorialCollectionFromDatabase(data.get(0), formData.get("Issn"), formData.get("Nome"), formData.get("Editore"));
+                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new EditorialCollectionsCrudTable(parentView, "Collane:", new String[]{"issn", "nome", "editore"}, parentView.getAppController().getRenderedEditorialCollections())));
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "La collana \"" + renderedData.get("issn") + " - " + renderedData.get("name") + "\" è stata modificata con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception) {
-                System.out.println(exception.getMessage());
+                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

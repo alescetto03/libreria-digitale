@@ -31,8 +31,10 @@ public class ModelManipulationFormGUI extends AppView {
             formField.setLayout(new BorderLayout());
             JLabel label = new JLabel(entry.getKey());
             formField.add(label, BorderLayout.PAGE_START);
-            formField.add(entry.getValue(), BorderLayout.PAGE_END);
-            formField.setMaximumSize(new Dimension(400, 55));
+            formField.add(entry.getValue(), BorderLayout.CENTER);
+            if (!(entry.getValue() instanceof JTextArea)) {
+                formField.setMaximumSize(new Dimension(400, 55));
+            }
 
             formField.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
             form.add(formField);
@@ -58,9 +60,6 @@ public class ModelManipulationFormGUI extends AppView {
         contentPane.add(confirmButton, BorderLayout.PAGE_END);
     }
 
-    public ModelManipulationFormGUI(AppController appController, AppView parentView, Map<String, JComponent> data, String title, Object id) {
-        this(appController, parentView, data, title);
-    }
     @Override
     public JPanel getContentPane() {
         return contentPane;
@@ -82,6 +81,7 @@ public class ModelManipulationFormGUI extends AppView {
             } else if (entry.getValue() instanceof JYearChooser){
                 renderedData.put(entry.getKey(), String.valueOf((((JYearChooser) entry.getValue()).getValue())));
             } else if (entry.getValue() instanceof JTextArea){
+                System.out.println(((JTextArea) entry.getValue()).getText().trim());
                 renderedData.put(entry.getKey(), ((JTextArea) entry.getValue()).getText().trim());
             } else if (entry.getValue() instanceof JDateChooser){
                 Date formDate = ((JDateChooser) entry.getValue()).getDate();
@@ -91,7 +91,6 @@ public class ModelManipulationFormGUI extends AppView {
                     renderedData.put(entry.getKey(), null);
                 }
             }
-
         }
         return renderedData;
     }

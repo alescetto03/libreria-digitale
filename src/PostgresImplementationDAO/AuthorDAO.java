@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class AuthorDAO implements AuthorDAOInterface {
     public ArrayList<AuthorResultInterface> getAll() {
-        final String query = "SELECT * FROM Autore";
+        final String query = "SELECT * FROM Autore ORDER BY cod_autore";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);

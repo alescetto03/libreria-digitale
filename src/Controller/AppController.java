@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -704,7 +705,7 @@ public class AppController {
     }
 
     /**
-     * Metodo che modifica un articolo scientifico dal database
+     * Metodo che aggiorna un articolo scientifico dal database
      * @param publicationToUpdate
      * @param doi
      * @param title
@@ -746,20 +747,82 @@ public class AppController {
     public Map<String, Object> updateStoreStoreFromDatabase(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
         StoreResultInterface resultSet = storeDAO.updateStoreByPartitaIva(storeToUpdate, partitaIva, name, address, url);
         if (resultSet != null) {
-
+            return new Store(resultSet.getPartitaIva(), resultSet.getName(), resultSet.getAddress(), resultSet.getUrl()).getData();
         }
         return null;
     }
 
     /**
-     * Metodo che aggiorna una collana dal database
+     * Metodo che aggiorna una collana nel database
      * @param editorialCollectionToUpdate
      * @param issn
      * @param name
      * @param publisher
      */
-    public void updateEditorialCollection(String editorialCollectionToUpdate, String issn, String name, String publisher) throws Exception{
+    public Map<String, Object> updateEditorialCollectionFromDatabase(String editorialCollectionToUpdate, String issn, String name, String publisher) throws Exception{
         EditorialCollectionResultInterface resultSet = editorialCollectionDAO.updateEditorialCollectionByIssn(editorialCollectionToUpdate, issn, name, publisher);
+        if (resultSet != null) {
+            return new EditorialCollection(resultSet.getIssn(), resultSet.getName(), resultSet.getPublisher()).getData();
+        }
+        return null;
+    }
+
+    /**
+     * Metodo che aggiorna una rivista nel database
+     * @param jorunalToUpdate
+     * @param issn
+     * @param name
+     * @param argument
+     * @param publicationYear
+     * @param manager
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> updateJournalFromDatabase(String jorunalToUpdate, String issn, String name, String argument, int publicationYear, String manager) throws Exception {
+        JournalResultInterface resultSet = journalDAO.updateJournalByIssn(jorunalToUpdate, issn, name, argument, publicationYear, manager);
+        if (resultSet != null) {
+            return new Journal(resultSet.getIssn(), resultSet.getName(), resultSet.getArgument(), resultSet.getPublicationYear(), resultSet.getManager()).getData();
+        }
+        return null;
+    }
+
+    /**
+     * Metodo che aggiorna una conferenza nel database
+     * @param conferenceId
+     * @param location
+     * @param startDate
+     * @param endDate
+     * @param organizer
+     * @param manager
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> updateConferenceFromDatabase(int conferenceId, String location, LocalDate startDate, LocalDate endDate, String organizer, String manager) throws Exception {
+        java.sql.Date parsedStartDate = startDate != null ? java.sql.Date.valueOf(startDate) : null;
+        java.sql.Date parsedEndDate = endDate != null ? java.sql.Date.valueOf(endDate) : null;
+        ConferenceResultInterface resultSet = conferenceDAO.updateConferenceById(conferenceId, location, parsedStartDate, parsedEndDate, organizer, manager);
+        if (resultSet != null) {
+            LocalDate parsedLocalStartDate = resultSet.getStartDate() != null ? resultSet.getStartDate().toLocalDate() : null;
+            LocalDate parsedLocalEndDate = resultSet.getEndDate() != null ? resultSet.getEndDate().toLocalDate() : null;
+            return new Conference(resultSet.getId(), resultSet.getPlace(), parsedLocalStartDate, parsedLocalEndDate, resultSet.getOrganizer(), resultSet.getManager()).getData();
+        }
+        return null;
+    }
+
+    /**
+     * Metodo che aggiorna una sala/libreria nel database
+     * @param id
+     * @param name
+     * @param address
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> updatePresentationHallFromDatabase(int id, String name, String address) throws Exception{
+        PresentationHallResultInterface resultSet = presentationHallDAO.updatePresentationHallById(id, name, address);
+        if (resultSet != null) {
+            return new PresentationHall(resultSet.getId(), resultSet.getName(), resultSet.getAddress()).getData();
+        }
+        return null;
     }
 
     /**

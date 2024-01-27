@@ -33,7 +33,7 @@ public class BookDAO implements BookDAOInterface {
 
     @Override
     public ArrayList<BookResultInterface> getAll() {
-        final String query = "SELECT * FROM Libro";
+        final String query = "SELECT * FROM Libro ORDER BY isbn";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -110,7 +110,7 @@ public class BookDAO implements BookDAOInterface {
             statement.setString(6, description);
             statement.setObject(7, type.name().toLowerCase(), Types.OTHER);
             statement.setBytes(8, cover);
-            System.out.println(statement);
+
             if (type.name().equals("ROMANZO")) {
                 statement.setString(9, genre);
                 statement.setString(10, bookToUpdate);

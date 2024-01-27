@@ -35,7 +35,7 @@ public class StoreDAO implements StoreDAOInterface {
 
     @Override
     public ArrayList<StoreResultInterface> getAll() {
-        final String query = "SELECT * FROM Negozio";
+        final String query = "SELECT * FROM Negozio ORDER BY partita_iva";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -72,7 +72,7 @@ public class StoreDAO implements StoreDAOInterface {
     public StoreResultInterface updateStoreByPartitaIva(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement statement = conn.prepareStatement("UPDATE negozio SET partita_iva = ?, nome = NULLIF(?, ''), indirizzo = NULLIF(?, ''), url = NULLIF(?, '') WHERE partita_iva = ?");
+            PreparedStatement statement = conn.prepareStatement("UPDATE negozio SET partita_iva = ?, nome = NULLIF(?, ''), indirizzo = NULLIF(?, ''), url = NULLIF(?, '') WHERE partita_iva = ? RETURNING Negozio.*");
         ) {
             statement.setString(1, partitaIva);
             statement.setString(2, name);

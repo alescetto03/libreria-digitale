@@ -89,13 +89,18 @@ public class ScientificPublicationsCrudTable extends CrudTable {
     @Override
     protected Map<String, JComponent> getFormSchema() {
         Map<String, JComponent> schema = new HashMap<>();
+
+        JTextArea descriptionField = new JTextArea();
+        descriptionField.setLineWrap(true);
+        descriptionField.setWrapStyleWord(true);
+
         String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
         schema.put("Doi", new JTextField());
         schema.put("Titolo", new JTextField());
         schema.put("Editore", new JTextField());
         schema.put("Modalità di fruizione", new JComboBox<>(fruitionModes));
         schema.put("Anno di pubblicazione", new JYearChooser());
-        schema.put("Descrizione", new JTextArea());
+        schema.put("Descrizione", descriptionField);
         return schema;
     }
 
@@ -109,6 +114,8 @@ public class ScientificPublicationsCrudTable extends CrudTable {
         JComboBox<String> fruitionModeField = new JComboBox<>(fruitionModes);
         JYearChooser publicationYearField = new JYearChooser();
         JTextArea descriptionField = new JTextArea();
+        descriptionField.setLineWrap(true);
+        descriptionField.setWrapStyleWord(true);
 
         doiField.setText(data.get(0));
         titleField.setText(data.get(1));
