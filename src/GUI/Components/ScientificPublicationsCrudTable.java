@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ScientificPublicationsCrudTable extends CrudTable {
     public ScientificPublicationsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(parentView, title, columns, data, false, true, true, true, "Aggiungi un articolo scientifico", "Aggiorna un articolo scientifico");
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi un articolo scientifico", "Aggiorna un articolo scientifico");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
@@ -82,9 +82,7 @@ public class ScientificPublicationsCrudTable extends CrudTable {
     }
 
     @Override
-    protected void onViewButton(Object id) {
-
-    }
+    protected void onViewButton(Object id) { parentView.getAppController().showAuthorsOfScientificPublication((String) id); }
 
     @Override
     protected Map<String, JComponent> getFormSchema() {

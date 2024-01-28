@@ -1,5 +1,6 @@
 package PostgresImplementationDAO;
 
+import DAO.AuthorResultInterface;
 import DAO.ScientificPublicationDAOInterface;
 import DAO.ScientificPublicationResultInterface;
 import Model.ScientificPublication;
@@ -8,6 +9,23 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ScientificPublicationDAO implements ScientificPublicationDAOInterface {
+    public ScientificPublicationResultInterface getScientificPublicationByDoi(String doi) {
+        final String query = "SELECT * FROM articolo_scientifico WHERE doi = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, doi);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return new ScientificPublicationResult(result);
+            }
+        }catch (SQLException e){
+            System.out.println("Errore: " + e.getMessage());
+        }
+        return null;
+    }
     @Override
     public ArrayList<ScientificPublicationResultInterface> getResearchedPublication(String searchedPublication) {
         final String query = "SELECT * FROM Articolo_Scientifico WHERE Articolo_Scientifico.titolo ILIKE '%' || ? || '%'";
@@ -165,6 +183,56 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
                 throw new Exception("Il campo \"editore\" non può essere vuoto");
             else
                 throw new Exception("C'è stato un errore durante l'inserimento");
+        }
+    }
+
+    public ArrayList<AuthorResultInterface> getAuthorsOfScientificPublication(String doi) {
+        try (
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement statement = conn.prepareStatement("SELECT cod_autore, nome, data_nascita, data_morte, nazionalita, biografia " +
+                                                                    "FROM autore JOIN scrittura_articolo sa on autore.cod_autore = sa.autore " +
+                                                                    "WHERE articolo_scientifico = ?");
+        ) {
+            statement.setString(1, doi);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<AuthorResultInterface> authorResults = new ArrayList<>();
+            while (result.next()) {
+                AuthorResultInterface authorResult = new AuthorResult(result);
+                authorResults.add(authorResult);
+            }
+            return authorResults;
+        } catch (SQLException e) {
+            System.out.println("Errore: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean insertAuthorOfScientificPublication(int author, String scientificPublication) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO scrittura_articolo VALUES (?,?)");
+        ) {
+            statement.setInt(1, author);
+            statement.setString(2, scientificPublication);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteAuthorOfScientificPublication(int author, String scientificPublication) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM scrittura_articolo WHERE autore = ? AND articolo_scientifico = ?");
+        ) {
+            statement.setInt(1, author);
+            statement.setString(2, scientificPublication);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 }

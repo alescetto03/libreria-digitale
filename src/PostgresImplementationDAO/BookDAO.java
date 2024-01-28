@@ -1,5 +1,6 @@
 package PostgresImplementationDAO;
 
+import DAO.AuthorResultInterface;
 import DAO.BookDAOInterface;
 import DAO.BookResultInterface;
 import Model.Book;
@@ -8,6 +9,23 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class BookDAO implements BookDAOInterface {
+    public BookResultInterface getBookByIsbn(String isbn) {
+        final String query = "SELECT * FROM Libro WHERE isbn = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, isbn);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return new BookResult(result);
+            }
+        }catch (SQLException e){
+            System.out.println("Errore: " + e.getMessage());
+        }
+        return null;
+    }
     @Override
     public ArrayList<BookResultInterface> getResearchedBook(String searchedBook){
         final String query = "SELECT * FROM Libro WHERE Libro.titolo ILIKE '%'|| ? ||'%'";
@@ -217,6 +235,54 @@ public class BookDAO implements BookDAOInterface {
              else
                 throw new Exception("C'è stato un errore durante l'inserimento!");
         }
+    }
 
+    public ArrayList<AuthorResultInterface> getAuthorsOfBook(String isbn) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("SELECT cod_autore, nome, data_nascita, data_morte, nazionalita, biografia " +
+                                                                        "FROM autore JOIN scrittura_libro sl on autore.cod_autore = sl.autore WHERE libro = ?");
+        ) {
+            statement.setString(1, isbn);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<AuthorResultInterface> authorResults = new ArrayList<>();
+            while (result.next()) {
+                AuthorResultInterface authorResult = new AuthorResult(result);
+                authorResults.add(authorResult);
+            }
+            return authorResults;
+        } catch (SQLException e) {
+            System.out.println("Errore: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean insertAuthorOfBook(int author, String book) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO scrittura_libro VALUES (?,?)");
+        ) {
+            statement.setInt(1, author);
+            statement.setString(2, book);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteAuthorOfBook(int author, String book) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM scrittura_libro WHERE autore = ? AND libro = ?");
+        ) {
+            statement.setInt(1, author);
+            statement.setString(2, book);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }

@@ -1031,6 +1031,41 @@ public class AppController {
     }
 
     /**
+     * Metodo che restituisce una lista di tutti gli autori di un libro memorizzato nel database
+     * @param isbn
+     * @return
+     */
+    public ArrayList<Map<String, Object>> getAuthorsOfBook(String isbn) {
+        ArrayList<AuthorResultInterface> resultSets = bookDAO.getAuthorsOfBook(isbn);
+        return renderAuthors(resultSets);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti gli autori di un articolo scientifico memorizzato nel database
+     * @param doi
+     * @return
+     */
+    public ArrayList<Map<String, Object>> getAuthorsOfScientificPublication(String doi) {
+        ArrayList<AuthorResultInterface> resultSets = publicationDAO.getAuthorsOfScientificPublication(doi);
+        return renderAuthors(resultSets);
+    }
+
+    /**
+     * Subroutine che renderizza gli autori di libri o di articoli scientifici
+     * @param resultSets
+     * @return
+     */
+    private ArrayList<Map<String, Object>> renderAuthors(ArrayList<AuthorResultInterface> resultSets) {
+        ArrayList<AbstractModel> authors = new ArrayList<>();
+        for (AuthorResultInterface resultSet: resultSets) {
+            LocalDate parsedLocalBirthdate = resultSet.getBirthDate() != null ? resultSet.getBirthDate().toLocalDate() : null;
+            LocalDate parsedLocalDeathDate = resultSet.getDeathDate() != null ? resultSet.getDeathDate().toLocalDate() : null;
+            authors.add(new Author(resultSet.getId(), resultSet.getName(), parsedLocalBirthdate, parsedLocalDeathDate, resultSet.getNationality(), resultSet.getBio()));
+        }
+        return renderData(authors);
+    }
+
+    /**
      * Metodo che mostra a video tutti gli articoli pubblicati da una rivista
      */
     public void showScientificPublicationsInJournal(String issn) {
@@ -1055,6 +1090,20 @@ public class AppController {
         PresentationHallResultInterface presentationHallResult = presentationHallDAO.getPresentationhallById(presentationHallId);
         PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
         switchView(new BooksInEditorialCollectionGUI(this, presentationHall.getData(), getBooksFromPresentationHall(presentationHallId), getRenderedBooks()));
+    }
+
+    public void showAuthorsOfBook(String isbn) {
+        BookResultInterface bookResult = bookDAO.getBookByIsbn(isbn);
+        //TODO:: AGGIUNGERE LA COPERTINA
+        Book book = new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic());
+        switchView(new AuthorsOfBookGUI(this, book.getData(), getAuthorsOfBook(isbn), getRenderedAuthors()));
+    }
+
+    public void showAuthorsOfScientificPublication(String doi) {
+        ScientificPublicationResultInterface scientificPublicationResult = publicationDAO.getScientificPublicationByDoi(doi);
+        //TODO:: AGGIUNGERE LA COPERTINA
+        ScientificPublication scientificPublication = new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), scientificPublicationResult.getPublicationYear(), null, scientificPublicationResult.getDescription(), scientificPublicationResult.getPublisher());
+        switchView(new AuthorsOfScientificPublicationGUI(this, scientificPublication.getData(), getAuthorsOfScientificPublication(doi), getRenderedAuthors()));
     }
 
     /**
@@ -1097,6 +1146,34 @@ public class AppController {
             presentationHallDAO.insertBookIntoPresentationHall(isbn, presentationHallId, presentationDate);
         } else {
             presentationHallDAO.deleteBookFromPresentationHall(isbn, presentationHallId);
+        }
+    }
+
+    /**
+     * Metodo che aggiorna le relazioni fra libri e autori
+     * @param authorId
+     * @param isbn
+     * @param isSelected
+     */
+    public void updateAuthorsOfBook(int authorId, String isbn, boolean isSelected) {
+        if (isSelected) {
+            bookDAO.insertAuthorOfBook(authorId, isbn);
+        } else {
+            bookDAO.deleteAuthorOfBook(authorId, isbn);
+        }
+    }
+
+    /**
+     * Metodo che aggiorna le relazioni fra libri e autori
+     * @param authorId
+     * @param doi
+     * @param isSelected
+     */
+    public void updateAuthorsOfScientificPublication(int authorId, String doi, boolean isSelected) {
+        if (isSelected) {
+            publicationDAO.insertAuthorOfScientificPublication(authorId, doi);
+        } else {
+            publicationDAO.deleteAuthorOfScientificPublication(authorId, doi);
         }
     }
 }

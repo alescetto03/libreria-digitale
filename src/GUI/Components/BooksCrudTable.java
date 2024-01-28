@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class BooksCrudTable extends CrudTable{
     public BooksCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(parentView, title, columns, data, false, true, true, true, "Aggiungi un libro", "Modifica un libro");
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi un libro", "Modifica un libro");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         TableColumn fruitionModeColumn = items.getColumn("modalità fruizione");
@@ -89,9 +89,7 @@ public class BooksCrudTable extends CrudTable{
     }
 
     @Override
-    protected void onViewButton(Object id) {
-
-    }
+    protected void onViewButton(Object id) { parentView.getAppController().showAuthorsOfBook((String) id); }
 
     @Override
     protected Map<String, JComponent> getFormSchema() {

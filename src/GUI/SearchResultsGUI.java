@@ -17,7 +17,7 @@ public class SearchResultsGUI extends AppView {
 
     JPanel contentPane = new JPanel();
     JPanel topPanel = new JPanel();
-    JScrollPane contentScrollPane = new JScrollPane();
+    //JScrollPane contentScrollPane = new JScrollPane();
 
     public SearchResultsGUI(AppController appController, ArrayList<Map<String, Object>> searchedBook, ArrayList<Map<String, Object>> searchedPublications, ArrayList<Map<String, Object>> searchedCollections, Map<String, String> storeBySeries, AppView previousView) {
         super(appController);
@@ -31,13 +31,13 @@ public class SearchResultsGUI extends AppView {
         contentPane.add(topPanel);
 
         int marginSize = 10;
-        contentPane.setPreferredSize(new Dimension(1600, 900));
+        //contentPane.setPreferredSize(new Dimension(1600, 900));
         contentPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
 
-        contentScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        contentScrollPane.setPreferredSize(new Dimension(1500, 850));
+        //contentScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        //contentScrollPane.setPreferredSize(new Dimension(1500, 850));
         //contentScrollPane.setBorder(BorderFactory.createEmptyBorder(marginSize, marginSize, marginSize, marginSize));
         //contentScrollPane.setLayout(new BoxLayout(contentScrollPane, BoxLayout.Y_AXIS));
 
@@ -57,7 +57,7 @@ public class SearchResultsGUI extends AppView {
             searchedBooksScrollPane.setPreferredSize(new Dimension(400, 250));
             searchedBooksContainer.add(searchedBooksLabel, BorderLayout.NORTH);
             searchedBooksContainer.add(searchedBooksScrollPane, BorderLayout.CENTER);
-            contentScrollPane.add(searchedBooksContainer);
+            contentPane.add(searchedBooksContainer);
             searchedBooksContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         }
         if (!searchedPublications.isEmpty()) {
@@ -75,7 +75,7 @@ public class SearchResultsGUI extends AppView {
             searchedPublicationsScrollPane.setPreferredSize(new Dimension(400, 250));
             searchedPublicationsContainer.add(searchedPublicationsLabel, BorderLayout.NORTH);
             searchedPublicationsContainer.add(searchedPublicationsScrollPane, BorderLayout.CENTER);
-            contentScrollPane.add(searchedPublicationsContainer);
+            contentPane.add(searchedPublicationsContainer);
             searchedPublicationsContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         }
         if (!searchedCollections.isEmpty()){
@@ -94,7 +94,7 @@ public class SearchResultsGUI extends AppView {
             searchedCollectionsScrollPane.setPreferredSize(new Dimension(400, 250));
             searchedCollectionsContainer.add(searchedCollectionsLabel, BorderLayout.NORTH);
             searchedCollectionsContainer.add(searchedCollectionsScrollPane, BorderLayout.CENTER);
-            contentScrollPane.add(searchedCollectionsContainer);
+            contentPane.add(searchedCollectionsContainer);
             searchedCollectionsContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         }
         if (!storeBySeries.isEmpty()){
@@ -130,10 +130,10 @@ public class SearchResultsGUI extends AppView {
             searchedSeriesScrollPane.setPreferredSize(new Dimension(400, 250));
             searchedSeriesContainer.add(searchedSeriesLabel, BorderLayout.NORTH);
             searchedSeriesContainer.add(searchedSeriesScrollPane, BorderLayout.CENTER);
-            contentScrollPane.add(searchedSeriesContainer);
+            contentPane.add(searchedSeriesContainer);
             searchedSeriesContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         }
-        contentPane.add(contentScrollPane);
+        //contentPane.add(contentScrollPane);
 
     }
 
