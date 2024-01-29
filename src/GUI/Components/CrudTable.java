@@ -57,6 +57,7 @@ public abstract class CrudTable extends JPanel {
         model.addColumn("azioni", new Object[model.getRowCount()]);
         items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displayEditButton, displayDeleteButton));
         items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displayEditButton, displayDeleteButton));
+        items.getColumn("azioni").setMinWidth(80);
         JScrollPane scrollPane = new JScrollPane(items, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(scrollPane);

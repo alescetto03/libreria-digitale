@@ -16,8 +16,8 @@ public class PresentationHallsCrudTable extends CrudTable {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una sala/libreria", "Modifica una sala/libreria");
         items.getColumn("id").setMaxWidth(50);
         items.getColumn("id").setMinWidth(50);
-        items.getColumn("azioni").setMaxWidth(80);
-        items.getColumn("azioni").setMinWidth(80);
+        items.getColumn("azioni").setMaxWidth(100);
+        items.getColumn("azioni").setMinWidth(100);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
             try {

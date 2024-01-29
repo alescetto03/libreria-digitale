@@ -23,7 +23,7 @@ public class JournalsCrudTable extends CrudTable {
         items.getColumn("argomento").setMinWidth(85);
         items.getColumn("anno di pubblicazione").setMinWidth(125);
         items.getColumn("responsabile").setMinWidth(125);
-
+        items.getColumn("azioni").setMinWidth(100);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
             try {

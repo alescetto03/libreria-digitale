@@ -29,6 +29,7 @@ public class ScientificPublicationsCrudTable extends CrudTable {
         items.getColumn("modalità fruizione").setMinWidth(120);
         items.getColumn("anno pubblicazione").setMinWidth(120);
         items.getColumn("descrizione").setMinWidth(300);
+        items.getColumn("azioni").setMinWidth(100);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
             try {

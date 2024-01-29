@@ -35,6 +35,7 @@ public class BooksCrudTable extends CrudTable{
         items.getColumn("target").setPreferredWidth(60);
         items.getColumn("materia").setPreferredWidth(80);
         items.getColumn("tipo").setPreferredWidth(80);
+        items.getColumn("azioni").setMinWidth(100);
         this.createButton.removeActionListener(createButtonListener);
         this.createButton.addActionListener((ActionEvent e) -> {
             parentView.getAppController().switchView(new InsertBookGUI(parentView.getAppController()));

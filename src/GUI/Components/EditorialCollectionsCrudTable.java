@@ -16,7 +16,7 @@ import java.util.Map;
 public class EditorialCollectionsCrudTable extends CrudTable {
     public EditorialCollectionsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una collana", "Modifica una collana");
-
+        items.getColumn("azioni").setMinWidth(100);
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
             try {
                 Map<String, String> formData = this.createView.getFormData();
