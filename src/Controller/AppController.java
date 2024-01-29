@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AppController {
     /**
@@ -1023,11 +1024,21 @@ public class AppController {
     }
 
     /**
-     * Metodo che restituisce una lista di tutti i libri presentati in una libreria memorizzata nel database
+     * Metodo che restituisce una lista di tutte le presentazioni di libri effettuate in una libreria memorizzata nel database
      */
-    public ArrayList<Map<String, Object>> getBooksFromPresentationHall(int presentationHallId) {
-        ArrayList<BookResultInterface> resultSets = presentationHallDAO.getPresentedBooks(presentationHallId);
-        return renderBooks(resultSets);
+    public ArrayList<Map<String, Object>> getBookPresentationsFromPresentationHall(int presentationHallId) {
+        ArrayList<BookPresentationResultInterface> resultSets = presentationHallDAO.getBookPresentations(presentationHallId);
+        ArrayList<AbstractModel> bookPresentations = new ArrayList<>();
+        for (BookPresentationResultInterface resultSet: resultSets) {
+            LocalDate parsedPresentationDate = resultSet.getPresentationDate() != null ? resultSet.getPresentationDate().toLocalDate() : null;
+            bookPresentations.add(new BookPresentation(
+                new PresentationHall(resultSet.getPresentationHall().getId(), resultSet.getPresentationHall().getName(), resultSet.getPresentationHall().getAddress()),
+                //TODO::AGGIUNGERE LA COPERTINA
+                new Book(resultSet.getPresentedBook().getIsbn(), resultSet.getPresentedBook().getTitle(), resultSet.getPresentedBook().getPublisher(), Book.FruitionMode.valueOf(resultSet.getPresentedBook().getFruitionMode().toUpperCase()), resultSet.getPresentedBook().getPublicationYear(), null, resultSet.getPresentedBook().getDescription(), Book.BookType.valueOf(resultSet.getPresentedBook().getBookType().toUpperCase()), resultSet.getPresentedBook().getGenre(), resultSet.getPresentedBook().getTarget(), resultSet.getPresentedBook().getTopic()),
+                parsedPresentationDate
+            ));
+        }
+        return renderData(bookPresentations);
     }
 
     /**
@@ -1086,10 +1097,11 @@ public class AppController {
     /**
      * Metodo che mostra a video tutti i libri presenti in una libreria
      */
-    public void showPresentedBooks(int presentationHallId) {
+    public void showBookPresentations(int presentationHallId) {
         PresentationHallResultInterface presentationHallResult = presentationHallDAO.getPresentationhallById(presentationHallId);
         PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
-        switchView(new BooksInEditorialCollectionGUI(this, presentationHall.getData(), getBooksFromPresentationHall(presentationHallId), getRenderedBooks()));
+        ArrayList<Map<String, Object>> books = getRenderedBooks();
+        switchView(new PresentedBooksGUI(this, presentationHall.getData(), getBookPresentationsFromPresentationHall(presentationHallId), getRenderedBooks()));
     }
 
     public void showAuthorsOfBook(String isbn) {
@@ -1141,9 +1153,10 @@ public class AppController {
      * @param presentationDate
      * @param isSelected
      */
-    public void updatePresentedBooks(String isbn, int presentationHallId, LocalDate presentationDate, boolean isSelected) {
+    public void updatePresentedBooks(String isbn, int presentationHallId, LocalDate presentationDate, boolean isSelected) throws Exception {
         if (isSelected) {
-            presentationHallDAO.insertBookIntoPresentationHall(isbn, presentationHallId, presentationDate);
+            Date parsedPresentationDate = presentationDate != null ? Date.valueOf(presentationDate) : null;
+            presentationHallDAO.insertBookIntoPresentationHall(isbn, presentationHallId, parsedPresentationDate);
         } else {
             presentationHallDAO.deleteBookFromPresentationHall(isbn, presentationHallId);
         }

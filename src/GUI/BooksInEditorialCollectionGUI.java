@@ -44,7 +44,7 @@ public class BooksInEditorialCollectionGUI extends AppView {
             checkBox.addActionListener((ActionEvent e) -> {
                 appController.updateBooksFromEditorialCollection((String) book.get("isbn"), (String) editorialCollection.get("issn"), checkBox.isSelected());
             });
-            item.setLayout(new FlowLayout());
+            item.setLayout(new FlowLayout(FlowLayout.LEFT));
             item.add(isbn);
             item.add(title);
             item.add(checkBox);

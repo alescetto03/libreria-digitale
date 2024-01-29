@@ -1,11 +1,11 @@
 package PostgresImplementationDAO;
 
+import DAO.BookPresentationResultInterface;
 import DAO.BookResultInterface;
 import DAO.PresentationHallDAOInterface;
 import DAO.PresentationHallResultInterface;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class PresentationHallDAO implements PresentationHallDAOInterface {
@@ -63,9 +63,10 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
     }
 
     @Override
-    public ArrayList<BookResultInterface> getPresentedBooks(int presentationHallId) {
-        final String query = "SELECT l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo FROM presentazione_libro AS pl " +
+    public ArrayList<BookPresentationResultInterface> getBookPresentations(int presentationHallId) {
+        final String query = "SELECT s.cod_sala, s.nome, s.indirizzo, pl.data_presentazione, l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo FROM presentazione_libro AS pl " +
                 "JOIN libro AS l ON l.isbn = pl.libro " +
+                "JOIN sala s on pl.sala = s.cod_sala " +
                 "WHERE pl.sala = ?";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -74,29 +75,35 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
             statement.setInt(1, presentationHallId);
             ResultSet result = statement.executeQuery();
 
-            ArrayList<BookResultInterface> bookResults = new ArrayList<>();
+            ArrayList<BookPresentationResultInterface> bookPresentationResults = new ArrayList<>();
             while (result.next()) {
-                BookResultInterface booksResult = new BookResult(result);
-                bookResults.add(booksResult);
+                BookResultInterface bookResult = new BookResult(result);
+                PresentationHallResultInterface presentationHallResult = new PresentationHallResult(result);
+                BookPresentationResultInterface bookPresentationResult = new BookPresentationResult(presentationHallResult, bookResult, result.getDate("data_presentazione"));
+                bookPresentationResults.add(bookPresentationResult);
             }
-            return bookResults;
+            return bookPresentationResults;
         } catch (SQLException e) {
             System.out.println("Errore: " + e.getMessage());
             return null;
         }
     }
 
-    public boolean insertBookIntoPresentationHall(String book, int presentationHall, LocalDate presentationDate) {
+    public boolean insertBookIntoPresentationHall(String book, int presentationHall, Date presentationDate) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("INSERT INTO presentazione_libro VALUES (?,?,?)");
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO presentazione_libro VALUES (?,?,?) ON CONFLICT (sala, libro) DO UPDATE SET data_presentazione = ?");
         ) {
             statement.setInt(1, presentationHall);
             statement.setString(2, book);
-            statement.setDate(3, Date.valueOf(presentationDate));
+            statement.setDate(3, presentationDate);
+            statement.setDate(4, presentationDate);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            if (e.getSQLState().equals("23502") && e.getMessage().contains("data_presentazione")) {
+                throw new Exception("Inserisci una data di presentazione!");
+            }
             return false;
         }
     }

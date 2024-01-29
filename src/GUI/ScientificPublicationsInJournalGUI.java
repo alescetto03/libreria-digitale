@@ -45,7 +45,7 @@ public class ScientificPublicationsInJournalGUI extends AppView {
             checkBox.addActionListener((ActionEvent e) -> {
                 appController.updateScientificPublicationsFromJournal((String) scientificPublication.get("doi"), (String) journal.get("issn"), checkBox.isSelected());
             });
-            item.setLayout(new FlowLayout());
+            item.setLayout(new FlowLayout(FlowLayout.LEFT));
             item.add(doi);
             item.add(title);
             item.add(checkBox);

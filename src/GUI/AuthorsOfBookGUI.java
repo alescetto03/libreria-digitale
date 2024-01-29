@@ -44,7 +44,7 @@ public class AuthorsOfBookGUI extends AppView {
             checkBox.addActionListener((ActionEvent e) -> {
                 appController.updateAuthorsOfBook((int) author.get("id"), (String) book.get("isbn"), checkBox.isSelected());
             });
-            item.setLayout(new FlowLayout());
+            item.setLayout(new FlowLayout(FlowLayout.LEFT));
             item.add(doi);
             item.add(title);
             item.add(checkBox);

@@ -1,7 +1,7 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.BooksCrudTable;
+import GUI.Components.ScientificPublicationsCrudTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class AuthorsOfScientificPublicationGUI extends AppView {
 
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
+            appController.switchView(new AdminPageGUI(appController, new ScientificPublicationsCrudTable(this, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, appController.getRenderedScientificPublications())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -44,7 +44,7 @@ public class AuthorsOfScientificPublicationGUI extends AppView {
             checkBox.addActionListener((ActionEvent e) -> {
                 appController.updateAuthorsOfScientificPublication((int) author.get("id"), (String) scientificPublication.get("doi"), checkBox.isSelected());
             });
-            item.setLayout(new FlowLayout());
+            item.setLayout(new FlowLayout(FlowLayout.LEFT));
             item.add(doi);
             item.add(title);
             item.add(checkBox);

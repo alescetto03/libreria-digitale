@@ -67,7 +67,7 @@ public class PresentationHallsCrudTable extends CrudTable {
 
     @Override
     protected void onViewButton(Object id) {
-        parentView.getAppController().showPresentedBooks(Integer.parseInt((String) id));
+        parentView.getAppController().showBookPresentations(Integer.parseInt((String) id));
     }
 
     @Override
