@@ -12,7 +12,7 @@ import java.util.Map;
 public class AuthorsOfScientificPublicationGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
-    JLabel collectionTitle = new JLabel();
+    JLabel scientificPublicationTitle = new JLabel();
     public AuthorsOfScientificPublicationGUI(AppController appController, Map<String, Object> scientificPublication, ArrayList<Map<String, Object>> authorsOfBook, ArrayList<Map<String, Object>> authors) {
         super(appController);
 
@@ -22,14 +22,14 @@ public class AuthorsOfScientificPublicationGUI extends AppView {
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        collectionTitle.setText((String) scientificPublication.get("name"));
-        collectionTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scientificPublicationTitle.setText((String) scientificPublication.get("name"));
+        scientificPublicationTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titlePanel.add(goBackButton);
-        titlePanel.add(collectionTitle);
+        titlePanel.add(scientificPublicationTitle);
         contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.setLayout(new BorderLayout());
-        contentPane.setPreferredSize(new Dimension(600, 300));
+        contentPane.setPreferredSize(new Dimension(800, 500));
 
         JPanel itemsWrapper = new JPanel();
         itemsWrapper.setLayout(new BoxLayout(itemsWrapper, BoxLayout.Y_AXIS));

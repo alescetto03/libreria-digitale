@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AppController {
     /**
@@ -655,8 +654,18 @@ public class AppController {
         ArrayList<BookResultInterface> bookResults = bookDAO.getAll();
         return renderBooks(bookResults);
     }
+
     /**
-     * Metodo che restituisce una lista di tutti i libri memorizzati nel database
+     * Metodo che restituisce una lista di tutti i libri memorizzati nel database data una modalità fruizione
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
+    public ArrayList<Map<String, Object>> getRenderedBooksByFruitionMode(Book.FruitionMode fruitionMode) {
+        ArrayList<BookResultInterface> bookResults = bookDAO.getBooksByFruitionMode(fruitionMode);
+        return renderBooks(bookResults);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutti i libri memorizzati nel database dato un editore
      * renderizzati come ArrayList di coppia chiave/valore
      */
     public ArrayList<Map<String, Object>> getRenderedBooksByPublisher(String publisher) {
@@ -1005,6 +1014,8 @@ public class AppController {
 
     /**
      * Metodo che restituisce una lista di tutti gli articoli pubblicati da una rivista memorizzata nel database
+     * @param issn
+     * @return
      */
     public ArrayList<Map<String, Object>> getScientificPublicationsFromJournal(String issn) {
         ArrayList<ScientificPublicationResultInterface> resultSets = journalDAO.getPublicationsFromJournal(issn);
@@ -1017,6 +1028,8 @@ public class AppController {
 
     /**
      * Metodo che restituisce una lista di tutti i libri contenuti in una raccolta memorizzata nel database
+     * @param issn
+     * @return
      */
     public ArrayList<Map<String, Object>> getBooksFromEditorialCollection(String issn) {
         ArrayList<BookResultInterface> resultSets = editorialCollectionDAO.getBooksFromEditorialCollection(issn);
@@ -1025,6 +1038,8 @@ public class AppController {
 
     /**
      * Metodo che restituisce una lista di tutte le presentazioni di libri effettuate in una libreria memorizzata nel database
+     * @param presentationHallId
+     * @return
      */
     public ArrayList<Map<String, Object>> getBookPresentationsFromPresentationHall(int presentationHallId) {
         ArrayList<BookPresentationResultInterface> resultSets = presentationHallDAO.getBookPresentations(presentationHallId);
@@ -1039,6 +1054,28 @@ public class AppController {
             ));
         }
         return renderData(bookPresentations);
+    }
+
+    /**
+     * Metodo che restituisce una lista di tutte le presentazioni di articoli scientifici effettuate durante una conferenza memorizzata nel database
+     * @param conferenceId
+     * @return
+     */
+    public ArrayList<Map<String, Object>> getScientificPublicationPresentationsFromConference(int conferenceId) {
+        ArrayList<ScientificPublicationPresentationResultInterface> resultSets = conferenceDAO.getScientificPublicatonPresentations(conferenceId);
+        ArrayList<AbstractModel> scientificPublicationPresentations = new ArrayList<>();
+        for (ScientificPublicationPresentationResultInterface resultSet: resultSets) {
+            LocalDate parsedPresentationDate = resultSet.getPresentationDate() != null ? resultSet.getPresentationDate().toLocalDate() : null;
+            LocalDate parsedStartDate = resultSet.getConference().getStartDate() != null ? resultSet.getConference().getStartDate().toLocalDate() : null;
+            LocalDate parsedEndDate = resultSet.getConference().getEndDate() != null ? resultSet.getConference().getEndDate().toLocalDate() : null;
+            scientificPublicationPresentations.add(new ScientificPublicationPresentation(
+                    new Conference(resultSet.getConference().getId(), resultSet.getConference().getPlace(), parsedStartDate, parsedEndDate, resultSet.getConference().getOrganizer(), resultSet.getConference().getManager()),
+                    //TODO::AGGIUNGERE LA COPERTINA
+                    new ScientificPublication(resultSet.getPresentedScientificPublication().getDoi(), resultSet.getPresentedScientificPublication().getTitle(), ScientificPublication.FruitionMode.valueOf(resultSet.getPresentedScientificPublication().getFruitionMode().toUpperCase()), resultSet.getPresentedScientificPublication().getPublicationYear(), null, resultSet.getPresentedScientificPublication().getDescription(), resultSet.getPresentedScientificPublication().getPublisher()),
+                    parsedPresentationDate
+            ));
+        }
+        return renderData(scientificPublicationPresentations);
     }
 
     /**
@@ -1077,7 +1114,27 @@ public class AppController {
     }
 
     /**
+     * Metodo che restituisce una lista di tutte le vendite di libri effettuate da un negozio memorizzato nel database
+     * @param partitaIva
+     * @return
+     */
+    public ArrayList<Map<String, Object>> getBookSalesFromStore(String partitaIva) {
+        ArrayList<BookSaleResultInterface> resultSets = storeDAO.getBookSales(partitaIva);
+        ArrayList<AbstractModel> bookSales = new ArrayList<>();
+        for (BookSaleResultInterface resultSet: resultSets) {
+            bookSales.add(new BookSale(
+                    new Store(resultSet.getStore().getPartitaIva(), resultSet.getStore().getName(), resultSet.getStore().getAddress(), resultSet.getStore().getUrl()),
+                    new Book(resultSet.getBook().getIsbn(), resultSet.getBook().getTitle(), resultSet.getBook().getPublisher(), Book.FruitionMode.valueOf(resultSet.getBook().getFruitionMode().toUpperCase()), resultSet.getBook().getPublicationYear(), null, resultSet.getBook().getDescription(), Book.BookType.valueOf(resultSet.getBook().getBookType().toUpperCase()), resultSet.getBook().getGenre(), resultSet.getBook().getTarget(), resultSet.getBook().getTopic()),
+                    resultSet.getPrice(),
+                    resultSet.getQuantity()
+            ));
+        }
+        return renderData(bookSales);
+    }
+
+    /**
      * Metodo che mostra a video tutti gli articoli pubblicati da una rivista
+     * @param issn
      */
     public void showScientificPublicationsInJournal(String issn) {
         JournalResultInterface journalResult = journalDAO.getJournalByIssn(issn);
@@ -1087,6 +1144,7 @@ public class AppController {
 
     /**
      * Metodo che mostra a video tutti i libri presenti in una collana
+     * @param issn
      */
     public void showBooksInEditorialCollection(String issn) {
         EditorialCollectionResultInterface editorialCollectionResult = editorialCollectionDAO.getEditorialCollectionByIssn(issn);
@@ -1096,14 +1154,28 @@ public class AppController {
 
     /**
      * Metodo che mostra a video tutti i libri presenti in una libreria
+     * @param presentationHallId
      */
     public void showBookPresentations(int presentationHallId) {
         PresentationHallResultInterface presentationHallResult = presentationHallDAO.getPresentationhallById(presentationHallId);
         PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
-        ArrayList<Map<String, Object>> books = getRenderedBooks();
-        switchView(new PresentedBooksGUI(this, presentationHall.getData(), getBookPresentationsFromPresentationHall(presentationHallId), getRenderedBooks()));
+        switchView(new BookPresentationsGUI(this, presentationHall.getData(), getBookPresentationsFromPresentationHall(presentationHallId), getRenderedBooks()));
     }
 
+    /**
+     * Metodo che mostra a video tutti gli articoli scientifici presentati in una conferenza
+     * @param conferenceId
+     */
+    public void showScientificPublicationPresentations(int conferenceId) {
+        ConferenceResultInterface conferenceResult = conferenceDAO.getConferenceById(conferenceId);
+        Conference conference = new Conference(conferenceResult.getId(), conferenceResult.getPlace(), conferenceResult.getStartDate().toLocalDate(), conferenceResult.getEndDate().toLocalDate(), conferenceResult.getOrganizer(), conferenceResult.getManager());
+        switchView(new ScientificPublicationsPresentationsGUI(this, conference.getData(), getScientificPublicationPresentationsFromConference(conferenceId), getRenderedScientificPublications()));
+    }
+
+    /**
+     * Metodo che mostra a video tutti gli autori di un libro
+     * @param isbn
+     */
     public void showAuthorsOfBook(String isbn) {
         BookResultInterface bookResult = bookDAO.getBookByIsbn(isbn);
         //TODO:: AGGIUNGERE LA COPERTINA
@@ -1111,11 +1183,31 @@ public class AppController {
         switchView(new AuthorsOfBookGUI(this, book.getData(), getAuthorsOfBook(isbn), getRenderedAuthors()));
     }
 
+    /**
+     * Metodo che mostra a video tutti i libri venduti da un negozio
+     * @param doi
+     */
     public void showAuthorsOfScientificPublication(String doi) {
         ScientificPublicationResultInterface scientificPublicationResult = publicationDAO.getScientificPublicationByDoi(doi);
         //TODO:: AGGIUNGERE LA COPERTINA
         ScientificPublication scientificPublication = new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), scientificPublicationResult.getPublicationYear(), null, scientificPublicationResult.getDescription(), scientificPublicationResult.getPublisher());
         switchView(new AuthorsOfScientificPublicationGUI(this, scientificPublication.getData(), getAuthorsOfScientificPublication(doi), getRenderedAuthors()));
+    }
+
+    /**
+     * Metodo che mostra a video tutti gli autori di un articoo scientifico
+     * @param partitaIva
+     */
+    public void showBookSales(String partitaIva) {
+        StoreResultInterface storeResult = storeDAO.getStoreByPartitaIva(partitaIva);
+        Store store = new Store(storeResult.getPartitaIva(), storeResult.getName(), storeResult.getAddress(), storeResult.getUrl());
+        ArrayList<Map<String, Object>> renderedBooks;
+        if (!storeResult.getAddress().isBlank() && store.getUrl().isBlank()) {
+            renderedBooks = getRenderedBooksByFruitionMode(Book.FruitionMode.valueOf("CARTACEO"));
+        } else {
+            renderedBooks = getRenderedBooks();
+        }
+        switchView(new BookSalesGUI(this, store.getData(), getBookSalesFromStore(partitaIva), renderedBooks));
     }
 
     /**
@@ -1153,12 +1245,29 @@ public class AppController {
      * @param presentationDate
      * @param isSelected
      */
-    public void updatePresentedBooks(String isbn, int presentationHallId, LocalDate presentationDate, boolean isSelected) throws Exception {
+    public void updateBookPresentation(String isbn, int presentationHallId, LocalDate presentationDate, boolean isSelected) throws Exception {
         if (isSelected) {
             Date parsedPresentationDate = presentationDate != null ? Date.valueOf(presentationDate) : null;
             presentationHallDAO.insertBookIntoPresentationHall(isbn, presentationHallId, parsedPresentationDate);
         } else {
             presentationHallDAO.deleteBookFromPresentationHall(isbn, presentationHallId);
+        }
+    }
+
+    /**
+     * Metodo che aggiorna le relazioni fra articoli e conferenze
+     * @param doi
+     * @param conferenceId
+     * @param presentationDate
+     * @param isSelected
+     * @throws Exception
+     */
+    public void updateScientificPublicationPresentation(String doi, int conferenceId, LocalDate presentationDate, boolean isSelected) throws Exception {
+        if (isSelected) {
+            Date parsedPresentationDate = presentationDate != null ? Date.valueOf(presentationDate) : null;
+            conferenceDAO.insertScientificPublicationPresentation(conferenceId, doi, parsedPresentationDate);
+        } else {
+            conferenceDAO.deleteScientificPublicationPresentation(conferenceId, doi);
         }
     }
 

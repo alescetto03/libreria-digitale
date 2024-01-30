@@ -14,13 +14,14 @@ import java.util.Map;
 
 public class StoresCrudTable extends CrudTable {
     public StoresCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(parentView, title, columns, data, false, true, true, true, "Aggiungi un negozio", "Modifica un negozio");
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi un negozio", "Modifica un negozio");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         items.getColumn("partita iva").setMinWidth(90);
         items.getColumn("partita iva").setMaxWidth(90);
         items.getColumn("nome").setMinWidth(150);
         items.getColumn("indirizzo").setMinWidth(180);
         items.getColumn("url").setMinWidth(200);
+        items.getColumn("azioni").setMinWidth(100);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
             try {
@@ -70,9 +71,7 @@ public class StoresCrudTable extends CrudTable {
     }
 
     @Override
-    protected void onViewButton(Object id) {
-
-    }
+    protected void onViewButton(Object id) { parentView.getAppController().showBookSales((String) id); }
 
     @Override
     protected Map<String, JComponent> getFormSchema() {

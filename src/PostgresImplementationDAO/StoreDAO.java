@@ -1,7 +1,6 @@
 package PostgresImplementationDAO;
 
-import DAO.StoreDAOInterface;
-import DAO.StoreResultInterface;
+import DAO.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +9,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class StoreDAO implements StoreDAOInterface {
+    public StoreResultInterface getStoreByPartitaIva(String partitaIva) {
+        final String query = "SELECT * FROM negozio WHERE partita_iva = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, partitaIva);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return new StoreResult(result);
+            }
+        }catch (SQLException e){
+            System.out.println("Errore: " + e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public ArrayList<StoreResultInterface> storeCompleteSerie(String searchedSerie) {
         final String query = "SELECT * FROM negoziconseriecomplete WHERE nome_serie ILIKE '%' || ? || '%'";
@@ -102,12 +119,12 @@ public class StoreDAO implements StoreDAOInterface {
     }
 
     @Override
-    public StoreResultInterface insertStoreInDb(String partita_iva, String name, String address, String url) throws Exception{
+    public StoreResultInterface insertStoreInDb(String partitaIva, String name, String address, String url) throws Exception{
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("INSERT INTO Negozio VALUES (?, NULLIF(?, ''), NULLIF(?, ''), NULLIF(?, '')) RETURNING Negozio.*");
         ) {
-            statement.setString(1, partita_iva);
+            statement.setString(1, partitaIva);
             statement.setString(2, name);
             statement.setString(3, address);
             statement.setString(4, url);
@@ -129,6 +146,33 @@ public class StoreDAO implements StoreDAOInterface {
                 throw new Exception("Il campo \"nome\" non può essere vuoto");
             else
                 throw new Exception("C'è stato un errore durante la modifica");
+        }
+    }
+
+    @Override
+    public ArrayList<BookSaleResultInterface> getBookSales(String partitaIva) {
+        final String query = "SELECT * FROM libro " +
+                "JOIN vendita v ON libro.isbn = v.libro " +
+                "JOIN negozio n ON v.negozio = n.partita_iva " +
+                "WHERE negozio = ?";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setString(1, partitaIva);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<BookSaleResultInterface> bookSaleResults = new ArrayList<>();
+            while (result.next()) {
+                BookResultInterface scientificPublicationResult = new BookResult(result);
+                StoreResultInterface storeResult = new StoreResult(result);
+                BookSaleResultInterface scientificPublicationPresentationResult = new BookSaleResult(storeResult, scientificPublicationResult, result.getFloat("costo"), result.getInt("quantita"));
+                bookSaleResults.add(scientificPublicationPresentationResult);
+            }
+            return bookSaleResults;
+        } catch (SQLException e) {
+            System.out.println("Errore: " + e.getMessage());
+            return null;
         }
     }
 }

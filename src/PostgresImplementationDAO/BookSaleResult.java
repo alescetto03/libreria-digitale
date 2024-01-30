@@ -1,58 +1,38 @@
 package PostgresImplementationDAO;
 
+import DAO.BookResultInterface;
 import DAO.BookSaleResultInterface;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import DAO.StoreResultInterface;
 
 public class BookSaleResult implements BookSaleResultInterface {
-    String isbn;
-    String partitaIva;
-    String bookTitle;
-    String storeName;
-    float price;
-    int quantity;
+    private StoreResultInterface store;
+    private BookResultInterface book;
+    private float price;
+    private int quantity;
 
-    public BookSaleResult(String isbn, String partitaIva, String bookTitle, String storeName, float price, int quantity) {
-        this.isbn = isbn;
-        this.partitaIva = partitaIva;
-        this.bookTitle = bookTitle;
-        this.storeName = storeName;
+    public BookSaleResult(StoreResultInterface store, BookResultInterface book, float price, int quantity) {
+        this.store = store;
+        this.book = book;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public BookSaleResult(ResultSet resultSet) throws SQLException {
-        this(
-            resultSet.getString("isbn"),
-            resultSet.getString("partita_iva"),
-            resultSet.getString("titolo_libro"),
-            resultSet.getString("nome_negozio"),
-            resultSet.getFloat("prezzo"),
-            resultSet.getInt("quantita")
-        );
+    @Override
+    public StoreResultInterface getStore() {
+        return store;
     }
 
-    public String getIsbn() {
-        return isbn;
+    @Override
+    public BookResultInterface getBook() {
+        return book;
     }
 
-    public String getPartitaIva() {
-        return partitaIva;
-    }
-
-    public String getBookTitle() {
-        return bookTitle;
-    }
-
-    public String getStoreName() {
-        return storeName;
-    }
-
+    @Override
     public float getPrice() {
         return price;
     }
 
+    @Override
     public int getQuantity() {
         return quantity;
     }

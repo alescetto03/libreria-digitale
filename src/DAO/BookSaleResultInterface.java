@@ -1,15 +1,8 @@
 package DAO;
 
 public interface BookSaleResultInterface {
-    String getIsbn();
-
-    String getPartitaIva();
-
-    String getBookTitle();
-
-    String getStoreName();
-
+    StoreResultInterface getStore();
+    BookResultInterface getBook();
     float getPrice();
-
     int getQuantity();
 }

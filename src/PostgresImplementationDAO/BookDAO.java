@@ -70,6 +70,27 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    public ArrayList<BookResultInterface> getBooksByFruitionMode(Book.FruitionMode fruitionMode) {
+        final String query = "SELECT * FROM Libro WHERE modalita_fruizione = ? ORDER BY isbn";
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+            statement.setObject(1, fruitionMode.name().toLowerCase(), Types.OTHER);
+            ResultSet result = statement.executeQuery();
+
+            ArrayList<BookResultInterface> bookResults = new ArrayList<>();
+            while(result.next()){
+                BookResultInterface bookResult = new BookResult(result);
+                bookResults.add(bookResult);
+            }
+            return bookResults;
+        }catch (SQLException e){
+            System.out.println("Errore: " + e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     public ArrayList<BookResultInterface> getBooksFromCollection(int collectionId) {
         final String query = "SELECT l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo " +

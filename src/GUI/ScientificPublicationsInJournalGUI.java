@@ -2,7 +2,6 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.*;
-import Model.ScientificPublication;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +12,7 @@ import java.util.Map;
 public class ScientificPublicationsInJournalGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
-    JLabel collectionTitle = new JLabel();
+    JLabel journalTitle = new JLabel();
     public ScientificPublicationsInJournalGUI(AppController appController, Map<String, Object> journal, ArrayList<Map<String, Object>> scientificPublicationsInJournal, ArrayList<Map<String, Object>> scientificPublications) {
         super(appController);
 
@@ -23,14 +22,14 @@ public class ScientificPublicationsInJournalGUI extends AppView {
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        collectionTitle.setText((String) journal.get("name"));
-        collectionTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        journalTitle.setText((String) journal.get("name"));
+        journalTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titlePanel.add(goBackButton);
-        titlePanel.add(collectionTitle);
+        titlePanel.add(journalTitle);
         contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.setLayout(new BorderLayout());
-        contentPane.setPreferredSize(new Dimension(600, 300));
+        contentPane.setPreferredSize(new Dimension(800, 500));
 
         JPanel itemsWrapper = new JPanel();
         itemsWrapper.setLayout(new BoxLayout(itemsWrapper, BoxLayout.Y_AXIS));

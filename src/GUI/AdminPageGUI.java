@@ -24,9 +24,6 @@ public class AdminPageGUI extends AppView {
     private JPanel tableWrapper;
     private JButton publicationsJournalsButton;
     private JButton booksEditorialCollectionsButton;
-    private JButton publicationsConferencesButton;
-    private JButton booksPresentationHallsButton;
-    private JButton booksShopsButton;
     private JPanel currentPanel;
     private CrudTable currentTable;
     private JButton goBackButton;
@@ -115,9 +112,6 @@ public class AdminPageGUI extends AppView {
     }
     public void createUIComponents() {
         currentTable = startCrudTable;
-    }
-    private void switchPanel() {
-
     }
 
     @Override

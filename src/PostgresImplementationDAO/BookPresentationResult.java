@@ -7,9 +7,9 @@ import DAO.PresentationHallResultInterface;
 import java.sql.Date;
 
 public class BookPresentationResult implements BookPresentationResultInterface {
-    PresentationHallResultInterface presentationHall;
-    BookResultInterface presentedBook;
-    Date presentationDate;
+    private PresentationHallResultInterface presentationHall;
+    private BookResultInterface presentedBook;
+    private Date presentationDate;
 
     public BookPresentationResult(PresentationHallResultInterface presentationHall, BookResultInterface presentedBook, Date presentationDate) {
         this.presentationHall = presentationHall;

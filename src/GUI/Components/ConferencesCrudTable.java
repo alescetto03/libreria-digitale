@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class ConferencesCrudTable extends CrudTable {
     public ConferencesCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(parentView, title, columns, data, false, true, true, true, "Aggiungi una conferenza", "Modifica una conferenza");
+        super(parentView, title, columns, data, true, true, true, true, "Aggiungi una conferenza", "Modifica una conferenza");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         items.getColumn("id").setMaxWidth(50);
@@ -27,6 +27,8 @@ public class ConferencesCrudTable extends CrudTable {
         items.getColumn("data di fine").setMinWidth(110);
         items.getColumn("organizzatore").setMinWidth(200);
         items.getColumn("responsabile").setMinWidth(120);
+        items.getColumn("azioni").setMaxWidth(100);
+        items.getColumn("azioni").setMinWidth(100);
 
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
             //System.out.println(formData);
@@ -83,7 +85,7 @@ public class ConferencesCrudTable extends CrudTable {
     }
 
     @Override
-    protected void onViewButton(Object id) {}
+    protected void onViewButton(Object id) { parentView.getAppController().showScientificPublicationPresentations(Integer.parseInt((String) id)); }
 
     @Override
     protected Map<String, JComponent> getFormSchema() {
