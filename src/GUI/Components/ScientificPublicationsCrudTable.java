@@ -58,12 +58,22 @@ public class ScientificPublicationsCrudTable extends CrudTable {
             tableContent[i][6] = rowData.get("description");
         }
 
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeScientificPublicationFromDatabase((String) id);
+        if (parentView.getAppController().removeScientificPublicationFromDatabase((String) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new ScientificPublicationsCrudTable(parentView, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, parentView.getAppController().getRenderedScientificPublications())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        }
+        return false;
     }
 
     @Override

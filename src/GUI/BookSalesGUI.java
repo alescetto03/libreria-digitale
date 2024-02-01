@@ -14,11 +14,11 @@ public class BookSalesGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel storeTitle = new JLabel();
-    public BookSalesGUI(AppController appController, Map<String, Object> store, ArrayList<Map<String, Object>> bookSales, ArrayList<Map<String, Object>> books) {
+    public BookSalesGUI(AppController appController, Map<String, Object> store, ArrayList<Map<String, Object>> bookSales, ArrayList<Map<String, Object>> books, AppView parentView) {
         super(appController);
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new StoresCrudTable(this, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, appController.getRenderedStores())));
+            appController.switchView(new AdminPageGUI(appController, new StoresCrudTable(parentView, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, appController.getRenderedStores())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);

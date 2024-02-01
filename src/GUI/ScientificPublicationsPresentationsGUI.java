@@ -18,11 +18,11 @@ public class ScientificPublicationsPresentationsGUI extends AppView{
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel conferenceTitle = new JLabel();
-    public ScientificPublicationsPresentationsGUI(AppController appController, Map<String, Object> conference, ArrayList<Map<String, Object>> bookPresentations, ArrayList<Map<String, Object>> scientificPublications) {
+    public ScientificPublicationsPresentationsGUI(AppController appController, Map<String, Object> conference, ArrayList<Map<String, Object>> bookPresentations, ArrayList<Map<String, Object>> scientificPublications, AppView parentView) {
         super(appController);
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new ConferencesCrudTable(this, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, appController.getRenderedConferences())));
+            appController.switchView(new AdminPageGUI(appController, new ConferencesCrudTable(parentView, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, appController.getRenderedConferences())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);

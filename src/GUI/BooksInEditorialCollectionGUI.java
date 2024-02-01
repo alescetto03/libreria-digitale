@@ -13,12 +13,12 @@ public class BooksInEditorialCollectionGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel collectionTitle = new JLabel();
-    public BooksInEditorialCollectionGUI(AppController appController, Map<String, Object> editorialCollection, ArrayList<Map<String, Object>> booksInEditorialCollection, ArrayList<Map<String, Object>> books) {
+    public BooksInEditorialCollectionGUI(AppController appController, Map<String, Object> editorialCollection, ArrayList<Map<String, Object>> booksInEditorialCollection, ArrayList<Map<String, Object>> books, AppView parentView) {
         super(appController);
 
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new EditorialCollectionsCrudTable(this, "Collane:", new String[]{"issn", "nome", "editore"}, appController.getRenderedEditorialCollections())));
+            appController.switchView(new AdminPageGUI(appController, new EditorialCollectionsCrudTable(parentView, "Collane:", new String[]{"issn", "nome", "editore"}, appController.getRenderedEditorialCollections())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);

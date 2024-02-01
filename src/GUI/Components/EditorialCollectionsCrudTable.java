@@ -39,12 +39,23 @@ public class EditorialCollectionsCrudTable extends CrudTable {
             tableContent[i][1] = rowData.get("name");
             tableContent[i][2] = rowData.get("publisher");
         }
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeEditorialCollectionFromDatabase((String) id);
+        if (parentView.getAppController().removeEditorialCollectionFromDatabase((String) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new EditorialCollectionsCrudTable(parentView, "Collane:", new String[]{"issn", "nome", "editore"}, parentView.getAppController().getRenderedEditorialCollections())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
+        }
+        return false;
     }
 
     @Override

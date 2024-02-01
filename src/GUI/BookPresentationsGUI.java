@@ -18,11 +18,11 @@ public class BookPresentationsGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel presentationHallTitle = new JLabel();
-    public BookPresentationsGUI(AppController appController, Map<String, Object> presentationHall, ArrayList<Map<String, Object>> bookPresentations, ArrayList<Map<String, Object>> books) {
+    public BookPresentationsGUI(AppController appController, Map<String, Object> presentationHall, ArrayList<Map<String, Object>> bookPresentations, ArrayList<Map<String, Object>> books, AppView parentView) {
         super(appController);
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new PresentationHallsCrudTable(this, "Librerie:", new String[]{"id", "nome", "indirizzo"}, appController.getRenderedPresentationHalls())));
+            appController.switchView(new AdminPageGUI(appController, new PresentationHallsCrudTable(parentView, "Librerie:", new String[]{"id", "nome", "indirizzo"}, appController.getRenderedPresentationHalls())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);

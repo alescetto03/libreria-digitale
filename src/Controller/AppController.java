@@ -1175,7 +1175,7 @@ public class AppController {
     public void showScientificPublicationsInJournal(String issn) {
         JournalResultInterface journalResult = journalDAO.getJournalByIssn(issn);
         Journal journal = new Journal(journalResult.getIssn(), journalResult.getName(), journalResult.getArgument(), journalResult.getPublicationYear(), journalResult.getManager());
-        switchView(new ScientificPublicationsInJournalGUI(this, journal.getData(), getScientificPublicationsFromJournal(issn), getRenderedScientificPublications()));
+        switchView(new ScientificPublicationsInJournalGUI(this, journal.getData(), getScientificPublicationsFromJournal(issn), getRenderedScientificPublications(), getCurrentView()));
     }
 
     /**
@@ -1185,7 +1185,7 @@ public class AppController {
     public void showBooksInEditorialCollection(String issn) {
         EditorialCollectionResultInterface editorialCollectionResult = editorialCollectionDAO.getEditorialCollectionByIssn(issn);
         EditorialCollection editorialCollection = new EditorialCollection(editorialCollectionResult.getIssn(), editorialCollectionResult.getName(), editorialCollectionResult.getPublisher());
-        switchView(new BooksInEditorialCollectionGUI(this, editorialCollection.getData(), getBooksFromEditorialCollection(issn), getRenderedBooksByPublisher(editorialCollection.getPublisher())));
+        switchView(new BooksInEditorialCollectionGUI(this, editorialCollection.getData(), getBooksFromEditorialCollection(issn), getRenderedBooksByPublisher(editorialCollection.getPublisher()), getCurrentView()));
     }
 
     /**
@@ -1195,7 +1195,7 @@ public class AppController {
     public void showBookPresentations(int presentationHallId) {
         PresentationHallResultInterface presentationHallResult = presentationHallDAO.getPresentationhallById(presentationHallId);
         PresentationHall presentationHall = new PresentationHall(presentationHallResult.getId(), presentationHallResult.getName(), presentationHallResult.getAddress());
-        switchView(new BookPresentationsGUI(this, presentationHall.getData(), getBookPresentationsFromPresentationHall(presentationHallId), getRenderedBooks()));
+        switchView(new BookPresentationsGUI(this, presentationHall.getData(), getBookPresentationsFromPresentationHall(presentationHallId), getRenderedBooks(), getCurrentView()));
     }
 
     /**
@@ -1205,7 +1205,7 @@ public class AppController {
     public void showScientificPublicationPresentations(int conferenceId) {
         ConferenceResultInterface conferenceResult = conferenceDAO.getConferenceById(conferenceId);
         Conference conference = new Conference(conferenceResult.getId(), conferenceResult.getPlace(), conferenceResult.getStartDate().toLocalDate(), conferenceResult.getEndDate().toLocalDate(), conferenceResult.getOrganizer(), conferenceResult.getManager());
-        switchView(new ScientificPublicationsPresentationsGUI(this, conference.getData(), getScientificPublicationPresentationsFromConference(conferenceId), getRenderedScientificPublications()));
+        switchView(new ScientificPublicationsPresentationsGUI(this, conference.getData(), getScientificPublicationPresentationsFromConference(conferenceId), getRenderedScientificPublications(), getCurrentView()));
     }
 
     /**
@@ -1227,7 +1227,7 @@ public class AppController {
         ScientificPublicationResultInterface scientificPublicationResult = publicationDAO.getScientificPublicationByDoi(doi);
         //TODO:: AGGIUNGERE LA COPERTINA
         ScientificPublication scientificPublication = new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), scientificPublicationResult.getPublicationYear(), null, scientificPublicationResult.getDescription(), scientificPublicationResult.getPublisher());
-        switchView(new AuthorsOfScientificPublicationGUI(this, scientificPublication.getData(), getAuthorsOfScientificPublication(doi), getRenderedAuthors()));
+        switchView(new AuthorsOfScientificPublicationGUI(this, scientificPublication.getData(), getAuthorsOfScientificPublication(doi), getRenderedAuthors(), getCurrentView()));
     }
 
     /**
@@ -1243,7 +1243,7 @@ public class AppController {
         } else {
             renderedBooks = getRenderedBooks();
         }
-        switchView(new BookSalesGUI(this, store.getData(), getBookSalesFromStore(partitaIva), renderedBooks));
+        switchView(new BookSalesGUI(this, store.getData(), getBookSalesFromStore(partitaIva), renderedBooks, getCurrentView()));
     }
 
     /**

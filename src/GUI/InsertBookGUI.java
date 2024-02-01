@@ -16,6 +16,7 @@ import java.awt.image.DataBufferByte;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class InsertBookGUI extends AppView {
     private JPanel contentPane;
@@ -41,7 +42,7 @@ public class InsertBookGUI extends AppView {
     private JPanel novelPanel;
     private JPanel educationalpanel;
 
-    public File bookCover;
+    public File bookCover = null;
 
     private static JFileChooser fileChooser = new JFileChooser();
 
@@ -77,11 +78,6 @@ public class InsertBookGUI extends AppView {
 
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     bookCover = fileChooser.getSelectedFile();
-
-                    //Se l'immagine è stata caricata correttamente, estraiamo il nome e l'estensione
-                    //e li inseriamo negli appositi campi.
-
-
                 }
             }
         });
@@ -96,22 +92,38 @@ public class InsertBookGUI extends AppView {
             String target = targetField.getText().trim();
             String topic =  topicField.getText().trim();
             String genre = genreField.getText().trim();
+
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            String fullName = bookCover.getName();
-            int index = fullName.lastIndexOf('.');
-            String extensionFile = fullName.substring(index + 1);
+            String extensionFile = null;
+            if (bookCover != null) {
+                String fullName = bookCover.getName();
+                extensionFile = fullName.substring(fullName.lastIndexOf('.') + 1);
+            }
+
             try {
-                ImageIO.write(ImageIO.read(bookCover), extensionFile, stream);
-                byte[] data = stream.toByteArray();
-                if (educationalRadioButton.isSelected()) {
-                    appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, data, description, null, "didattico", target, topic);
-                } else {
-                    appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, data, description, genre, "romanzo", null, null);
+                if(bookCover != null) {
+                    ImageIO.write(ImageIO.read(bookCover), extensionFile, stream);
+                    byte[] cover = stream.toByteArray();
+                    if (educationalRadioButton.isSelected()) {
+                        appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, cover, description, null, "didattico", target, topic);
+                    } else {
+                        appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, cover, description, genre, "romanzo", null, null);
+                    }
+                    appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
+                    JOptionPane.showMessageDialog(appController.getCurrentView().getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
                 }
-                appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
-                JOptionPane.showMessageDialog(appController.getCurrentView().getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                else{
+                    if (educationalRadioButton.isSelected()) {
+                        appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, null, description, null, "didattico", target, topic);
+                    } else {
+                        appController.insertBookIntoDatabase(isbn, title, publisher, fruitionMode, publicationYear, null, description, genre, "romanzo", null, null);
+                    }
+                    appController.switchView(new AdminPageGUI(appController, new BooksCrudTable(this, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, appController.getRenderedBooks())));
+                    JOptionPane.showMessageDialog(appController.getCurrentView().getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                }
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(appController.getCurrentView().getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
+                System.out.println(Arrays.toString(exception.getStackTrace()));
             }
         });
 

@@ -58,12 +58,23 @@ public class ConferencesCrudTable extends CrudTable {
             tableContent[i][4] = rowData.get("organizer");
             tableContent[i][5] = rowData.get("manager");
         }
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeConferenceFromDatabase((Integer.parseInt((String) id)));
+        if (parentView.getAppController().removeConferenceFromDatabase((Integer) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new ConferencesCrudTable(parentView, "Conferenze:", new String[]{"id", "luogo", "data di inizio", "data di fine", "organizzatore", "responsabile"}, parentView.getAppController().getRenderedConferences())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -46,12 +46,23 @@ public class StoresCrudTable extends CrudTable {
             tableContent[i][2] = rowData.get("address");
             tableContent[i][3] = rowData.get("url");
         }
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeStoreFromDatabase((String) id);
+        if (parentView.getAppController().removeStoreFromDatabase((String) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new StoresCrudTable(parentView, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, parentView.getAppController().getRenderedStores())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentView().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
+        }
+        return false;
     }
 
     @Override

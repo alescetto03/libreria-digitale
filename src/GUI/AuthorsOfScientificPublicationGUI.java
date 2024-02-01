@@ -13,12 +13,12 @@ public class AuthorsOfScientificPublicationGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel scientificPublicationTitle = new JLabel();
-    public AuthorsOfScientificPublicationGUI(AppController appController, Map<String, Object> scientificPublication, ArrayList<Map<String, Object>> authorsOfBook, ArrayList<Map<String, Object>> authors) {
+    public AuthorsOfScientificPublicationGUI(AppController appController, Map<String, Object> scientificPublication, ArrayList<Map<String, Object>> authorsOfBook, ArrayList<Map<String, Object>> authors, AppView parentView) {
         super(appController);
 
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new ScientificPublicationsCrudTable(this, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, appController.getRenderedScientificPublications())));
+            appController.switchView(new AdminPageGUI(appController, new ScientificPublicationsCrudTable(parentView, "Articoli scientifici:", new String[]{"doi", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione"}, appController.getRenderedScientificPublications())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);

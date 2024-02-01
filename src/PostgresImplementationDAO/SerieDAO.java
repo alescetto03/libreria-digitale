@@ -114,7 +114,4 @@ public class SerieDAO implements SerieDAOInterface {
             //return null;
         }
 
-
-
-
     }

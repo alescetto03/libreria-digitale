@@ -41,12 +41,23 @@ public class PresentationHallsCrudTable extends CrudTable {
             tableContent[i][1] = rowData.get("name");
             tableContent[i][2] = rowData.get("address");
         }
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removePresentationHallFromDatabase(Integer.parseInt((String) id));
+        if (parentView.getAppController().removePresentationHallFromDatabase((Integer) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new PresentationHallsCrudTable(parentView, "Librerie:", new String[]{"id", "nome", "indirizzo"}, parentView.getAppController().getRenderedPresentationHalls())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -49,12 +49,23 @@ public class JournalsCrudTable extends CrudTable {
             tableContent[i][3] = rowData.get("publication_year");
             tableContent[i][4] = rowData.get("manager");
         }
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeJournalFromDatabase((String) id);
+        if (parentView.getAppController().removeJournalFromDatabase((String) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new JournalsCrudTable(parentView, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, parentView.getAppController().getRenderedJournals())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
+        }
+        return false;
     }
 
     @Override

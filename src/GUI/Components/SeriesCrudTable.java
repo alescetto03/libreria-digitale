@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.AdminPageGUI;
 import GUI.AppView;
 
 import javax.swing.*;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public class SeriesCrudTable extends CrudTable {
     public SeriesCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
-        super(parentView, title, columns, data, false, true, true, true, "Aggiungi un libro in una serie", "Modifica un libro in una serie");
+        super(parentView, title, columns, data, false, false, true, true, "Aggiungi un libro in una serie", "Modifica un libro in una serie");
         items.getColumn("prequel").setMaxWidth(100);
         items.getColumn("prequel").setMinWidth(100);
         items.getColumn("sequel").setMaxWidth(100);
@@ -42,11 +43,21 @@ public class SeriesCrudTable extends CrudTable {
             tableContent[i][1] = rowData.get("sequel");
             tableContent[i][2] = rowData.get("name");
         }
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeSerieFromDatabase((String) id);
+        if (parentView.getAppController().removeSerieFromDatabase((String) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new SeriesCrudTable(parentView, "Serie:", new String[]{"prequel", "sequel", "nome"}, parentView.getAppController().getRenderedSeries())));
+            JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Rimozione avvenuta con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -13,12 +13,12 @@ public class ScientificPublicationsInJournalGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();
     JLabel journalTitle = new JLabel();
-    public ScientificPublicationsInJournalGUI(AppController appController, Map<String, Object> journal, ArrayList<Map<String, Object>> scientificPublicationsInJournal, ArrayList<Map<String, Object>> scientificPublications) {
+    public ScientificPublicationsInJournalGUI(AppController appController, Map<String, Object> journal, ArrayList<Map<String, Object>> scientificPublicationsInJournal, ArrayList<Map<String, Object>> scientificPublications, AppView parentView) {
         super(appController);
 
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(new AdminPageGUI(appController, new JournalsCrudTable(this, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, appController.getRenderedJournals())));
+            appController.switchView(new AdminPageGUI(appController, new JournalsCrudTable(parentView, "Riviste:", new String[]{"issn", "nome", "argomento", "anno di pubblicazione", "responsabile"}, appController.getRenderedJournals())));
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);

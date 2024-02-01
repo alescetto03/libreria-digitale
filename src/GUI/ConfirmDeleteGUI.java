@@ -1,6 +1,5 @@
 package GUI;
 
-import Controller.AppController;
 import GUI.Components.CrudTable;
 
 import javax.swing.*;

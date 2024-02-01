@@ -35,6 +35,7 @@ public abstract class CrudTable extends JPanel {
         this.data = data;
         this.parentView = parentView;
 
+        items.setDefaultEditor(Object.class, null);
         setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         setLayout(new BorderLayout());
         topBar.setLayout(new BorderLayout());

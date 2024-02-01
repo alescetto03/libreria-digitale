@@ -64,12 +64,23 @@ public class BooksCrudTable extends CrudTable{
             tableContent[i][10] = ((Book.BookType) rowData.get("book_type")).name().toLowerCase();
         }
 
-        return new DefaultTableModel(tableContent, columns);
+        return new DefaultTableModel(tableContent, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return (column != columns.length - 1);
+            }
+        };
     }
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeBookFromDatabase((String) id);
+        if (parentView.getAppController().removeBookFromDatabase((String) id)){
+            parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new BooksCrudTable(parentView, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, parentView.getAppController().getRenderedBooks())));
+            JOptionPane.showMessageDialog(parentView.getAppController().getCurrentView().getContentPane(), "Rimozione avvenuta con successo.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
+        }
+        return false;
     }
 
     @Override
