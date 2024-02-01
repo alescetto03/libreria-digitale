@@ -1,49 +1,36 @@
 package GUI.Components;
 
-import Model.Book;
+import Controller.AppController;
+import GUI.AppView;
+import GUI.CollectionsGUI;
+import GUI.SaveItemInCollectionGUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
-public class BookPanel extends JPanel {
-    //private Book book;
+public class BookPanel extends HorizontalScrollpanePanel {
+    AppController appController;
+    String book_isbn;
+    public BookPanel(AppController appController, Map<String, Object> book, String buttonText) {
+        super(book.get("title").toString(), (BufferedImage) book.get("cover"), buttonText);
+        this.appController = appController;
+        this.book_isbn = book.get("isbn").toString();
 
-    public BookPanel(String title, BufferedImage cover) {
-        //this.book = book;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        // Etichetta per la copertina del libro
-        ImageIcon converIcon = new ImageIcon(getClass().getResource("/GUI/images/HP_ordine_fenice.jpg"));
-        Image scaledImage = converIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-        converIcon = new ImageIcon(scaledImage);
-        JLabel coverLabel = new JLabel(converIcon);
-        coverLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(coverLabel);
-
-        // Etichetta per il nome del libro
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(titleLabel);
-
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
 
-//    private void initUI() {
-//        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//
-//        // Etichetta per il nome del libro
-//        JLabel titleLabel = new JLabel(book.getTitle());
-//        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-//        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        add(titleLabel);
-//
-//        // Etichetta per la copertina del libro
-//        JLabel coverLabel = new JLabel(new ImageIcon(book.getCover()));
-//        coverLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        add(coverLabel);
-//
-//        setBorder(BorderFactory.createLineBorder(Color.BLACK));
-//    }
+
+
+
+    @Override
+    public boolean onSaveButtonPress() {
+        appController.switchView(new SaveItemInCollectionGUI(appController, this.book_isbn, null, appController.getCurrentView()));
+        return true;
+    }
+
+    @Override
+    public void onViewButtonPress() {
+    }
+
 }

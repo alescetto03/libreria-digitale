@@ -10,12 +10,11 @@ public class StoreResult implements StoreResultInterface {
     String name;
     String address;
     String url;
-
     public StoreResult(String partita_iva, String name, String address, String url) {
         this.partita_iva = partita_iva;
         this.name = name;
-        this.address = address;
-        this.url = url;
+        this.address = address != null ? address : "";
+        this.url = url != null ? url : "";
     }
 
     public StoreResult(ResultSet result) throws SQLException {
@@ -27,7 +26,7 @@ public class StoreResult implements StoreResultInterface {
         );
     }
 
-    public String getPartita_iva() {
+    public String getPartitaIva() {
         return partita_iva;
     }
 

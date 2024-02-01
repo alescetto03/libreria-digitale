@@ -1,84 +1,80 @@
 package GUI.Components;
 
+import GUI.AppView;
+import GUI.ModelManipulationFormGUI;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 public abstract class CrudTable extends JPanel {
     protected String[] columns;
     protected ArrayList<Map<String, Object>> data;
     protected JTable items = new JTable();
+    protected AppView parentView;
+    protected ActionButton createButton;
+    protected ModelManipulationFormGUI createView;
+    protected ModelManipulationFormGUI updateView;
+    protected String updateViewTitle;
+    protected JPanel topBar = new JPanel();
+    protected ActionListener createButtonListener = (ActionEvent e) -> {
+        parentView.getAppController().switchView(createView);
+    };
     protected abstract DefaultTableModel getModel();
-    protected abstract boolean onRemoveButton(int id);
-    protected abstract boolean onSaveButton(ArrayList<String> data);
-    private boolean displayViewButton;
-    private boolean displaySaveButton;
-    private boolean displayCreateButton;
-    private boolean displayDeleteButton;
-
-    public CrudTable(String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displaySaveButton, boolean displayCreateButton, boolean displayDeleteButton) {
+    public abstract boolean onRemoveButton(Object id);
+    protected abstract void onUpdateButton(Object id, ArrayList<String> data);
+    protected abstract void onViewButton(Object id);
+    protected abstract Map<String, JComponent> getFormSchema();
+    protected abstract Map<String, JComponent> getFormSchema(ArrayList<String> data);
+    public CrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displayEditButton, boolean displayCreateButton, boolean displayDeleteButton) {
         this.columns = columns;
         this.data = data;
-        this.displayViewButton = displayViewButton;
-        this.displaySaveButton = displaySaveButton;
-        this.displayCreateButton = displayCreateButton;
-        this.displayDeleteButton = displayDeleteButton;
+        this.parentView = parentView;
 
         setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         setLayout(new BorderLayout());
-        JPanel topBar = new JPanel();
         topBar.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel(title);
         topBar.add(titleLabel, BorderLayout.LINE_START);
 
-        IconButton createButton = null;
         if (displayCreateButton) {
-            createButton = new IconButton("/GUI/images/create.png", 18, 18, Image.SCALE_SMOOTH);
+            createButton = new ActionButton("/GUI/images/create.png", 18, 18, Image.SCALE_SMOOTH);
             topBar.add(createButton, BorderLayout.LINE_END);
         }
         add(topBar, BorderLayout.NORTH);
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(items, BorderLayout.CENTER);
         DefaultTableModel model = getModel();
         items.setModel(model);
         items.getTableHeader().setReorderingAllowed(false);
         items.setRowHeight(40);
         items.setRowSelectionAllowed(false);
+        items.setSelectionBackground(items.getBackground());
         model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
-        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
-        scrollPane.setViewportView(items);
+        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displayEditButton, displayDeleteButton));
+        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displayEditButton, displayDeleteButton));
+        items.getColumn("azioni").setMinWidth(80);
+        JScrollPane scrollPane = new JScrollPane(items, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
         add(scrollPane);
-
-        if (createButton != null) {
-            createButton.addActionListener((ActionEvent e) -> {
-                int columnCount = items.getColumnCount();
-                String[] emptyRow = new String[columnCount];
-                Arrays.fill(emptyRow, "");
-                model.insertRow(0, emptyRow);
-            });
-        }
     }
 
-    private void createTable() {
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth(), 185));
-        add(items, BorderLayout.CENTER);
-        DefaultTableModel model = getModel();
-        items.setModel(model);
-        items.getTableHeader().setReorderingAllowed(false);
-        items.setRowHeight(40);
-        items.setRowSelectionAllowed(false);
-        model.addColumn("azioni", new Object[model.getRowCount()]);
-        items.getColumn("azioni").setCellRenderer(new TableActionsPanelRenderer(this,displayViewButton, displaySaveButton, displayDeleteButton));
-        items.getColumn("azioni").setCellEditor(new TableActionsPanelEditor(this, displayViewButton, displaySaveButton, displayDeleteButton));
-        scrollPane.setViewportView(items);
-        add(scrollPane);
+    public CrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, boolean displayViewButton, boolean displayEditButton, boolean displayCreateButton, boolean displayDeleteButton, String createViewTitle, String updateViewTitle) {
+        this(parentView, title, columns, data, displayViewButton, displayEditButton, displayCreateButton, displayDeleteButton);
+        this.createView = new ModelManipulationFormGUI(parentView.getAppController(), parentView, getFormSchema(), createViewTitle);
+        this.updateViewTitle = updateViewTitle;
+        createButton.addActionListener(createButtonListener);
+    }
+
+    public void setData(ArrayList<Map<String, Object>> data) {
+        this.data = data;
+    }
+
+    public AppView getParentView() {
+        return parentView;
     }
 }

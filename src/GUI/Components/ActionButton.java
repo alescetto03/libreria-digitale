@@ -29,24 +29,11 @@ public class ActionButton extends JButton {
     }
 
     public ActionButton(String path, int width, int height, int scale_alg) {
-        setContentAreaFilled(false);
-        setBorder(new EmptyBorder(3, 3, 3, 3));
-
+        this();
         ImageIcon buttonIcon = new ImageIcon(getClass().getResource(path));
         Image scaledImage = buttonIcon.getImage().getScaledInstance(width, height, scale_alg);
         buttonIcon = new ImageIcon(scaledImage);
         setIcon(buttonIcon);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent me) {
-                mousePress = true;
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                mousePress = false;
-            }
-        });
     }
 
     @Override

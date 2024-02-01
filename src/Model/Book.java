@@ -1,6 +1,7 @@
 package Model;
 
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,6 @@ public class Book extends AbstractModel {
     private String genre;
     private String target;
     private String topic;
-    private String series;
 
     public Book(String isbn, String title, String publisher, FruitionMode fruition_mode, int publication_year, BufferedImage cover, String description, BookType book_type, String genre, String target, String topic){
         this.isbn = isbn;
@@ -35,7 +35,7 @@ public class Book extends AbstractModel {
         this.fruition_mode = fruition_mode;
         this.publication_year = publication_year;
         this.cover = cover;
-        this. description = description;
+        this.description = description;
         this.book_type = book_type;
         this.genre = genre;
         this.target = target;

@@ -30,8 +30,6 @@ public class ScientificPublication extends AbstractModel{
         this.publisher = publisher;
     }
 
-
-
     public String getDoi() {
         return doi;
     }

@@ -24,7 +24,7 @@ public class Notification extends AbstractModel{
         this.text = text;
     }
 
-    public LocalDateTime getDate_time() {
+    public LocalDateTime getDateTime() {
         return date_time;
     }
 
@@ -36,7 +36,7 @@ public class Notification extends AbstractModel{
     public Map<String, Object> getData() {
         Map<String, Object> data = new HashMap<>();
         data.put("text", getText());
-        data.put("timestamp", getDate_time());
+        data.put("timestamp", getDateTime());
         return data;
     }
 }

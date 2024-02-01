@@ -15,7 +15,6 @@ public class ScientificPublicationResult implements ScientificPublicationResultI
     String description;
     String publisher;
 
-
     public ScientificPublicationResult(String doi, String title, String publisher, String fruition_mode, int publication_year, InputStream cover, String description) {
         this.doi = doi;
         this.title = title;
@@ -28,13 +27,13 @@ public class ScientificPublicationResult implements ScientificPublicationResultI
 
     public ScientificPublicationResult(ResultSet result) throws SQLException {
         this(
-                result.getString("doi"),
-                result.getString("titolo"),
-                result.getString("editore"),
-                result.getString("modalita_fruizione"),
-                result.getInt("anno_pubblicazione"),
-                result.getBinaryStream("copertina"),
-                result.getString("descrizione")
+            result.getString("doi"),
+            result.getString("titolo"),
+            result.getString("editore"),
+            result.getString("modalita_fruizione"),
+            result.getInt("anno_pubblicazione"),
+            result.getBinaryStream("copertina"),
+            result.getString("descrizione")
         );
     }
 
@@ -46,11 +45,11 @@ public class ScientificPublicationResult implements ScientificPublicationResultI
         return title;
     }
 
-    public String getFruition_mode() {
+    public String getFruitionMode() {
         return fruition_mode;
     }
 
-    public int getPublication_year() {
+    public int getPublicationYear() {
         return publication_year;
     }
 
@@ -65,5 +64,4 @@ public class ScientificPublicationResult implements ScientificPublicationResultI
     public String getPublisher() {
         return publisher;
     }
-
 }
