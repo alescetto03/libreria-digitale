@@ -2,6 +2,8 @@ package PostgresImplementationDAO;
 
 import DAO.BookResultInterface;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,6 +50,7 @@ public class BookResult implements BookResultInterface {
                 result.getString("tipo")
         );
     }
+
 
     public String getIsbn() {
         return isbn;

@@ -30,27 +30,19 @@ public class BooksCrudTable extends CrudTable{
         items.getColumn("editore").setPreferredWidth(100);
         items.getColumn("modalità fruizione").setPreferredWidth(110);
         items.getColumn("anno pubblicazione").setPreferredWidth(120);
+        items.getColumn("copertina").setPreferredWidth(100);
         items.getColumn("descrizione").setPreferredWidth(175);
         items.getColumn("genere").setPreferredWidth(70);
         items.getColumn("target").setPreferredWidth(60);
         items.getColumn("materia").setPreferredWidth(80);
         items.getColumn("tipo").setPreferredWidth(80);
         items.getColumn("azioni").setMinWidth(100);
+
         this.createButton.removeActionListener(createButtonListener);
         this.createButton.addActionListener((ActionEvent e) -> {
             parentView.getAppController().switchView(new InsertBookGUI(parentView.getAppController()));
         });
 
-        this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
-            try {
-                Map<String, String> formData = this.createView.getFormData();
-                parentView.getAppController().insertBookIntoDatabase(formData.get("Isbn"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"), formData.get("Genere"), formData.get("Tipo"), formData.get("Target"), formData.get("Materia"));
-                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new BooksCrudTable(parentView, "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, parentView.getAppController().getRenderedBooks())));
-                JOptionPane.showMessageDialog(parentView.getAppController().getCurrentView().getContentPane(), "Libro inserito con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception exception){
-                JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
-            }
-        });
     }
 
     @Override

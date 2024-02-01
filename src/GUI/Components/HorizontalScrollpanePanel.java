@@ -10,9 +10,15 @@ public abstract class HorizontalScrollpanePanel extends JPanel {
     public abstract void onViewButtonPress();
     public HorizontalScrollpanePanel(String title, BufferedImage image) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        /** TODO::TROVARE IL MODO PER IMPLEMENTARE LE COPERTINE IN MANIERA DINAMICA **/
-        ImageIcon coverIcon = new ImageIcon(getClass().getResource("/GUI/images/HP_ordine_fenice.jpg"));
-        /** ENDTODO:: **/
+        ImageIcon coverIcon;
+
+        if (image == null) {
+            coverIcon = new ImageIcon(getClass().getResource("/GUI/images/null_icon.png"));
+        }
+        else
+            coverIcon = new ImageIcon(image);
+
+
         Image scaledImage = coverIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
         coverIcon = new ImageIcon(scaledImage);
         JLabel coverLabel = new JLabel(coverIcon);
@@ -34,9 +40,6 @@ public abstract class HorizontalScrollpanePanel extends JPanel {
 
         actionButton.addActionListener((ActionEvent e) -> {
             onSaveButtonPress();
-//            if (onSaveButtonPress()){
-//                JOptionPane.showMessageDialog(this, "Il libro che stai cercando di salvare esiste gia' nelle tue raccolte.", "ATTENZIONE!!!", JOptionPane.WARNING_MESSAGE);
-//            }
         });
         actionButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(actionButton);

@@ -2,10 +2,16 @@ package Controller;
 
 import DAO.*;
 import GUI.*;
+import GUI.Components.CrudTable;
 import Model.*;
 import PostgresImplementationDAO.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -204,7 +210,7 @@ public class AppController {
      * Metodo che registra un utente all'applicativo
      */
     public boolean registerUser(String username, String email, String password, String name, String surname, java.util.Date birthdate) {
-        java.sql.Date sqlDate = new java.sql.Date(birthdate.getTime());
+        Date sqlDate = new Date(birthdate.getTime());
         UserResultInterface userResult = this.userDAO.register(username, email, password.getBytes(StandardCharsets.UTF_8), name, surname, sqlDate);
 
         if (userResult != null){
@@ -271,11 +277,51 @@ public class AppController {
         ArrayList<BookResultInterface> results = this.bookDAO.getResearchedBook(searchItem);
         searchedBook.clear();
 
+        Book book = null;
         for(BookResultInterface result : results){
-            Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+            if(result.getCover() != null) {
+                try {
+                    book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), ImageIO.read(result.getCover()), result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            else
+                book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+
             this.searchedBook.add(book);
         }
     }
+
+//    public void getBookByString(String searchItem) {
+//        ArrayList<BookResultInterface> results = this.bookDAO.getResearchedBook(searchItem);
+//        searchedBook.clear();
+//
+//        Book book = null;
+//        for (BookResultInterface result : results) {
+//            try {
+//                byte[] coverData = result.getCover().readAllBytes();
+//
+//                if (coverData != null) {
+//                    System.out.println("Length of cover data: " + coverData.length);
+//                    BufferedImage coverImage = ImageIO.read(new ByteArrayInputStream(coverData));
+//                    System.out.println("Image read successfully");
+//                    JLabel label = new JLabel(new ImageIcon(coverImage));
+//                    JScrollPane scrollPane = new JScrollPane(label);
+//                    JOptionPane.showMessageDialog(null, scrollPane, "Immagine", JOptionPane.PLAIN_MESSAGE);
+//
+//                    book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), coverImage, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+//                } else {
+//                    System.out.println("Cover data is null");
+//                    book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
+//                }
+//            } catch (IOException e) {
+//                System.out.println("Error reading image: " + e.getMessage());
+//            }
+//
+//            this.searchedBook.add(book);
+//        }
+//    }
 
     /**
      * Funzione che prende tutti gli articoliScientifici ricercati tramite il nome
@@ -451,7 +497,7 @@ public class AppController {
     }
 
     public void insertBookIntoDatabase(String isbn, String title, String publisher, String fruition_mode, int publication_year, byte[] cover, String description, String genre, String book_type, String target, String topic) throws Exception{
-            this.bookDAO.insertBookInDb(isbn, title, publisher, Book.FruitionMode.valueOf(fruition_mode.toUpperCase()), publication_year, null, description, genre, target, topic, Book.BookType.valueOf(book_type.toUpperCase()));
+            this.bookDAO.insertBookInDb(isbn, title, publisher, Book.FruitionMode.valueOf(fruition_mode.toUpperCase()), publication_year, cover, description, genre, target, topic, Book.BookType.valueOf(book_type.toUpperCase()));
     }
 
     public void insertPublicationIntoDatabase(String doi, String title, String publisher, String fruition_mode, int publication_year, byte[] cover, String description) throws Exception{
@@ -459,8 +505,8 @@ public class AppController {
     }
 
     public void insertAuthorIntoDatabase(String name, LocalDate birth_date, LocalDate death_date, String nationality, String bio) throws Exception{
-        java.sql.Date parsedBirthdate = birth_date != null ? java.sql.Date.valueOf(birth_date) : null;
-        java.sql.Date parsedDeathDate = death_date != null ? java.sql.Date.valueOf(death_date) : null;
+        Date parsedBirthdate = birth_date != null ? Date.valueOf(birth_date) : null;
+        Date parsedDeathDate = death_date != null ? Date.valueOf(death_date) : null;
         this.authorDAO.insertAuthorInDb(name, parsedBirthdate, parsedDeathDate, nationality, bio);
     }
 
@@ -481,8 +527,8 @@ public class AppController {
     }
 
     public void insertConferenceIntoDatabase(String location, LocalDate start_date, LocalDate end_date, String organizer, String manager) throws Exception{
-        java.sql.Date parsedStartDate = start_date != null ? java.sql.Date.valueOf(start_date) : null;
-        java.sql.Date parsedEndDate = end_date != null ? java.sql.Date.valueOf(end_date) : null;
+        Date parsedStartDate = start_date != null ? Date.valueOf(start_date) : null;
+        Date parsedEndDate = end_date != null ? Date.valueOf(end_date) : null;
         this.conferenceDAO.insertConferenceInDb(location, parsedStartDate, parsedEndDate, organizer, manager);
     }
 
@@ -537,7 +583,7 @@ public class AppController {
 
     /**
      * Funzione che renderizza i dati per renderli visualizzabili in una view
-     * @see GUI.Components.CrudTable
+     * @see CrudTable
      */
     public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
         ArrayList<Map<String, Object>> renderedData = new ArrayList<>();
@@ -586,22 +632,12 @@ public class AppController {
         ArrayList<Map<String, Object>> renderedSearchedPublications = renderData(abstractModelsPublications);
         ArrayList<Map<String, Object>> renderedSearchedCollections = renderData(abstractModelsCollections);
 
-        for (Map<String, Object> item : renderedSearchedBooks) {
-            System.out.println(item.get("title"));
-        }
-        for (Map<String, Object> item : renderedSearchedPublications) {
-            System.out.println(item.get("title"));
-        }
-        for (Map<String, Object> item : renderedSearchedCollections) {
-            System.out.println(item.get("name"));
-        }
         Map<String, String> storeBySeries = new HashMap<>();
         for (String item : getSeriesByString(searchText)) {
             getStoreCompleteSeries(item);
             for (Store store : storeWithCompleteSeries)
                 storeBySeries.put(item, store.getName());
         }
-        //System.out.println("NEGOZI CON SERIE COMPLETE:" + storeBySeries);
         switchView(new SearchResultsGUI(this, renderedSearchedBooks, renderedSearchedPublications, renderedSearchedCollections, storeBySeries, this.currentView));
     }
 
@@ -743,8 +779,8 @@ public class AppController {
      * @param biografia
      */
     public Map<String, Object> updateAuthorFromDatabase(int id, String name, LocalDate birthDate, LocalDate deathDate, String nationality, String biografia) throws Exception {
-        java.sql.Date parsedBirthdate = birthDate != null ? java.sql.Date.valueOf(birthDate) : null;
-        java.sql.Date parsedDeathDate = deathDate != null ? java.sql.Date.valueOf(deathDate) : null;
+        Date parsedBirthdate = birthDate != null ? Date.valueOf(birthDate) : null;
+        Date parsedDeathDate = deathDate != null ? Date.valueOf(deathDate) : null;
         AuthorResultInterface resultSet = authorDAO.updateAuthorById(id, name, parsedBirthdate, parsedDeathDate, nationality, biografia);
         if (resultSet != null) {
             LocalDate parsedLocalBirthdate = resultSet.getBirthDate() != null ? resultSet.getBirthDate().toLocalDate() : null;
@@ -808,8 +844,8 @@ public class AppController {
      * @throws Exception
      */
     public Map<String, Object> updateConferenceFromDatabase(int conferenceId, String location, LocalDate startDate, LocalDate endDate, String organizer, String manager) throws Exception {
-        java.sql.Date parsedStartDate = startDate != null ? java.sql.Date.valueOf(startDate) : null;
-        java.sql.Date parsedEndDate = endDate != null ? java.sql.Date.valueOf(endDate) : null;
+        Date parsedStartDate = startDate != null ? Date.valueOf(startDate) : null;
+        Date parsedEndDate = endDate != null ? Date.valueOf(endDate) : null;
         ConferenceResultInterface resultSet = conferenceDAO.updateConferenceById(conferenceId, location, parsedStartDate, parsedEndDate, organizer, manager);
         if (resultSet != null) {
             LocalDate parsedLocalStartDate = resultSet.getStartDate() != null ? resultSet.getStartDate().toLocalDate() : null;
