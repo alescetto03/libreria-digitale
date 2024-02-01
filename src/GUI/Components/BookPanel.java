@@ -17,11 +17,7 @@ public class BookPanel extends HorizontalScrollpanePanel {
         super(book.get("title").toString(), (BufferedImage) book.get("cover"), buttonText);
         this.appController = appController;
         this.book_isbn = book.get("isbn").toString();
-
     }
-
-
-
 
     @Override
     public boolean onSaveButtonPress() {
@@ -32,5 +28,4 @@ public class BookPanel extends HorizontalScrollpanePanel {
     @Override
     public void onViewButtonPress() {
     }
-
 }

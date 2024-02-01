@@ -4,6 +4,7 @@ import Controller.AppController;
 import GUI.Components.CustomCheckBoxPanel;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -26,32 +27,26 @@ public class SaveItemInCollectionGUI extends AppView{
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         goBackButton.setLayout(new GridLayout());
 
-        title.setText("Raccolte personali di " + personalCollection.get(0).get("owner"));
+        title.setText("Raccolte personali di " + appController.getLoggedUsername());
+        title.setBorder(new EmptyBorder(0, 0, 10, 0));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titlePanel.add(subTitle);
         //subTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(goBackButton,  BorderLayout.LINE_START);
         titlePanel.add(title,  BorderLayout.CENTER);
         //titlePanel.add(subTitle, BorderLayout.PAGE_END);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        titlePanel.setPreferredSize(new Dimension(950, 200));
         titlePanel.setAlignmentX(Component.TOP_ALIGNMENT);
-
+        titlePanel.setPreferredSize(new Dimension(350, 75));
 
         CustomCheckBoxPanel checkBox = new CustomCheckBoxPanel(appController, personalCollection, book_isbn, publication_doi, previousView);
-        checkBoxPanel.add(subTitle);
         checkBoxPanel.add(checkBox);
-        checkBoxPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        checkBoxPanel.setPreferredSize(new Dimension(950, 550));
 
-
-        contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.setLayout(new BorderLayout());
-        contentPane.setPreferredSize(new Dimension(1000, 700));
+        //contentPane.setPreferredSize(new Dimension(350, 500));
 
         contentPane.add(titlePanel, BorderLayout.NORTH);
         contentPane.add(checkBoxPanel, BorderLayout.CENTER);
-
-
     }
 
     @Override
