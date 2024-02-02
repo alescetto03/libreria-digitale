@@ -18,27 +18,33 @@ public class CustomCheckBoxPanel extends JPanel {
     JButton confirmButton = new JButton("Conferma");
     boolean check_selection = false;
 
-    public CustomCheckBoxPanel(AppController appController, ArrayList<Map<String, Object>> personalCollection, String book_isbn, String publication_doi, AppView previousView) {
+    public CustomCheckBoxPanel(AppController appController, ArrayList<Map<String, Object>> personalCollections, String book_isbn, String publication_doi, AppView previousView) {
         this.appController = appController;
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(350, 400));
         setAlignmentX(Component.CENTER_ALIGNMENT);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        for (Map<String, Object> label : personalCollection) {
+
+        JPanel checkBoxWrapper = new JPanel();
+        checkBoxWrapper.setLayout(new BoxLayout(checkBoxWrapper, BoxLayout.Y_AXIS));
+        JScrollPane checkBoxScrollpane = new JScrollPane(checkBoxWrapper);
+
+        for (Map<String, Object> label : personalCollections) {
             JCheckBox checkBox = new JCheckBox(label.get("name").toString());
             checkBoxMap.put(label.get("name").toString(), checkBox);
-            add(checkBox);
+            checkBoxWrapper.add(checkBox);
         }
-
+        add(checkBoxScrollpane, BorderLayout.CENTER);
+        add(confirmButton, BorderLayout.SOUTH);
 
         confirmButton.addActionListener((ActionEvent e) -> {
             for (Map.Entry<String, JCheckBox> entry : checkBoxMap.entrySet()) {
                 String label = entry.getKey();
                 JCheckBox checkBox = entry.getValue();
                 if (checkBox.isSelected()) {
-                    if (!personalCollection.isEmpty()) {
+                    if (!personalCollections.isEmpty()) {
                         check_selection = true;
-                        for (Map<String, Object> item : personalCollection) {
+                        for (Map<String, Object> item : personalCollections) {
                             try {
                                 if ((item.get("name").toString().equals(label)) && !(book_isbn.isEmpty())) {
                                     if (!appController.saveBookInCollection(item.get("id").hashCode(), book_isbn))
@@ -72,7 +78,6 @@ public class CustomCheckBoxPanel extends JPanel {
             if (!check_selection)
                 JOptionPane.showMessageDialog(this, "Non hai selezionato nessuna raccolta, selezionane una oppure torna indietro.", "!!! ATTENZIONE !!!", JOptionPane.WARNING_MESSAGE);
         });
-        add(confirmButton);
     }
 
 }

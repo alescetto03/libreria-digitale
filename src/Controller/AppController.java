@@ -409,11 +409,10 @@ public class AppController {
     /**
      * Funzione che rimuove dal DB le collezzioni salvate dell'utente loggato dato il suo ID
      */
-    public boolean removeSavedCollectionFromDatabase(Object id){
-        int collection_id = Integer.parseInt((String)id);
-        if(collectionDAO.deleteSavedCollectionById(collection_id, getLoggedUsername())){
+    public boolean removeSavedCollectionFromDatabase(int id){
+        if(collectionDAO.deleteSavedCollectionById(id, getLoggedUsername())){
             for (Collection savedCollection: savedCollections) {
-                if (savedCollection.getId() == collection_id) {
+                if (savedCollection.getId() == id) {
                     savedCollections.remove(savedCollection);
                     break;
                 }
@@ -591,7 +590,7 @@ public class AppController {
         ArrayList<Map<String, Object>> renderedPublication = renderData(abstractModelsPublication);
         ArrayList<Map<String, Object>> renderedCollection = renderData(abstractModelsCollection);
 
-        switchView(new CollectionsGUI(this, renderedCollection.get(0), renderedBook, renderedPublication, this.currentView));
+        switchView(new CollectionsGUI(this, renderedCollection.get(0), renderedBook, renderedPublication));
     }
 
     /**
