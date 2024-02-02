@@ -19,7 +19,7 @@ public class PublicationPanel extends HorizontalScrollpanePanel {
 
     @Override
     public boolean onSaveButtonPress() {
-        appController.switchView(new SaveItemInCollectionGUI(appController, null, this.publication_doi, appController.getCurrentView()));
+        appController.switchView(new SaveItemInCollectionGUI(appController, "", this.publication_doi, appController.getCurrentView()));
         return false;
     }
 

@@ -6,10 +6,16 @@ import GUI.ModelManipulationFormGUI;
 import Model.ScientificPublication;
 import com.toedter.calendar.JYearChooser;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +37,30 @@ public class ScientificPublicationsCrudTable extends CrudTable {
         items.getColumn("descrizione").setMinWidth(300);
         items.getColumn("azioni").setMinWidth(100);
 
+
+
         this.createView.getConfirmButton().addActionListener((ActionEvent e) -> {
+            Map<String, String> formData = this.createView.getFormData();
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            String extensionFile = null;
+            if (scientificPublicationCover != null) {
+                String fullName = scientificPublicationCover.getName();
+                extensionFile = fullName.substring(fullName.lastIndexOf('.') + 1);
+            }
             try {
-                Map<String, String> formData = this.createView.getFormData();
-                parentView.getAppController().insertPublicationIntoDatabase(formData.get("Doi"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"));
-                parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
-                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                if (scientificPublicationCover != null) {
+                    ImageIO.write(ImageIO.read(scientificPublicationCover), extensionFile, stream);
+                    byte[] cover = stream.toByteArray();
+                    parentView.getAppController().insertPublicationIntoDatabase(formData.get("Doi"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), cover, formData.get("Descrizione"));
+                    parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
+                    JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    parentView.getAppController().insertPublicationIntoDatabase(formData.get("Doi"), formData.get("Titolo"), formData.get("Editore"), formData.get("Modalità di fruizione"), Integer.parseInt(formData.get("Anno di pubblicazione")), null, formData.get("Descrizione"));
+                    parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new AuthorsCrudTable(parentView, "Autori:", new String[]{"id", "nome", "data di nascita", "data di morte", "nazionalità", "biografia"}, parentView.getAppController().getRenderedAuthors())));
+                    JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                }
             } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -95,6 +119,17 @@ public class ScientificPublicationsCrudTable extends CrudTable {
     @Override
     protected void onViewButton(Object id) { parentView.getAppController().showAuthorsOfScientificPublication((String) id); }
 
+    public File scientificPublicationCover = null;
+    private static JFileChooser fileChooser = new JFileChooser();
+
+    static {
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Tutte le immagini", "jpg", "jpeg", "png"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Immagine JPEG", "jpg", "jpeg"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Immagine PNG", "png"));
+    };
+
     @Override
     protected Map<String, JComponent> getFormSchema() {
         Map<String, JComponent> schema = new HashMap<>();
@@ -104,12 +139,28 @@ public class ScientificPublicationsCrudTable extends CrudTable {
         descriptionField.setWrapStyleWord(true);
 
         String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
+
+        JButton coverButton = new JButton("Scegli una copertina.");
+
+        coverButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int returnValue = fileChooser.showOpenDialog(parentView.getContentPane());
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    scientificPublicationCover = fileChooser.getSelectedFile();
+                }
+            }
+        });
+
         schema.put("Doi", new JTextField());
         schema.put("Titolo", new JTextField());
         schema.put("Editore", new JTextField());
         schema.put("Modalità di fruizione", new JComboBox<>(fruitionModes));
         schema.put("Anno di pubblicazione", new JYearChooser());
         schema.put("Descrizione", descriptionField);
+        schema.put("Copertina", coverButton);
         return schema;
     }
 

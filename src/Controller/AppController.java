@@ -293,35 +293,6 @@ public class AppController {
         }
     }
 
-//    public void getBookByString(String searchItem) {
-//        ArrayList<BookResultInterface> results = this.bookDAO.getResearchedBook(searchItem);
-//        searchedBook.clear();
-//
-//        Book book = null;
-//        for (BookResultInterface result : results) {
-//            try {
-//                byte[] coverData = result.getCover().readAllBytes();
-//
-//                if (coverData != null) {
-//                    System.out.println("Length of cover data: " + coverData.length);
-//                    BufferedImage coverImage = ImageIO.read(new ByteArrayInputStream(coverData));
-//                    System.out.println("Image read successfully");
-//                    JLabel label = new JLabel(new ImageIcon(coverImage));
-//                    JScrollPane scrollPane = new JScrollPane(label);
-//                    JOptionPane.showMessageDialog(null, scrollPane, "Immagine", JOptionPane.PLAIN_MESSAGE);
-//
-//                    book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), coverImage, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
-//                } else {
-//                    System.out.println("Cover data is null");
-//                    book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
-//                }
-//            } catch (IOException e) {
-//                System.out.println("Error reading image: " + e.getMessage());
-//            }
-//
-//            this.searchedBook.add(book);
-//        }
-//    }
 
     /**
      * Funzione che prende tutti gli articoliScientifici ricercati tramite il nome
@@ -331,8 +302,17 @@ public class AppController {
         ArrayList<ScientificPublicationResultInterface> results = this.publicationDAO.getResearchedPublication(searchItem);
         searchedPublication.clear();
 
+        ScientificPublication publication = null;
         for(ScientificPublicationResultInterface result : results){
-            ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), result.getPublisher());
+            if (result.getCover() != null){
+                try{
+                    publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), ImageIO.read(result.getCover()), result.getDescription(), result.getPublisher());
+                }catch (IOException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+            else
+                publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), result.getPublisher());
             this.searchedPublication.add(publication);
         }
     }
