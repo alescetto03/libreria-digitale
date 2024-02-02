@@ -40,7 +40,11 @@ public class SavedCollectionCrudTable extends CrudTable{
 
     @Override
     public boolean onRemoveButton(Object id) {
-        return parentView.getAppController().removeSavedCollectionFromDatabase(id);
+        boolean isDeleted = parentView.getAppController().removeSavedCollectionFromDatabase((int) id);
+        if (isDeleted) {
+            parentView.getAppController().showHomepage();
+        }
+        return isDeleted;
     }
 
     @Override

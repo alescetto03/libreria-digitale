@@ -18,12 +18,12 @@ public class CollectionsGUI extends AppView{
     JPanel titlePanel = new JPanel();
     JLabel collectionTitle = new JLabel();
 
-    public CollectionsGUI(AppController appController, Map<String, Object> collection_data, ArrayList<Map<String, Object>> bookFromCollection, ArrayList<Map<String, Object>> publicationFromCollection, AppView previousView) {
+    public CollectionsGUI(AppController appController, Map<String, Object> collection_data, ArrayList<Map<String, Object>> bookFromCollection, ArrayList<Map<String, Object>> publicationFromCollection) {
         super(appController);
 
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(previousView);
+            appController.showHomepage();
         });
 
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -43,7 +43,6 @@ public class CollectionsGUI extends AppView{
 
         CrudTable publicationFromCollectionTable = new PublicationsInCollectionCrudTable(this, "Articoli Scientifici nella raccolta:", new String[]{"doi", "titolo", "editore", "modalita fruizione", "anno", "descrizione"}, publicationFromCollection, (Integer)collection_data.get("id"), collection_data.get("owner").toString());
         contentPane.add(publicationFromCollectionTable);
-
     }
 
     @Override

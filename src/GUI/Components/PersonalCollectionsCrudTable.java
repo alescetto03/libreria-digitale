@@ -22,7 +22,8 @@ public class PersonalCollectionsCrudTable extends CrudTable {
             try {
                 Map<String, String> formData = this.createView.getFormData();
                 parentView.getAppController().insertPersonalCollectionIntoDatabase(formData.get("Nome"), formData.get("Visibilità"));
-                JOptionPane.showMessageDialog(parentView.getContentPane(), "Inserimento effettuato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                parentView.getAppController().showHomepage();
+                JOptionPane.showMessageDialog(parentView.getAppController().getCurrentView().getContentPane(), "Hai inserito una nuova raccolta!", "Congratulazioni!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception){
                 JOptionPane.showMessageDialog(parentView.getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
@@ -88,8 +89,9 @@ public class PersonalCollectionsCrudTable extends CrudTable {
             try {
                 parentView.getAppController().updatePersonalCollectionIntoDatabase(Integer.parseInt(data.get(0)), formData.get("Nome"), formData.get("Visibilità"));
                 parentView.getAppController().showHomepage();
+                JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentWindow().getContentPane(), "Hai modificato un raccolta!", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception) {
-                System.out.println(exception.getMessage());
+                JOptionPane.showMessageDialog(this.updateView.getContentPane(), exception.getMessage(), "Errore!!!", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

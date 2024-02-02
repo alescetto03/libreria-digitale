@@ -48,7 +48,11 @@ public class BooksInCollectionCrudTable extends CrudTable{
 
     @Override
     public boolean onRemoveButton(Object isbn) {
-        return parentView.getAppController().removeBookFromCollection(isbn, this.collectiond_id);
+        boolean isDeleted = parentView.getAppController().removeBookFromCollection(isbn, this.collectiond_id);
+        if (isDeleted) {
+            parentView.getAppController().showCollectionItems(String.valueOf(this.collectiond_id));
+        }
+        return isDeleted;
     }
 
     @Override

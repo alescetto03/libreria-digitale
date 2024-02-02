@@ -108,7 +108,7 @@ public class CollectionDAO implements CollectionDAOInterface {
     public CollectionResultInterface updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("UPDATE raccolta SET nome = ?, visibilita = ?, proprietario = ? WHERE cod_raccolta = ? RETURNING Raccolta.*");
+                PreparedStatement statement = conn.prepareStatement("UPDATE raccolta SET nome = NULLIF(?, ''), visibilita = ?, proprietario = ? WHERE cod_raccolta = ? RETURNING Raccolta.*");
         ) {
             statement.setString(1, name);
             statement.setObject(2, visibility.name().toLowerCase(), Types.OTHER);
@@ -271,7 +271,7 @@ public class CollectionDAO implements CollectionDAOInterface {
     public boolean insertPublicationInCollection(int collectionId, String publicationDoi) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = conn.prepareStatement("INSERT INTO Articolo_Contenuto_Raccolta (articolo_scientifico, raccolta) VALUES (?, ?)");
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO Articolo_Contenuto_Raccolta (articolo_scientifico, raccolta) VALUES (NULLIF(?, ''), ?)");
         ) {
             statement.setString(1, publicationDoi);
             statement.setInt(2, collectionId);
