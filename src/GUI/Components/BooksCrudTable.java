@@ -3,12 +3,9 @@ package GUI.Components;
 import GUI.*;
 import Model.Book;
 import com.toedter.calendar.JYearChooser;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,13 +15,6 @@ public class BooksCrudTable extends CrudTable{
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi un libro", "Modifica un libro");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        TableColumn fruitionModeColumn = items.getColumn("modalità fruizione");
-        TableColumn bookTypeColumn = items.getColumn("tipo");
-
-        String[] fruitionModes = {"cartaceo", "digitale", "audiolibro"};
-        String[] bookTypes = {"romanzo", "didattico"};
-        fruitionModeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(fruitionModes)));
-        bookTypeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(bookTypes)));
         items.getColumn("isbn").setPreferredWidth(100);
         items.getColumn("titolo").setPreferredWidth(280);
         items.getColumn("editore").setPreferredWidth(100);

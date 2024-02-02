@@ -11,10 +11,7 @@ import java.util.Map;
 
 public class UpdateNovelBook extends AppView {
     private JPanel contentPane;
-    private JPanel topBar;
     private JButton goBackButton;
-    private JLabel titleLabel;
-    private JPanel bottomWrapper;
     private JButton confirmButton;
     private JTextField isbnField;
     private JTextField titleField;
@@ -23,10 +20,6 @@ public class UpdateNovelBook extends AppView {
     private JYearChooser publicationYearField;
     private JTextField genreField;
     private JTextArea descriptionField;
-    private JScrollPane scrollPane;
-    private JPanel form;
-    private JButton coverButton;
-    private JPanel novelPanel;
     private ArrayList<String> data;
 
     public UpdateNovelBook(AppController appController, ArrayList<String> data, String bookToUpdate) {

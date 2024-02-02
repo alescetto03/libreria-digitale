@@ -1,7 +1,7 @@
 package DAO;
 
 import java.sql.Date;
-import java.time.LocalDate;
+
 
 public interface AuthorResultInterface {
     int getId();

@@ -5,6 +5,10 @@ import DAO.UserResultInterface;
 
 import java.sql.*;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' utente.
+ * Permette di loggare o registrare un utente.
+ */
 public class UserDAO implements UserDAOInterface {
 
     public UserResultInterface login(String username, byte[] password) {

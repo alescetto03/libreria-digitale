@@ -8,6 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' negozio.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare negozi
+ */
+
 public class StoreDAO implements StoreDAOInterface {
     public StoreResultInterface getStoreByPartitaIva(String partitaIva) {
         final String query = "SELECT * FROM negozio WHERE partita_iva = ?";

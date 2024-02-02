@@ -8,6 +8,10 @@ import Model.ScientificPublication;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' articoli_scientifici.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare articoli scientifici
+ */
 public class ScientificPublicationDAO implements ScientificPublicationDAOInterface {
     public ScientificPublicationResultInterface getScientificPublicationByDoi(String doi) {
         final String query = "SELECT * FROM articolo_scientifico WHERE doi = ?";

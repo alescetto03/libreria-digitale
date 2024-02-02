@@ -6,7 +6,6 @@ import GUI.Components.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Map;
 
 public class HomepageGUI extends AppView{

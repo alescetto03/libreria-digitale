@@ -8,9 +8,6 @@ import PostgresImplementationDAO.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -33,50 +30,69 @@ public class AppController {
     AppView currentView;
 
     /**
-     * Interfaccia utenteDAO per la comunicazione col DB
+     * Interfaccia DAO per la comunicazione con la tabella utente del DB
      */
     UserDAOInterface userDAO = new UserDAO();
 
     /**
-     * Interfaccia notificaDAO per la comunicazione col DB
+     * Interfaccia DAO per la comunicazione con la tabella notifica del DB
      */
     NotificationDAOInterface notificationDAO = new NotificationDAO();
 
     /**
-     * Interfaccia libroDAO per la comunicazione col DB
+     * Interfaccia DAO per la comunicazione con la tabella libro del DB
      */
     BookDAOInterface bookDAO = new BookDAO();
 
     /**
-     * Interfaccia articoliScientificiDAO per la comunicazione col DB
+     * Interfaccia DAO per la comunicazione con la tabella articoli scientifici del DB
      */
     ScientificPublicationDAOInterface publicationDAO = new ScientificPublicationDAO();
+
+    /**
+     * Interfaccia DAO per la comunicazione con la tabella autore del DB
+     */
     AuthorDAOInterface authorDAO = new AuthorDAO();
 
     /**
-     * Interfaccia raccolteDAO per la comunicazione col DB
+     * Interfaccia DAO per la comunicazione con la tabella raccolte del DB
      */
     CollectionDAOInterface collectionDAO = new CollectionDAO();
 
     /**
-     * Interfaccia negozioDAO per la comunicazione col DB
+     * Interfaccia DAO per la comunicazione con la tabella negozio del DB
      */
     StoreDAOInterface storeDAO = new StoreDAO();
+
+    /**
+     * Interfaccia DAO per la comunicazione con la tabella collana del DB
+     */
     EditorialCollectionDAOInterface editorialCollectionDAO = new EditorialCollectionDAO();
+
+    /**
+     * Interfaccia DAO per la comunicazione con la tabella serie del DB
+     */
     SerieDAOInterface serieDAO = new SerieDAO();
+
+    /**
+     * Interfaccia DAO per la comunicazione con la tabella rivista del DB
+     */
     JournalDAOInterface journalDAO = new JournalDAO();
+
+    /**
+     * Interfaccia DAO per la comunicazione con la tabella conferenza del DB
+     */
     ConferenceDAOInterface conferenceDAO = new ConferenceDAO();
+
+    /**
+     * Interfaccia DAO per la comunicazione con la tabella sala del DB
+     */
     PresentationHallDAOInterface presentationHallDAO = new PresentationHallDAO();
 
     /**
      * Utente correntemente autenticato all'applicativo
      */
     User loggedUser = null;
-
-    /**
-     * Lista di tutte le raccolte personali dell'utente
-     */
-    ArrayList<Collection> personalCollections = new ArrayList<>();
 
     /**
      * Lista di tutte le raccolte salvate dall'utente
@@ -109,7 +125,7 @@ public class AppController {
     ArrayList<Store> storeWithCompleteSeries = new ArrayList<Store>();
 
     /**
-     * Funzione che ci permette di reperire la finestra corrente in cui ci troviamo
+     * Metodo che ci permette di reperire la finestra corrente in cui ci troviamo
      * anche se siamo fuori dal controller.
      */
     public JFrame getCurrentWindow(){
@@ -117,7 +133,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che ci permette di reperire la view corrente in cui ci troviamo
+     * Metodo che ci permette di reperire la view corrente in cui ci troviamo
      * anche se siamo fuori dal controller.
      */
     public AppView getCurrentView(){
@@ -125,14 +141,14 @@ public class AppController {
     }
 
     /**
-     * Funzione per avere l'utente registrato all'applicativo in quel momento
+     * Metodo per avere l'utente registrato all'applicativo in quel momento
      */
     public String getLoggedUsername(){
         return this.loggedUser.getUsername();
     }
 
     /**
-     * Funzione per la chiusura della view corrente
+     * Metodo per la chiusura della view corrente
      */
     public void closeCurrentView() {
         currentWindow.dispose();
@@ -140,13 +156,7 @@ public class AppController {
     }
 
     /**
-     * Metodo per settare la view corrente
-     * @param currentView
-     */
-    public void setCurrentView(AppView currentView) { this.currentView = currentView; }
-
-    /**
-     * Funzione che ci permette di mostrare la finestra corrente
+     * Metodo che ci permette di istanziare una nuova view
      */
     public void showView(AppView view) {
         currentView = view;
@@ -165,17 +175,17 @@ public class AppController {
     }
 
     /**
-     * Funzione per mostrare le schermata di LoginGUI nonche la prima pagina da mostrare
+     * Metodo per mostrare le schermata di LoginGUI
      */
     public void showLogin() { showView(new LoginGUI(this)); }
 
     /**
-     * Funzione per mostrare la schermata di HomepageGUI
+     * Metodo per mostrare la schermata di HomepageGUI
      */
     public void showHomepage() { switchView(new HomepageGUI(this)); }
 
     /**
-     * Funzione per cambiare schermata e chiudere quella precedente, uno switch di finestra in pratica.
+     * Metodo per cambiare schermata e chiudere quella precedente, uno switch di finestra in pratica.
      */
     public void switchView(AppView destinationView) {
         closeCurrentView();
@@ -183,9 +193,8 @@ public class AppController {
     }
 
     /**
-     * Metodo che effettua l'autenticazione dell'utente, controlla nel DB le credenziali cripatate
-     * se l'utente sbaglia credenziali viene mostrato un messaggio di errore, altrimenti
-     * viene rimandato alla HomepageGUI
+     * Metodo che effettua l'autenticazione dell'utente, cerca un utente nel DB e controlla che le credenziali cripatate
+     * inserite siano corrette, se l'autenticazione va a buon fine reindirizza l'utente alla HomepageGUI
      * @see HomepageGUI
      */
     public boolean authenticateUser(String username, String password) {
@@ -221,24 +230,16 @@ public class AppController {
     }
 
     /**
-     * Funzione per effettuare il logout di un utente
+     * Metodo per effettuare il logout di un utente
      */
     public void logoutUser() {
         loggedUser = null;
         switchView(new LoginGUI(this));
     }
 
-    /**
-     * Funzione per prendere tutte le collezioni personali di un utente sottoforma di ArrayList in modo tale
-     * da passarle alle GUI
-     */
-    public ArrayList<Map<String, Object>> getUserPersonalCollectionsList(){
-        ArrayList<AbstractModel> abstractModelsCollections = new ArrayList<>(this.personalCollections);
-        return renderData(abstractModelsCollections);
-    }
 
     /**
-     * Funzione per prendere tutte le collezioni salvate da un utente e inserirle in un ArrayList
+     * Metodo per prendere tutte le collezioni salvate da un utente e inserirle in un ArrayList
      */
     public boolean getUserSavedCollections(){
         ArrayList<CollectionResultInterface> results = this.collectionDAO.getUserSavedCollections(getLoggedUsername());
@@ -255,22 +256,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che prende tutte le notifiche di un utente loggato e le inserisce in un ArrayList
-     */
-    public void getUserNotification(){
-        ArrayList<NotificationResultInterface> results = this.notificationDAO.getUserNotification(getLoggedUsername());
-        userNotification.clear();
-
-        if(!results.isEmpty()) {
-            for (NotificationResultInterface result : results) {
-                Notification notification = new Notification(result.getText(), (result.getDateTime()).toLocalDateTime());
-                this.userNotification.add(notification);
-            }
-        }
-    }
-
-    /**
-     * Funzione che prende tutti i libri ricercati tramite il titolo
+     * Metodo che prende tutti i libri ricercati tramite il titolo
      * poi li inserisce in un ArrayList
      */
     public void getBookByString(String searchItem){
@@ -295,7 +281,7 @@ public class AppController {
 
 
     /**
-     * Funzione che prende tutti gli articoliScientifici ricercati tramite il nome
+     * Metodo che prende tutti gli articoliScientifici ricercati tramite il nome
      * poi li inserisce in un ArrayList
      */
     public void getScientificPublicationByString(String searchItem){
@@ -318,8 +304,8 @@ public class AppController {
     }
 
     /**
-     * Funzione che prende tutte le raccolte ricercate tramite il nome
-     * poi li inserisce in un ArrayList
+     * Metodo che prende tutte le raccolte ricercate tramite il nome
+     * poi le inserisce in un ArrayList
      */
     public void getCollectionByString(String searchItem){
         ArrayList<CollectionResultInterface> results = this.collectionDAO.getReasearchedCollection(searchItem, getLoggedUsername());
@@ -332,7 +318,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che prende tutte le serie dato il nome e restituisce
+     * Metodo che prende tutte le serie dato il nome e restituisce
      * un ArrayList con i nomi delle serie risultanti
      */
     public ArrayList<String> getSeriesByString(String searchItem){
@@ -340,7 +326,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che prende tutti i negozi che possiedono una serie completa
+     * Metodo che prende tutti i negozi che possiedono una serie completa
      * li inserisce poi in un ArrayList
      */
     public void getStoreCompleteSeries(String searchItem){
@@ -354,7 +340,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che restituisce un ArrayList di libri e che prende dal DB
+     * Metodo che restituisce un ArrayList di libri e che prende dal DB
      * tutti i libri da una raccolta dato il suo ID
      */
     public ArrayList<Book> getBookListFromCollection(int collection_id){
@@ -362,7 +348,6 @@ public class AppController {
         ArrayList<Book> outputBook = new ArrayList<Book>();
 
         for(BookResultInterface result : resultsBook){
-            //SIA QUI CHE SOPRA BISGONA AGGIUSTARE GESTENDO INSERIMENTO DI IMMAGINI
             Book book = new Book(result.getIsbn(), result.getTitle(), result.getPublisher(), Book.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(),  Book.BookType.valueOf(result.getBookType().toUpperCase()), result.getGenre(), result.getTarget(), result.getTopic());
             outputBook.add(book);
         }
@@ -370,7 +355,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che restituisce un ArrayList di artioliScientifici e che prende dal DB
+     * Metodo che restituisce un ArrayList di artioliScientifici e che prende dal DB
      * tutti gli articoli da una raccolta dato il suo ID
      */
     public ArrayList<ScientificPublication> getPublicationListFromCollection(int collection_id){
@@ -378,7 +363,6 @@ public class AppController {
         ArrayList<ScientificPublication> outputPublication = new ArrayList<ScientificPublication>();
 
         for(ScientificPublicationResultInterface result : resultsPublication){
-            //SIA QUI CHE SOPRA BISGONA AGGIUSTARE GESTENDO INSERIMENTO DI IMMAGINI
             ScientificPublication publication = new ScientificPublication(result.getDoi(), result.getTitle(), ScientificPublication.FruitionMode.valueOf(result.getFruitionMode().toUpperCase()), result.getPublicationYear(), null, result.getDescription(), result.getPublisher());
             outputPublication.add(publication);
         }
@@ -386,11 +370,11 @@ public class AppController {
     }
 
     /**
-     * Funzione che restituisce un ArrayList di raccolte e che prende dal DB
+     * Metodo che restituisce un ArrayList di raccolte e che prende dal DB
      * tutti i dati di una raccolta dato il suo ID
      */
-    public ArrayList<Collection> getAllFromCollectionById(int collection_id){
-        CollectionResultInterface resultCollection = this.collectionDAO.getAllByCollectionId(collection_id);
+    public ArrayList<Collection> getCollectionById(int collection_id){
+        CollectionResultInterface resultCollection = this.collectionDAO.getCollectionById(collection_id);
         ArrayList<Collection> outputCollection = new ArrayList<Collection>();
 
         Collection collection = new Collection(resultCollection.getId(), resultCollection.getName(), resultCollection.getOwner(), Collection.Visibility.valueOf(resultCollection.getVisibility().toUpperCase()));
@@ -400,14 +384,14 @@ public class AppController {
     }
 
     /**
-     * Funzione che rimuove dal DB una raccolta dato il suo ID
+     * Metodo che rimuove dal DB una raccolta dato il suo ID
      */
     public boolean removeCollectionFromDatabase(int id) {
         return collectionDAO.deleteCollectionById(id);
     }
 
     /**
-     * Funzione che rimuove dal DB le collezzioni salvate dell'utente loggato dato il suo ID
+     * Metodo che rimuove dal DB le collezzioni salvate dell'utente loggato dato il suo ID
      */
     public boolean removeSavedCollectionFromDatabase(int id){
         if(collectionDAO.deleteSavedCollectionById(id, getLoggedUsername())){
@@ -423,8 +407,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che rimuove dal DB un libro, dato il suo isbn,
-     * da una raccolta, dato il suo ID
+     * Metodo che rimuove un libro da una raccolta, dati ISBN e l'ID della raccolta
      */
     public boolean removeBookFromCollection(Object book_isbn, int collection_id){
         String isbn = (String) book_isbn;
@@ -434,8 +417,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che rimuove dal DB un articoloScientifico, dato il suo doi,
-     * da una raccolta, dato il suo ID
+     * Metodo che rimuove un articolo scientifico da una raccolta, dati il DOI e l'ID della raccolta
      */
     public boolean removePublicationFromCollection(Object publication_doi, int collection_id){
         String doi = (String) publication_doi;
@@ -443,95 +425,96 @@ public class AppController {
     }
 
     /**
-     * TODO::DEPRECATO?
-     * Funzione che salva nel DB le collezioni personali create dall'utente.
+     * Metodo che inserisce una raccolta personale nel DB
      */
-    public int savePersonalCollectionIntoDatabase(ArrayList<String> data) {
-        if (data.get(1).isEmpty() || data.get(2).isEmpty()) {
-            return 0;
-        }
-        String name = data.get(1);
-        Collection.Visibility visibility = Collection.Visibility.valueOf(data.get(2).toUpperCase());
-        if (!data.get(0).isEmpty()) {
-            int id = Integer.parseInt(data.get(0));
-            CollectionResultInterface collectionResultUpdated = collectionDAO.updateCollectionById(id, name, visibility, getLoggedUsername());
-            if (collectionResultUpdated.getId() != 0) {
-                for (Collection personalCollection : personalCollections) {
-                    if (personalCollection.getId() == id) {
-                        personalCollection.setName(name);
-                        personalCollection.setVisibility(visibility);
-                        break;
-                    }
-                }
-                return collectionResultUpdated.getId();
-            }
-            return 0;
-        }
-        CollectionResultInterface collectionResultInserted = collectionDAO.insertCollection(name, visibility, getLoggedUsername());
-        return collectionResultInserted.getId();
-    }
-
     public void insertPersonalCollectionIntoDatabase(String name, String visibility) {
         this.collectionDAO.insertCollection(name, Collection.Visibility.valueOf(visibility.toUpperCase()), loggedUser.getUsername());
     }
 
+    /**
+     * Metodo che inserisce un libro nel DB
+     */
     public void insertBookIntoDatabase(String isbn, String title, String publisher, String fruition_mode, int publication_year, byte[] cover, String description, String genre, String book_type, String target, String topic) throws Exception{
             this.bookDAO.insertBookInDb(isbn, title, publisher, Book.FruitionMode.valueOf(fruition_mode.toUpperCase()), publication_year, cover, description, genre, target, topic, Book.BookType.valueOf(book_type.toUpperCase()));
     }
 
+    /**
+     * Metodo che inserisce un articolo scientifico nel DB
+     */
     public void insertPublicationIntoDatabase(String doi, String title, String publisher, String fruition_mode, int publication_year, byte[] cover, String description) throws Exception{
             this.publicationDAO.insertPublicationInDb(doi, title, publisher, ScientificPublication.FruitionMode.valueOf(fruition_mode.toUpperCase()), publication_year, null, description);
     }
 
+    /**
+     * Metodo che inserisce un autore nel DB
+     */
     public void insertAuthorIntoDatabase(String name, LocalDate birth_date, LocalDate death_date, String nationality, String bio) throws Exception{
         Date parsedBirthdate = birth_date != null ? Date.valueOf(birth_date) : null;
         Date parsedDeathDate = death_date != null ? Date.valueOf(death_date) : null;
         this.authorDAO.insertAuthorInDb(name, parsedBirthdate, parsedDeathDate, nationality, bio);
     }
 
+    /**
+     * Metodo che inserisce un negozio nel DB
+     */
     public void insertStoreIntoDatabase(String partita_iva, String name, String address, String url) throws Exception{
             this.storeDAO.insertStoreInDb(partita_iva, name, address, url);
     }
 
+    /**
+     * Metodo che inserisce una collana nel DB
+     */
     public void insertEditorialCollectionIntoDatabase(String issn, String name, String publisher) throws Exception{
             this.editorialCollectionDAO.insertEditorialCollectionInDb(issn, name, publisher);
     }
 
+    /**
+     * Metodo che inserisce una serie nel DB
+     */
     public void insertSeriesIntoDatabase(String prequel, String sequel, String name) throws Exception{
             this.serieDAO.insertSeriesInDb(prequel, sequel, name);
     }
 
+    /**
+     * Metodo che inserisce una rivista nel DB
+     */
     public void insertJournalsIntoDatabase(String issn, String name, String argument, int publication_year, String manager) throws Exception{
             this.journalDAO.insertJournalInDb(issn, name, argument, publication_year, manager);
     }
 
+    /**
+     * Metodo che inserisce una conferenza nel DB
+     */
     public void insertConferenceIntoDatabase(String location, LocalDate start_date, LocalDate end_date, String organizer, String manager) throws Exception{
         Date parsedStartDate = start_date != null ? Date.valueOf(start_date) : null;
         Date parsedEndDate = end_date != null ? Date.valueOf(end_date) : null;
         this.conferenceDAO.insertConferenceInDb(location, parsedStartDate, parsedEndDate, organizer, manager);
     }
 
+    /**
+     * Metodo che inserisce una sala nel DB
+     */
     public void insertPresentationHallIntoDatabase(String name, String address) throws Exception{
             this.presentationHallDAO.insertPresentationHallInDb(name, address);
     }
 
-
+    /**
+     * Metodo che aggiorna i dati di una raccolta personale nel DB
+     */
     public void updatePersonalCollectionIntoDatabase(int id, String name, String visibility) {
-        System.out.println(id + " " +  name + " "  + visibility);
         this.collectionDAO.updateCollectionById(id, name, Collection.Visibility.valueOf(visibility.toUpperCase()), loggedUser.getUsername());
     }
 
     /**
-     * Funzione che salva nel DB una raccolta ricercata all'interno delle
-     * raccolte preferite/salvate dell'utente.
+     * Metodo che permette all'utente loggato di salvare una raccolta
      */
-    public boolean saveSearchedCollection(int collection_id){
-        for (Collection collection : this.savedCollections){
-            if(collection.getId() == collection_id)
+    public boolean saveSearchedCollection(int collection_id) {
+        for (Collection collection : this.savedCollections) {
+            if (collection.getId() == collection_id)
                 return false;
         }
 
-        if(this.collectionDAO.saveCollectionById(collection_id, getLoggedUsername())){
+        if (this.collectionDAO.saveCollectionById(collection_id, getLoggedUsername())) {
             getUserSavedCollections();
             return true;
         }
@@ -539,8 +522,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che salva nel DB un libro, dato il suo isbn,
-     * all'interno di una raccolta, dato il suo ID
+     * Metodo che salva un libro in una raccolta
      */
     public boolean saveBookInCollection(int collection_id, String book_isbn){
         if(!this.collectionDAO.isBookInCollection(collection_id, book_isbn)){
@@ -550,8 +532,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che salva nel DB un articoloScientifico, dato il suo doi,
-     * all'interno di una raccolta, dato il suo ID
+     * Metodo che salva un articolo scientifico in una raccolta
      */
     public boolean savePublicationInCollection(int collection_id, String publication_doi){
         if(!this.collectionDAO.isPublicationInCollection(collection_id, publication_doi)){
@@ -561,7 +542,7 @@ public class AppController {
     }
 
     /**
-     * Funzione che renderizza i dati per renderli visualizzabili in una view
+     * Metodo che renderizza i dati per renderli visualizzabili in una view
      * @see CrudTable
      */
     public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
@@ -573,12 +554,12 @@ public class AppController {
     }
 
     /**
-     * Funzione che mostra una schermata con tutti i libri contenuti in una raccolta
+     * Metodo che mostra il contenuto di una raccolta
      */
     public void showCollectionItems(Object id){
         int collection_id = Integer.parseInt((String)id);
 
-        ArrayList<Collection> collection_data = getAllFromCollectionById(collection_id);
+        ArrayList<Collection> collection_data = getCollectionById(collection_id);
         ArrayList<Book> booksInCollection = getBookListFromCollection(collection_id);
         ArrayList<ScientificPublication> publicationsInCollection = getPublicationListFromCollection(collection_id);
 
@@ -595,7 +576,7 @@ public class AppController {
 
     /**
      * Metodo che mostra una schermata con tutti i risultati di ricerca.
-     * L'utente cerca in base ad un testo le possibili raccolte, libri, articoli e poi
+     * L'utente cerca in base ad un testo le possibili raccolte, libri, articoli scientifici e poi
      * le serie con relativi negozi che posseggono quella serie in vendita completa.
      */
     public void showSearchResults(String searchText) {
@@ -612,14 +593,25 @@ public class AppController {
         ArrayList<Map<String, Object>> renderedSearchedCollections = renderData(abstractModelsCollections);
 
         Map<String, String> storeBySeries = new HashMap<>();
-        for (String item : getSeriesByString(searchText)) {
-            getStoreCompleteSeries(item);
-            for (Store store : storeWithCompleteSeries)
-                storeBySeries.put(item, store.getName());
+        for(String item : getSeriesByString(searchText)){
+            if(!item.isEmpty()) {
+                getStoreCompleteSeries(item);
+                if (!storeWithCompleteSeries.isEmpty()) {
+                    for (Store store : storeWithCompleteSeries)
+                        storeBySeries.put(item, store.getName());
+                } else
+                    storeBySeries.put(item, "Non ci sono negozi che vendono tutta la serie.");
+            }
+            else
+                storeBySeries.put("Non ci sono serie con questo nome.", "Non ci sono negozi che vendono tutta la serie.");
         }
         switchView(new SearchResultsGUI(this, renderedSearchedBooks, renderedSearchedPublications, renderedSearchedCollections, storeBySeries, this.currentView));
     }
 
+    /**
+     * Metodo che restituisce una lista di tutte le notifiche dell'utente loggato memorizzate nel database
+     * renderizzati come ArrayList di coppia chiave/valore
+     */
     public ArrayList<Map<String, Object>> getRenderedNotifications() {
         ArrayList<NotificationResultInterface> notificationResults = this.notificationDAO.getUserNotification(getLoggedUsername());
         ArrayList<AbstractModel> notifications = new ArrayList<>();
@@ -688,6 +680,10 @@ public class AppController {
         return renderBooks(bookResults);
     }
 
+    /**
+     * Subroutine che renderizza i libri
+     * @param bookResults
+     */
     private ArrayList<Map<String, Object>> renderBooks(ArrayList<BookResultInterface> bookResults) {
         ArrayList<AbstractModel> books = new ArrayList<>();
         for (BookResultInterface bookResult: bookResults) {
@@ -718,7 +714,6 @@ public class AppController {
      * @param target
      * @param topic
      * @param type
-     * @return
      * @throws Exception
      */
     public Map<String, Object> updateBookFromDatabase(String bookToUpdate, String isbn, String title, String publisher, String fruitionMode, int publicationYear, String description, String genre, String target, String topic, String type) throws Exception {
@@ -738,7 +733,6 @@ public class AppController {
      * @param fruitionMode
      * @param publicationYear
      * @param description
-     * @return
      */
     public Map<String, Object> updateScientificPublicationFromDatabase(String publicationToUpdate, String doi, String title, String publisher, String fruitionMode, int publicationYear, String description) throws Exception {
         ScientificPublicationResultInterface scientificPublicationResult = publicationDAO.updateScientificPublicationByDoi(publicationToUpdate, doi, title, publisher, ScientificPublication.FruitionMode.valueOf(fruitionMode.toUpperCase()), publicationYear, description);
@@ -769,7 +763,15 @@ public class AppController {
         return null;
     }
 
-    public Map<String, Object> updateStoreStoreFromDatabase(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
+    /**
+     * Metodo che aggiorna un negozio dal database
+     * @param storeToUpdate
+     * @param partitaIva
+     * @param name
+     * @param address
+     * @param url
+     */
+    public Map<String, Object> updateStoreFromDatabase(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
         StoreResultInterface resultSet = storeDAO.updateStoreByPartitaIva(storeToUpdate, partitaIva, name, address, url);
         if (resultSet != null) {
             return new Store(resultSet.getPartitaIva(), resultSet.getName(), resultSet.getAddress(), resultSet.getUrl()).getData();
@@ -800,7 +802,6 @@ public class AppController {
      * @param argument
      * @param publicationYear
      * @param manager
-     * @return
      * @throws Exception
      */
     public Map<String, Object> updateJournalFromDatabase(String jorunalToUpdate, String issn, String name, String argument, int publicationYear, String manager) throws Exception {
@@ -819,7 +820,6 @@ public class AppController {
      * @param endDate
      * @param organizer
      * @param manager
-     * @return
      * @throws Exception
      */
     public Map<String, Object> updateConferenceFromDatabase(int conferenceId, String location, LocalDate startDate, LocalDate endDate, String organizer, String manager) throws Exception {
@@ -839,7 +839,6 @@ public class AppController {
      * @param id
      * @param name
      * @param address
-     * @return
      * @throws Exception
      */
     public Map<String, Object> updatePresentationHallFromDatabase(int id, String name, String address) throws Exception{
@@ -984,7 +983,7 @@ public class AppController {
     }
 
     /**
-     * Metodo che restituisce una lista di tutte le serie memorizzate nel database
+     * Metodo che restituisce una lista di tutte le conferenze memorizzate nel database
      * renderizzati come ArrayList di coppia chiave/valore
      */
     public ArrayList<Map<String, Object>> getRenderedConferences() {
@@ -1020,7 +1019,7 @@ public class AppController {
     }
 
     /**
-     * Metodo che elimina una libreria dal database
+     * Metodo che elimina una sala dal database
      * @param id
      */
     public boolean removePresentationHallFromDatabase(int id) {
@@ -1030,7 +1029,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutti gli articoli pubblicati da una rivista memorizzata nel database
      * @param issn
-     * @return
      */
     public ArrayList<Map<String, Object>> getScientificPublicationsFromJournal(String issn) {
         ArrayList<ScientificPublicationResultInterface> resultSets = journalDAO.getPublicationsFromJournal(issn);
@@ -1044,7 +1042,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutti i libri contenuti in una raccolta memorizzata nel database
      * @param issn
-     * @return
      */
     public ArrayList<Map<String, Object>> getBooksFromEditorialCollection(String issn) {
         ArrayList<BookResultInterface> resultSets = editorialCollectionDAO.getBooksFromEditorialCollection(issn);
@@ -1054,7 +1051,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutte le presentazioni di libri effettuate in una libreria memorizzata nel database
      * @param presentationHallId
-     * @return
      */
     public ArrayList<Map<String, Object>> getBookPresentationsFromPresentationHall(int presentationHallId) {
         ArrayList<BookPresentationResultInterface> resultSets = presentationHallDAO.getBookPresentations(presentationHallId);
@@ -1063,7 +1059,6 @@ public class AppController {
             LocalDate parsedPresentationDate = resultSet.getPresentationDate() != null ? resultSet.getPresentationDate().toLocalDate() : null;
             bookPresentations.add(new BookPresentation(
                 new PresentationHall(resultSet.getPresentationHall().getId(), resultSet.getPresentationHall().getName(), resultSet.getPresentationHall().getAddress()),
-                //TODO::AGGIUNGERE LA COPERTINA
                 new Book(resultSet.getPresentedBook().getIsbn(), resultSet.getPresentedBook().getTitle(), resultSet.getPresentedBook().getPublisher(), Book.FruitionMode.valueOf(resultSet.getPresentedBook().getFruitionMode().toUpperCase()), resultSet.getPresentedBook().getPublicationYear(), null, resultSet.getPresentedBook().getDescription(), Book.BookType.valueOf(resultSet.getPresentedBook().getBookType().toUpperCase()), resultSet.getPresentedBook().getGenre(), resultSet.getPresentedBook().getTarget(), resultSet.getPresentedBook().getTopic()),
                 parsedPresentationDate
             ));
@@ -1074,7 +1069,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutte le presentazioni di articoli scientifici effettuate durante una conferenza memorizzata nel database
      * @param conferenceId
-     * @return
      */
     public ArrayList<Map<String, Object>> getScientificPublicationPresentationsFromConference(int conferenceId) {
         ArrayList<ScientificPublicationPresentationResultInterface> resultSets = conferenceDAO.getScientificPublicatonPresentations(conferenceId);
@@ -1085,7 +1079,6 @@ public class AppController {
             LocalDate parsedEndDate = resultSet.getConference().getEndDate() != null ? resultSet.getConference().getEndDate().toLocalDate() : null;
             scientificPublicationPresentations.add(new ScientificPublicationPresentation(
                     new Conference(resultSet.getConference().getId(), resultSet.getConference().getPlace(), parsedStartDate, parsedEndDate, resultSet.getConference().getOrganizer(), resultSet.getConference().getManager()),
-                    //TODO::AGGIUNGERE LA COPERTINA
                     new ScientificPublication(resultSet.getPresentedScientificPublication().getDoi(), resultSet.getPresentedScientificPublication().getTitle(), ScientificPublication.FruitionMode.valueOf(resultSet.getPresentedScientificPublication().getFruitionMode().toUpperCase()), resultSet.getPresentedScientificPublication().getPublicationYear(), null, resultSet.getPresentedScientificPublication().getDescription(), resultSet.getPresentedScientificPublication().getPublisher()),
                     parsedPresentationDate
             ));
@@ -1096,7 +1089,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutti gli autori di un libro memorizzato nel database
      * @param isbn
-     * @return
      */
     public ArrayList<Map<String, Object>> getAuthorsOfBook(String isbn) {
         ArrayList<AuthorResultInterface> resultSets = bookDAO.getAuthorsOfBook(isbn);
@@ -1106,7 +1098,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutti gli autori di un articolo scientifico memorizzato nel database
      * @param doi
-     * @return
      */
     public ArrayList<Map<String, Object>> getAuthorsOfScientificPublication(String doi) {
         ArrayList<AuthorResultInterface> resultSets = publicationDAO.getAuthorsOfScientificPublication(doi);
@@ -1116,7 +1107,6 @@ public class AppController {
     /**
      * Subroutine che renderizza gli autori di libri o di articoli scientifici
      * @param resultSets
-     * @return
      */
     private ArrayList<Map<String, Object>> renderAuthors(ArrayList<AuthorResultInterface> resultSets) {
         ArrayList<AbstractModel> authors = new ArrayList<>();
@@ -1131,7 +1121,6 @@ public class AppController {
     /**
      * Metodo che restituisce una lista di tutte le vendite di libri effettuate da un negozio memorizzato nel database
      * @param partitaIva
-     * @return
      */
     public ArrayList<Map<String, Object>> getBookSalesFromStore(String partitaIva) {
         ArrayList<BookSaleResultInterface> resultSets = storeDAO.getBookSales(partitaIva);
@@ -1193,24 +1182,22 @@ public class AppController {
      */
     public void showAuthorsOfBook(String isbn) {
         BookResultInterface bookResult = bookDAO.getBookByIsbn(isbn);
-        //TODO:: AGGIUNGERE LA COPERTINA
         Book book = new Book(bookResult.getIsbn(), bookResult.getTitle(), bookResult.getPublisher(), Book.FruitionMode.valueOf(bookResult.getFruitionMode().toUpperCase()), bookResult.getPublicationYear(), null, bookResult.getDescription(), Book.BookType.valueOf(bookResult.getBookType().toUpperCase()), bookResult.getGenre(), bookResult.getTarget(), bookResult.getTopic());
         switchView(new AuthorsOfBookGUI(this, book.getData(), getAuthorsOfBook(isbn), getRenderedAuthors()));
     }
 
     /**
-     * Metodo che mostra a video tutti i libri venduti da un negozio
+     * Metodo che mostra a video tutti gli autori di un articoo scientifico
      * @param doi
      */
     public void showAuthorsOfScientificPublication(String doi) {
         ScientificPublicationResultInterface scientificPublicationResult = publicationDAO.getScientificPublicationByDoi(doi);
-        //TODO:: AGGIUNGERE LA COPERTINA
         ScientificPublication scientificPublication = new ScientificPublication(scientificPublicationResult.getDoi(), scientificPublicationResult.getTitle(), ScientificPublication.FruitionMode.valueOf(scientificPublicationResult.getFruitionMode().toUpperCase()), scientificPublicationResult.getPublicationYear(), null, scientificPublicationResult.getDescription(), scientificPublicationResult.getPublisher());
         switchView(new AuthorsOfScientificPublicationGUI(this, scientificPublication.getData(), getAuthorsOfScientificPublication(doi), getRenderedAuthors(), getCurrentView()));
     }
 
     /**
-     * Metodo che mostra a video tutti gli autori di un articoo scientifico
+     * Metodo che mostra a video tutti i libri venduti da un negozio
      * @param partitaIva
      */
     public void showBookSales(String partitaIva) {
@@ -1301,7 +1288,7 @@ public class AppController {
     }
 
     /**
-     * Metodo che aggiorna le relazioni fra libri e autori
+     * Metodo che aggiorna le relazioni fra articoli scientifici e autori
      * @param authorId
      * @param doi
      * @param isSelected

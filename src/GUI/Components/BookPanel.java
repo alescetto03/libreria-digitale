@@ -1,12 +1,7 @@
 package GUI.Components;
 
 import Controller.AppController;
-import GUI.AppView;
-import GUI.CollectionsGUI;
 import GUI.SaveItemInCollectionGUI;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 

@@ -9,6 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' notifica.
+ * Permette di reperire le notifiche di un utente
+ */
+
 public class NotificationDAO implements NotificationDAOInterface {
 
     @Override

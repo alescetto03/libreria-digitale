@@ -7,7 +7,6 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Date;
 
 public class RegisterGUI extends AppView{
     public JPanel contentPane;

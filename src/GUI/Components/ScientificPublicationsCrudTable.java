@@ -1,8 +1,6 @@
 package GUI.Components;
 
-import GUI.AdminPageGUI;
-import GUI.AppView;
-import GUI.ModelManipulationFormGUI;
+import GUI.*;
 import Model.ScientificPublication;
 import com.toedter.calendar.JYearChooser;
 
@@ -10,7 +8,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,10 +21,6 @@ public class ScientificPublicationsCrudTable extends CrudTable {
     public ScientificPublicationsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi un articolo scientifico", "Aggiorna un articolo scientifico");
         items.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-        String[] fruitionModes = {"digitale", "cartaceo", "audiolibro"};
-        TableColumn fruitionModeColumn = items.getColumn("modalità fruizione");
-        fruitionModeColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(fruitionModes)));
 
         items.getColumn("doi").setMinWidth(180);
         items.getColumn("titolo").setMinWidth(320);

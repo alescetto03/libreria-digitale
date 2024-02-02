@@ -6,6 +6,10 @@ import DAO.AuthorResultInterface;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' autore.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare autori
+ */
 public class AuthorDAO implements AuthorDAOInterface {
     public ArrayList<AuthorResultInterface> getAll() {
         final String query = "SELECT * FROM Autore ORDER BY cod_autore";

@@ -7,7 +7,6 @@ import GUI.ModelManipulationFormGUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class StoresCrudTable extends CrudTable {
         this.updateView.getConfirmButton().addActionListener((ActionEvent e) -> {
             Map<String, String> formData = updateView.getFormData();
             try {
-                Map<String, Object> renderedData = parentView.getAppController().updateStoreStoreFromDatabase(data.get(0), formData.get("Partita Iva"), formData.get("Nome"), formData.get("Indirizzo"), formData.get("Url"));
+                Map<String, Object> renderedData = parentView.getAppController().updateStoreFromDatabase(data.get(0), formData.get("Partita Iva"), formData.get("Nome"), formData.get("Indirizzo"), formData.get("Url"));
                 parentView.getAppController().switchView(new AdminPageGUI(parentView.getAppController(), new StoresCrudTable(parentView, "Negozi:", new String[]{"partita iva", "nome", "indirizzo", "url"}, parentView.getAppController().getRenderedStores())));
                 JOptionPane.showMessageDialog(this.parentView.getAppController().getCurrentView().getContentPane(), "Il negozio " + renderedData.get("partita_iva") + " - " + renderedData.get("name") + " è stato modificato con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception exception) {

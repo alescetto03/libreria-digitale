@@ -5,28 +5,19 @@ import GUI.Components.BooksCrudTable;
 import com.toedter.calendar.JYearChooser;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.DataBufferByte;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class InsertBookGUI extends AppView {
     private JPanel contentPane;
-    private JPanel topBar;
     private JButton goBackButton;
-    private JLabel titleLabel;
     private JButton confirmButton;
-    private JPanel bottomWrapper;
-    private JScrollPane scrollPane;
-    private JPanel form;
     private JTextField isbnField;
     private JTextField titleField;
     private JComboBox fruitionModeField;
@@ -57,7 +48,6 @@ public class InsertBookGUI extends AppView {
     public InsertBookGUI(AppController appController) {
         super(appController);
         educationalpanel.setVisible(false);
-        JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
         educationalRadioButton.addActionListener((ActionEvent e) -> {
             educationalpanel.setVisible(true);
             novelPanel.setVisible(false);

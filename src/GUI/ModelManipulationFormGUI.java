@@ -5,10 +5,8 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 

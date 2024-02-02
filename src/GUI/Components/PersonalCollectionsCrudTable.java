@@ -1,15 +1,11 @@
 package GUI.Components;
 
-import GUI.AdminPageGUI;
-import GUI.AppView;
-import GUI.ModelManipulationFormGUI;
+import GUI.*;
 import Model.Collection;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

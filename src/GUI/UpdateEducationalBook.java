@@ -2,33 +2,22 @@ package GUI;
 
 import Controller.AppController;
 import GUI.Components.BooksCrudTable;
-import GUI.Components.ScientificPublicationsCrudTable;
 import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Map;
 
 public class UpdateEducationalBook extends AppView {
     private JPanel contentPane;
-    private JPanel topBar;
     private JButton goBackButton;
-    private JLabel titleLabel;
-    private JPanel bottomWrapper;
     private JButton confirmButton;
-    private JScrollPane scrollPane;
-    private JPanel form;
     private JTextField isbnField;
     private JTextField titleField;
     private JComboBox fruitionModeField;
     private JTextField publisherField;
     private JYearChooser publicationYearField;
-    private JButton coverButton;
-    private JPanel educationalpanel;
     private JTextField targetField;
     private JTextField topicField;
     private JTextArea descriptionField;

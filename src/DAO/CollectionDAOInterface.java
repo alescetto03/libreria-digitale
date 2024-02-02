@@ -1,9 +1,7 @@
 package DAO;
 
 import Model.Collection;
-import PostgresImplementationDAO.CollectionResult;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public interface CollectionDAOInterface {
@@ -15,7 +13,7 @@ public interface CollectionDAOInterface {
     boolean deleteSavedCollectionById(int collectionId, String username);
     CollectionResultInterface updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner);
     CollectionResultInterface insertCollection(String name, Collection.Visibility visibility, String owner);
-    CollectionResultInterface getAllByCollectionId(int collectionId);
+    CollectionResultInterface getCollectionById(int collectionId);
     boolean deleteBookFromCollection(int collectionId, String isbn);
     boolean deletePublicationFromCollection(int collectionId, String doi);
     boolean saveCollectionById(int collectionId, String username);

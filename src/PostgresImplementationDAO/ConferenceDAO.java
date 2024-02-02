@@ -5,6 +5,10 @@ import DAO.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' conferenza.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare conferenze
+ */
 public class ConferenceDAO implements ConferenceDAOInterface {
     @Override
     public ConferenceResultInterface getConferenceById(int conferenceId) {

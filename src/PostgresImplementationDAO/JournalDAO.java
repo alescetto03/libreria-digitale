@@ -10,6 +10,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' rivista.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare riviste
+ */
+
 public class JournalDAO implements JournalDAOInterface {
     @Override
     public JournalResultInterface getJournalByIssn(String issn) {

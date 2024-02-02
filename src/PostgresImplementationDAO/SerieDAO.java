@@ -1,7 +1,5 @@
 package PostgresImplementationDAO;
 
-import DAO.BookResultInterface;
-import DAO.EditorialCollectionResultInterface;
 import DAO.SerieDAOInterface;
 import DAO.SerieResultInterface;
 
@@ -11,6 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' serie.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare serie
+ */
 public class SerieDAO implements SerieDAOInterface {
     @Override
     public ArrayList<String> getResearchedSeries(String searchedSeries) {

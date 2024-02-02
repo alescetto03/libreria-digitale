@@ -8,6 +8,11 @@ import DAO.PresentationHallResultInterface;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' sala.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare sale
+ */
+
 public class PresentationHallDAO implements PresentationHallDAOInterface {
     @Override
     public PresentationHallResultInterface getPresentationhallById(int presentationHallId) {

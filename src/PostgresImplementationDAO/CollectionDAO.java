@@ -6,6 +6,10 @@ import Model.Collection;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' raccolta.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare raccolte
+ */
 public class CollectionDAO implements CollectionDAOInterface {
     @Override
     public ArrayList<CollectionResultInterface> getReasearchedCollection(String searchedCollection, String username) {
@@ -151,7 +155,7 @@ public class CollectionDAO implements CollectionDAOInterface {
     }
 
     @Override
-    public CollectionResultInterface getAllByCollectionId(int collectionId) {
+    public CollectionResultInterface getCollectionById(int collectionId) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("SELECT * FROM Raccolta WHERE cod_raccolta = ?");

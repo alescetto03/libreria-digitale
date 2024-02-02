@@ -4,7 +4,6 @@ import Controller.AppController;
 import GUI.SaveItemInCollectionGUI;
 
 import java.awt.image.BufferedImage;
-import java.io.ObjectStreamException;
 import java.util.Map;
 
 public class PublicationPanel extends HorizontalScrollpanePanel {
