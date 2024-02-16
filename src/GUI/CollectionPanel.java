@@ -1,10 +1,10 @@
-package GUI.Components;
+package GUI;
 
 import Controller.AppController;
 
 import java.util.Map;
 
-public class CollectionPanel extends HorizontalScrollpanePanel{
+public class CollectionPanel extends HorizontalScrollpanePanel {
     AppController appController;
     Object collectionId;
     public CollectionPanel(AppController appController, Map<String, Object> collection, String buttonText) {

@@ -1,13 +1,14 @@
-package GUI.Components;
+package GUI;
 
 import GUI.AppView;
+import GUI.CrudTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PublicationsInCollectionCrudTable extends CrudTable{
+public class PublicationsInCollectionCrudTable extends CrudTable {
     int collectiond_id;
     public PublicationsInCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, Integer collection_id, String collection_owner) {
         super(parentView, title, columns, data, false, false, false, collection_owner.equals(parentView.getAppController().getLoggedUsername()));

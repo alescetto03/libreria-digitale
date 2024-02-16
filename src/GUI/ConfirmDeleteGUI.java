@@ -1,7 +1,5 @@
 package GUI;
 
-import GUI.Components.CrudTable;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 

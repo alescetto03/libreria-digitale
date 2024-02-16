@@ -1,6 +1,4 @@
-package GUI.Components;
-
-import GUI.ConfirmDeleteGUI;
+package GUI;
 
 import javax.swing.*;
 import java.awt.*;

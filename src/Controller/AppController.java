@@ -2,7 +2,6 @@ package Controller;
 
 import DAO.*;
 import GUI.*;
-import GUI.Components.CrudTable;
 import Model.*;
 import PostgresImplementationDAO.*;
 
@@ -98,11 +97,6 @@ public class AppController {
      * Lista di tutte le raccolte salvate dall'utente
      */
     ArrayList<Collection> savedCollections = new ArrayList<>();
-
-    /**
-     * Lista di tutte le notifiche dell'utente loggato
-     */
-    ArrayList<Notification> userNotification = new ArrayList<Notification>();
 
     /**
      * Lista di tutti i libri che un utente ricerca nella HomepageGUI
@@ -543,7 +537,6 @@ public class AppController {
 
     /**
      * Metodo che renderizza i dati per renderli visualizzabili in una view
-     * @see CrudTable
      */
     public ArrayList<Map<String, Object>> renderData(ArrayList<AbstractModel> objects) {
         ArrayList<Map<String, Object>> renderedData = new ArrayList<>();

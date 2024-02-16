@@ -2,7 +2,6 @@ package GUI;
 
 
 import Controller.AppController;
-import GUI.Components.*;
 
 
 import javax.swing.*;

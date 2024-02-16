@@ -1,6 +1,5 @@
-package GUI.Components;
+package GUI;
 
-import GUI.*;
 import Model.Book;
 import com.toedter.calendar.JYearChooser;
 import javax.swing.*;

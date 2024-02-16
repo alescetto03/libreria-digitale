@@ -8,6 +8,11 @@ import Model.Book;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' libro.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare libri
+ */
+
 public class BookDAO implements BookDAOInterface {
     public BookResultInterface getBookByIsbn(String isbn) {
         final String query = "SELECT * FROM Libro WHERE isbn = ?";

@@ -1,6 +1,7 @@
-package GUI.Components;
+package GUI;
 
 import Controller.AppController;
+import GUI.HorizontalScrollpanePanel;
 import GUI.SaveItemInCollectionGUI;
 
 import java.awt.image.BufferedImage;

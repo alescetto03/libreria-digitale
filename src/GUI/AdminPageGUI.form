@@ -110,7 +110,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="7fb88" class="GUI.Components.CrudTable" binding="currentTable" custom-create="true" default-binding="true">
+          <component id="7fb88" class="GUI.CrudTable" binding="currentTable" custom-create="true" default-binding="true">
             <constraints border-constraint="Center"/>
             <properties>
               <text value="Button"/>

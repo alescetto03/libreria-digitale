@@ -1,7 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.CustomCheckBoxPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

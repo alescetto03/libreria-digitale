@@ -1,6 +1,5 @@
-package GUI.Components;
+package GUI;
 
-import GUI.*;
 import Model.ScientificPublication;
 import com.toedter.calendar.JYearChooser;
 

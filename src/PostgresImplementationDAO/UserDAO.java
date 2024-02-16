@@ -38,7 +38,7 @@ public class UserDAO implements UserDAOInterface {
     }
 
     public UserResultInterface register(String username, String email, byte[] password, String name, String surname, Date birthdate) {
-        final String query = "INSERT INTO Utente(username, email, password, nome, cognome, data_nascita) VALUES (?, ?, ?, ?, ?, ?)";
+        final String query = "INSERT INTO Utente(username, email, password, nome, cognome, data_nascita) VALUES (?, ?, ?, ?, ?, ?)RETURNING *";
         try (
             Connection connection = DatabaseConnection.getInstance().getConnection();
             PreparedStatement statement = connection.prepareStatement(query)
@@ -50,17 +50,11 @@ public class UserDAO implements UserDAOInterface {
             statement.setString(5, surname);
             statement.setDate(6, birthdate);
 
-            int affectedRows = statement.executeUpdate();
+            statement.execute();
+            ResultSet result = statement.getResultSet();
+            result.next();
 
-            // Gestisci il risultato, se necessario
-            if (affectedRows > 0) {
-                System.out.println("Inserimento effettuato con successo!");
-            } else {
-                System.out.println("Nessun record inserito.");
-            }
-            connection.setAutoCommit(false);
-            connection.commit();
-            return new UserResult(username, email, name, surname, birthdate.toLocalDate(), false);
+            return new UserResult(result);
         } catch (SQLException e) {
             System.out.println("Errore:" + e.getMessage());
             return null;

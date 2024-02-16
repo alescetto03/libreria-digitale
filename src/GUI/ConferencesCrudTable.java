@@ -1,8 +1,5 @@
-package GUI.Components;
+package GUI;
 
-import GUI.AdminPageGUI;
-import GUI.AppView;
-import GUI.ModelManipulationFormGUI;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;

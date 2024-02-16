@@ -1,7 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.BooksCrudTable;
 import com.toedter.calendar.JYearChooser;
 
 import javax.imageio.ImageIO;
@@ -32,6 +31,11 @@ public class InsertBookGUI extends AppView {
     private JTextField topicField;
     private JPanel novelPanel;
     private JPanel educationalpanel;
+    private JPanel topBar;
+    private JLabel titleLabel;
+    private JPanel bottomWrapper;
+    private JPanel form;
+    private JScrollPane scrollPane;
 
     public File bookCover = null;
 

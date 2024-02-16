@@ -1,7 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.BooksCrudTable;
 import com.toedter.calendar.JYearChooser;
 
 import javax.swing.*;
@@ -22,6 +21,13 @@ public class UpdateEducationalBook extends AppView {
     private JTextField topicField;
     private JTextArea descriptionField;
     private ArrayList<String> data;
+    private JPanel topBar;
+    private JPanel bottomWrapper;
+    private JScrollPane scrollPane;
+    private JPanel form;
+    private JLabel titleLabel;
+    private JButton coverButton;
+    private JPanel educationalPanel;
 
     public UpdateEducationalBook(AppController appController, ArrayList<String> data, String bookToUpdate) {
         super(appController);

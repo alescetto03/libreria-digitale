@@ -2,6 +2,8 @@ package PostgresImplementationDAO;
 
 import DAO.UserResultInterface;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class UserResult implements UserResultInterface {
@@ -19,6 +21,17 @@ public class UserResult implements UserResultInterface {
         this.surname = surname;
         this.birthdate = birthdate;
         this.isAdmin = isAdmin;
+    }
+
+    public UserResult(ResultSet result) throws SQLException{
+        this(
+                result.getString("username"),
+                result.getString("email"),
+                result.getString("nome"),
+                result.getString("cognome"),
+                result.getDate("data_nascita").toLocalDate(),
+                result.getBoolean("amministratore")
+                );
     }
     public String getUsername() {
         return username;

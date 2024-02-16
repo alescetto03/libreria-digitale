@@ -1,6 +1,7 @@
-package GUI.Components;
+package GUI;
 
 import GUI.AppView;
+import GUI.CrudTable;
 
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class SavedCollectionCrudTable extends CrudTable{
+public class SavedCollectionCrudTable extends CrudTable {
     public SavedCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, false, false, true);
 

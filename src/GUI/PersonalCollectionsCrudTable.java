@@ -1,4 +1,4 @@
-package GUI.Components;
+package GUI;
 
 import GUI.*;
 import Model.Collection;

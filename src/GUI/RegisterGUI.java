@@ -1,7 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.CustomButton;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;

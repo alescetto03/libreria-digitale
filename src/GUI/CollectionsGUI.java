@@ -1,9 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.BooksInCollectionCrudTable;
-import GUI.Components.CrudTable;
-import GUI.Components.PublicationsInCollectionCrudTable;
 
 import javax.swing.*;
 import java.awt.*;

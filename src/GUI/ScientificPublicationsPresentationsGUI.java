@@ -1,8 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.ActionButton;
-import GUI.Components.ConferencesCrudTable;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;

@@ -1,4 +1,7 @@
-package GUI.Components;
+package GUI;
+
+import GUI.ActionsPanel;
+import GUI.CrudTable;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,8 +1,6 @@
 package GUI;
 
 import Controller.AppController;
-import GUI.Components.ActionButton;
-import GUI.Components.StoresCrudTable;
 
 import javax.swing.*;
 import java.awt.*;

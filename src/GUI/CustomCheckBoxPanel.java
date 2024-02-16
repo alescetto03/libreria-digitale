@@ -1,4 +1,4 @@
-package GUI.Components;
+package GUI;
 
 import Controller.AppController;
 import GUI.AppView;

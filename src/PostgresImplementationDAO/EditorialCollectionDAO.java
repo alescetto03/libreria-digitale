@@ -7,6 +7,11 @@ import DAO.EditorialCollectionResultInterface;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Classe per l'interfacciamente con il database per l'entita' Collana.
+ * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare collane
+ */
+
 public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
     @Override
     public EditorialCollectionResultInterface getEditorialCollectionByIssn(String issn) {

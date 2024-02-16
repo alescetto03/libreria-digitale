@@ -1,8 +1,4 @@
-package GUI.Components;
-
-import GUI.AdminPageGUI;
-import GUI.AppView;
-import GUI.ModelManipulationFormGUI;
+package GUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
