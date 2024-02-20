@@ -63,28 +63,6 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
-    public ArrayList<PublicationConferenceResultInterface> getBooksFromConferences() {
-        final String query = "SELECT doi, conferenza, titolo AS titolo_articolo, luogo, data_inizio, data_fine FROM presentazione_articolo " +
-                "JOIN conferenza c ON c.cod_conferenza = presentazione_articolo.conferenza " +
-                "JOIN articolo_scientifico a ON a.doi = presentazione_articolo.articolo_scientifico";
-        try (
-                Connection connection = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-        ) {
-            ResultSet result = statement.executeQuery();
-
-            ArrayList<PublicationConferenceResultInterface> publicationConferenceResults = new ArrayList<>();
-            while(result.next()){
-                PublicationConferenceResultInterface publicationConferenceResult = new PublicationConferenceResult(result);
-                publicationConferenceResults.add(publicationConferenceResult);
-            }
-            return publicationConferenceResults;
-        }catch (SQLException e){
-            System.out.println("Errore: " + e.getMessage());
-            return null;
-        }
-    }
-
     @Override
     public ConferenceResultInterface insertConferenceInDb(String location, Date startDate, Date endDate, String organizer, String manager) throws Exception{
         try (

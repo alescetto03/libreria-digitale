@@ -22,7 +22,7 @@ public class Journal extends AbstractModel {
         return issn;
     }
 
-    public void setId(int id) {
+    public void setId(String issn) {
         this.issn = issn;
     }
 

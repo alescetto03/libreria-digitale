@@ -286,26 +286,4 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
         return false;
     }
-
-    public ArrayList<BookEditorialCollectionResultInterface> getBooksFromCollections() {
-        final String query = "SELECT isbn, issn, titolo AS titolo_libro, nome AS nome_collana FROM libro_contenuto_collana " +
-                "JOIN collana c ON c.issn = libro_contenuto_collana.collana " +
-                "JOIN libro l ON l.isbn = libro_contenuto_collana.libro";
-        try (
-                Connection connection = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-        ) {
-            ResultSet result = statement.executeQuery();
-
-            ArrayList<BookEditorialCollectionResultInterface> bookEditorialCollectionResults = new ArrayList<>();
-            while(result.next()){
-                BookEditorialCollectionResultInterface bookEditorialCollectionResult = new BookEditorialCollectionResult(result);
-                bookEditorialCollectionResults.add(bookEditorialCollectionResult);
-            }
-            return bookEditorialCollectionResults;
-        }catch (SQLException e){
-            System.out.println("Errore: " + e.getMessage());
-            return null;
-        }
-    }
 }
