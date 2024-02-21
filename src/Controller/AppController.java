@@ -1298,11 +1298,11 @@ public class AppController {
      * Metodo che aggiorna le relazioni fra libri e negozi
      * @param isbn
      * @param partitaIva
-     * @param quantity
      * @param price
+     * @param quantity
      * @param isSelected
      */
-    public void updateBookSale(String isbn, String partitaIva, int quantity, float price, boolean isSelected) throws Exception {
+    public void updateBookSale(String isbn, String partitaIva, double price, int quantity, boolean isSelected) throws Exception {
         if (isSelected) {
             storeDAO.insertBookSale(isbn, partitaIva, price, quantity);
         } else {

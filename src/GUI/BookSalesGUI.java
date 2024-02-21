@@ -39,14 +39,16 @@ public class BookSalesGUI extends AppView {
 
             JLabel priceLabel = new JLabel("Prezzo:");
             JCheckBox checkBox = new JCheckBox();
-            JSpinner priceField = new JSpinner();
-            priceField.setPreferredSize(new Dimension(50, 20));
+            JSpinner priceField = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE,0.01));
+            priceField.setPreferredSize(new Dimension(100, 20));
+            priceField.setValue(0);
             priceLabel.setVisible(false);
             priceField.setVisible(false);
 
             JLabel quantityLabel = new JLabel("Quantità:");
-            JSpinner quantityField = new JSpinner();
-            quantityField.setPreferredSize(new Dimension(50, 20));
+            JSpinner quantityField = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE,1));
+            quantityField.setPreferredSize(new Dimension(100, 20));
+            quantityField.setValue(0);
             quantityLabel.setVisible(false);
             quantityField.setVisible(false);
 
@@ -58,6 +60,8 @@ public class BookSalesGUI extends AppView {
                     priceField.setVisible(true);
                     quantityLabel.setVisible(true);
                     quantityField.setVisible(true);
+                    priceField.setValue(bookSale.get("price"));
+                    quantityField.setValue(bookSale.get("quantity"));
                     break;
                 }
             }
@@ -81,8 +85,11 @@ public class BookSalesGUI extends AppView {
             });
             saveButton.addActionListener((ActionEvent e) -> {
                 try {
-                    appController.updateBookSale((String) book.get("isbn"), (String) store.get("id"), (int) quantityField.getValue(), (float) priceField.getValue(), ((JCheckBox) saveButton.getParent().getComponent(2)).isSelected());
+                    double price = Double.parseDouble(String.valueOf(priceField.getValue()));
+                    int quantity = Integer.parseInt(String.valueOf(quantityField.getValue()));
+                    appController.updateBookSale((String) book.get("isbn"), (String) store.get("partita_iva"), price, quantity, ((JCheckBox) saveButton.getParent().getComponent(1)).isSelected());
                 } catch (Exception exception) {
+                    exception.printStackTrace();
                     JOptionPane.showMessageDialog(getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
                 }
             });

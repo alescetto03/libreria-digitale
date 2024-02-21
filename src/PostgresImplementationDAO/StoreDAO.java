@@ -178,15 +178,17 @@ public class StoreDAO implements StoreDAOInterface {
         }
     }
 
-    public boolean insertBookSale(String book, String store, float price, int quantity) throws Exception {
+    public boolean insertBookSale(String book, String store, double price, int quantity) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = conn.prepareStatement("INSERT INTO vendita VALUES (?,?,?,?) ON CONFLICT (negozio, libro) DO UPDATE SET costo = ?, quantita = ?");
         ) {
             statement.setString(1, store);
             statement.setString(2, book);
-            statement.setFloat(3, price);
+            statement.setDouble(3, price);
             statement.setInt(4, quantity);
+            statement.setDouble(5, price);
+            statement.setInt(6, quantity);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -196,9 +198,8 @@ public class StoreDAO implements StoreDAOInterface {
             else if (e.getSQLState().equals("23502") && e.getMessage().contains("quantita")) {
                 throw new Exception("Inserisci una quantita' !");
             }
-
-            return false;
         }
+        return false;
     }
 
     public boolean deleteBookSale(String book, String store) {
