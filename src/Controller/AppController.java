@@ -924,7 +924,7 @@ public class AppController {
     }
 
     /**
-     * Metodo che elimina un negozio dal database
+     * Metodo che elimina una Collana dal database
      * @param issn
      */
     public boolean removeEditorialCollectionFromDatabase(String issn) {
@@ -1291,6 +1291,22 @@ public class AppController {
             publicationDAO.insertAuthorOfScientificPublication(authorId, doi);
         } else {
             publicationDAO.deleteAuthorOfScientificPublication(authorId, doi);
+        }
+    }
+
+    /**
+     * Metodo che aggiorna le relazioni fra libri e negozi
+     * @param isbn
+     * @param partitaIva
+     * @param quantity
+     * @param price
+     * @param isSelected
+     */
+    public void updateBookSale(String isbn, String partitaIva, int quantity, float price, boolean isSelected) throws Exception {
+        if (isSelected) {
+            storeDAO.insertBookSale(isbn, partitaIva, price, quantity);
+        } else {
+            storeDAO.deleteBookSale(isbn, partitaIva);
         }
     }
 }

@@ -81,7 +81,7 @@ public class BookSalesGUI extends AppView {
             });
             saveButton.addActionListener((ActionEvent e) -> {
                 try {
-                    //appController.updateBookPresentation((String) book.get("isbn"), (int) store.get("id"), parsedPresentationDate, ((JCheckBox) saveButton.getParent().getComponent(2)).isSelected());
+                    appController.updateBookSale((String) book.get("isbn"), (String) store.get("id"), (int) quantityField.getValue(), (float) priceField.getValue(), ((JCheckBox) saveButton.getParent().getComponent(2)).isSelected());
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(getContentPane(), exception.getMessage(), "!!!Errore!!!", JOptionPane.ERROR_MESSAGE);
                 }
