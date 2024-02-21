@@ -179,6 +179,17 @@ public class AppController {
     public void showHomepage() { switchView(new HomepageGUI(this)); }
 
     /**
+     * Metodo per mostrare la schermata di AdminPageGUI
+     */
+    public boolean showAdminPage() {
+        boolean isAdmin = loggedUser.isAdmin();
+        if (isAdmin) {
+            switchView(new AdminPageGUI(this, new BooksCrudTable(getCurrentView(), "Libri:", new String[]{"isbn", "titolo", "editore", "modalità fruizione", "anno pubblicazione", "copertina", "descrizione", "genere", "target", "materia", "tipo"}, getRenderedBooks())));
+        }
+        return isAdmin;
+    }
+
+    /**
      * Metodo per cambiare schermata e chiudere quella precedente, uno switch di finestra in pratica.
      */
     public void switchView(AppView destinationView) {
