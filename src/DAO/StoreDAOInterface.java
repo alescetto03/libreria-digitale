@@ -11,4 +11,6 @@ public interface StoreDAOInterface {
     StoreResultInterface updateStoreByPartitaIva(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception;
     StoreResultInterface insertStoreInDb(String partitaIva, String name, String address, String url) throws Exception;
     ArrayList<BookSaleResultInterface> getBookSales(String partitaIva);
+    boolean insertBookSale(String book, String store, float price, int quantity) throws Exception;
+    boolean deleteBookSale(String book, String store) throws Exception;
 }

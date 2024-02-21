@@ -2,10 +2,7 @@ package PostgresImplementationDAO;
 
 import DAO.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 /**
@@ -178,6 +175,43 @@ public class StoreDAO implements StoreDAOInterface {
         } catch (SQLException e) {
             System.out.println("Errore: " + e.getMessage());
             return null;
+        }
+    }
+
+    public boolean insertBookSale(String book, String store, float price, int quantity) throws Exception {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO vendita VALUES (?,?,?,?) ON CONFLICT (negozio, libro) DO UPDATE SET costo = ?, quantita = ?");
+        ) {
+            statement.setString(1, store);
+            statement.setString(2, book);
+            statement.setFloat(3, price);
+            statement.setInt(4, quantity);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            if (e.getSQLState().equals("23502") && e.getMessage().contains("costo")) {
+                throw new Exception("Inserisci un costo!");
+            }
+            else if (e.getSQLState().equals("23502") && e.getMessage().contains("quantita")) {
+                throw new Exception("Inserisci una quantita' !");
+            }
+
+            return false;
+        }
+    }
+
+    public boolean deleteBookSale(String book, String store) {
+        try (
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = conn.prepareStatement("DELETE FROM vendita WHERE libro = ? AND negozio = ?");
+        ) {
+            statement.setString(1, book);
+            statement.setString(2, store);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 }
