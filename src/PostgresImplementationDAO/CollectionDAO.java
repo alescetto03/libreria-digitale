@@ -7,10 +7,16 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' raccolta.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare raccolte
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Raccolta all'interno del database.
  */
 public class CollectionDAO implements CollectionDAOInterface {
+
+    /**
+     * @inheritDoc
+     * @param searchedCollection
+     * @param username
+     * @return
+     */
     @Override
     public ArrayList<CollectionResultInterface> getReasearchedCollection(String searchedCollection, String username) {
         final String query = "SELECT * FROM Raccolta WHERE Raccolta.visibilita = 'pubblica' AND proprietario <> ? AND Raccolta.nome ILIKE '%' || ? || '%'";
@@ -35,6 +41,11 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param username
+     * @return
+     */
     @Override
     public ArrayList<CollectionResultInterface> getUserPersonalCollections(String username) {
         final String query = "SELECT cod_raccolta, nome, visibilita, proprietario FROM Raccolta WHERE Raccolta.proprietario = ? ORDER BY cod_raccolta";
@@ -57,6 +68,11 @@ public class CollectionDAO implements CollectionDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param username
+     * @return
+     */
     @Override
     public ArrayList<CollectionResultInterface> getUserSavedCollections(String username) {
         final String query = "SELECT r.cod_raccolta, r.nome, r.visibilita, r.proprietario " +
@@ -82,6 +98,11 @@ public class CollectionDAO implements CollectionDAOInterface {
 
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @return
+     */
     public boolean deleteCollectionById(int collectionId) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -95,6 +116,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param username
+     * @return
+     */
     public boolean deleteSavedCollectionById(int collectionId, String username){
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -109,6 +136,14 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param name
+     * @param visibility
+     * @param owner
+     * @return
+     */
     public CollectionResultInterface updateCollectionById(int collectionId, String name, Collection.Visibility visibility, String owner) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -130,6 +165,13 @@ public class CollectionDAO implements CollectionDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param name
+     * @param visibility
+     * @param owner
+     * @return
+     */
     @Override
     public CollectionResultInterface insertCollection(String name, Collection.Visibility visibility, String owner) {
         if (name.matches("\\s*")) {
@@ -154,6 +196,11 @@ public class CollectionDAO implements CollectionDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @return
+     */
     @Override
     public CollectionResultInterface getCollectionById(int collectionId) {
         try (
@@ -172,6 +219,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param isbn
+     * @return
+     */
     @Override
     public boolean deleteBookFromCollection(int collectionId, String isbn) {
         try (
@@ -187,6 +240,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param doi
+     * @return
+     */
     @Override
     public boolean deletePublicationFromCollection(int collectionId, String doi) {
         try (
@@ -202,6 +261,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param username
+     * @return
+     */
     @Override
     public boolean saveCollectionById(int collectionId, String username) {
         try (
@@ -218,7 +283,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         return false;
     }
 
-
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param bookIsbn
+     * @return
+     */
     @Override
     public boolean isBookInCollection(int collectionId, String bookIsbn) {
         try(
@@ -237,6 +307,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param bookIsbn
+     * @return
+     */
     @Override
     public boolean insertBookInCollection(int collectionId, String bookIsbn) {
         try (
@@ -253,6 +329,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param publicationDoi
+     * @return
+     */
     @Override
     public boolean isPublicationInCollection(int collectionId, String publicationDoi) {
         try(
@@ -271,6 +353,12 @@ public class CollectionDAO implements CollectionDAOInterface {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @param publicationDoi
+     * @return
+     */
     @Override
     public boolean insertPublicationInCollection(int collectionId, String publicationDoi) {
         try (

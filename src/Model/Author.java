@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Autore
+ */
 public class Author extends AbstractModel {
     private int id;
     private String name;

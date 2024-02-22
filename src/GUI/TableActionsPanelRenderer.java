@@ -7,6 +7,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * Classe che permette di renderizzare l'ActionPanel come colonna di una tabella
+ * @see ActionsPanel
+ */
 public class TableActionsPanelRenderer extends DefaultTableCellRenderer {
     private boolean displayViewButton;
     private boolean displayEditButton;

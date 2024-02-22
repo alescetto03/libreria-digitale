@@ -6,11 +6,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' negozio.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare negozi
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Negozio all'interno del database.
  */
-
 public class StoreDAO implements StoreDAOInterface {
+    /**
+     * @inheritDoc
+     * @param partitaIva
+     * @return
+     */
     public StoreResultInterface getStoreByPartitaIva(String partitaIva) {
         final String query = "SELECT * FROM negozio WHERE partita_iva = ?";
         try (
@@ -29,6 +32,11 @@ public class StoreDAO implements StoreDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param searchedSerie
+     * @return
+     */
     @Override
     public ArrayList<StoreResultInterface> storeCompleteSerie(String searchedSerie) {
         final String query = "SELECT * FROM negoziconseriecomplete WHERE nome_serie ILIKE '%' || ? || '%'";
@@ -52,6 +60,10 @@ public class StoreDAO implements StoreDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     @Override
     public ArrayList<StoreResultInterface> getAll() {
         final String query = "SELECT * FROM Negozio ORDER BY partita_iva";
@@ -73,6 +85,11 @@ public class StoreDAO implements StoreDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param partitaIva
+     * @return
+     */
     @Override
     public boolean deleteStoreByPartitaIva(String partitaIva) {
         try (
@@ -87,6 +104,16 @@ public class StoreDAO implements StoreDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param storeToUpdate
+     * @param partitaIva
+     * @param name
+     * @param address
+     * @param url
+     * @return
+     * @throws Exception
+     */
     @Override
     public StoreResultInterface updateStoreByPartitaIva(String storeToUpdate, String partitaIva, String name, String address, String url) throws Exception {
         try (
@@ -120,6 +147,15 @@ public class StoreDAO implements StoreDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param partitaIva
+     * @param name
+     * @param address
+     * @param url
+     * @return
+     * @throws Exception
+     */
     @Override
     public StoreResultInterface insertStoreInDb(String partitaIva, String name, String address, String url) throws Exception{
         try (
@@ -151,6 +187,11 @@ public class StoreDAO implements StoreDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param partitaIva
+     * @return
+     */
     @Override
     public ArrayList<BookSaleResultInterface> getBookSales(String partitaIva) {
         final String query = "SELECT * FROM libro " +
@@ -178,6 +219,15 @@ public class StoreDAO implements StoreDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param book
+     * @param store
+     * @param price
+     * @param quantity
+     * @return
+     * @throws Exception
+     */
     public boolean insertBookSale(String book, String store, double price, int quantity) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -202,6 +252,12 @@ public class StoreDAO implements StoreDAOInterface {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     * @param book
+     * @param store
+     * @return
+     */
     public boolean deleteBookSale(String book, String store) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();

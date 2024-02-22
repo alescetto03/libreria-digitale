@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * View che mostra i risultati di ricerca
+ */
 public class SearchResultsGUI extends AppView {
 
     JPanel contentPane = new JPanel();

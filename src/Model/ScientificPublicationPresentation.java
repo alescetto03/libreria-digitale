@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Presentazione Articolo Scientifico
+ */
 public class ScientificPublicationPresentation extends AbstractModel {
     private Conference conference;
     private ScientificPublication presentedScientificPublication;

@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * Superclasse che rappresenta uno Scrollpane orizzontale contenente degli elementi
+ */
 public abstract class HorizontalScrollpanePanel extends JPanel {
     public abstract boolean onSaveButtonPress();
     public abstract void onViewButtonPress();

@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * View che permette all'utente di salvare un libro o un articolo in una sua raccolta personale
+ */
 public class SaveItemInCollectionGUI extends AppView{
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();

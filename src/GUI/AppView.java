@@ -5,6 +5,9 @@ import Controller.AppController;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Superclasse rappresentante una View dell'applicativo
+ */
 public abstract class AppView {
     AppController controller;
     private Dimension dimension = null;
@@ -14,14 +17,21 @@ public abstract class AppView {
         this.controller = appController;
     }
 
+    /**
+     * Metodo che setta la dimensione della finestra
+     * @param dimension
+     */
     protected void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
+    /**
+     * Funzione che setta il titolo della view
+     * @param title
+     */
     protected void setTitle(String title) {
         this.title = title;
     }
-
 
     /**
      * Funzione che restituisce l'AppController che gestisce questa view.
@@ -45,5 +55,10 @@ public abstract class AppView {
         return title;
     }
 
+    /**
+     * Funzione che restituisce il content pane della view.
+     * Il content pane è il JPanel che contiene tutti gli elementi presenti all'interno della view
+     * @return
+     */
     public abstract JPanel getContentPane();
 }

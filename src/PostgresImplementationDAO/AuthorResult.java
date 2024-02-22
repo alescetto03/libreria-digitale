@@ -6,6 +6,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Autore del database
+ */
 public class AuthorResult implements AuthorResultInterface {
     private int id;
     private String name;

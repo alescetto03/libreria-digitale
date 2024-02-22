@@ -5,6 +5,9 @@ import DAO.PublicationJournalResultInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Pubblicazione Articolo del database
+ */
 public class PublicationJournalResult implements PublicationJournalResultInterface {
     String doi;
     String issn;

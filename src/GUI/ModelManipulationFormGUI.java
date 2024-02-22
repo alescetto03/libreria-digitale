@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.time.ZoneId;
 import java.util.*;
 
+/**
+ * View che permette all'utente di modificare o inserire le istanze di un'entità presente nell'applicativo
+ */
 public class ModelManipulationFormGUI extends AppView {
     private JButton confirmButton;
     private JButton goBackButton;

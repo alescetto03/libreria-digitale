@@ -9,10 +9,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' articoli_scientifici.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare articoli scientifici
- */
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Articolo Scientifico all'interno del database.
+ **/
 public class ScientificPublicationDAO implements ScientificPublicationDAOInterface {
+    /**
+     * @inheritDoc
+     * @param doi
+     * @return
+     */
     public ScientificPublicationResultInterface getScientificPublicationByDoi(String doi) {
         final String query = "SELECT * FROM articolo_scientifico WHERE doi = ?";
         try (
@@ -30,6 +34,12 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
         return null;
     }
+
+    /**
+     * @inheritDoc
+     * @param searchedPublication
+     * @return
+     */
     @Override
     public ArrayList<ScientificPublicationResultInterface> getResearchedPublication(String searchedPublication) {
         final String query = "SELECT * FROM Articolo_Scientifico WHERE Articolo_Scientifico.titolo ILIKE '%' || ? || '%'";
@@ -53,6 +63,10 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     public ArrayList<ScientificPublicationResultInterface> getAll() {
         final String query = "SELECT * FROM Articolo_Scientifico ORDER BY doi";
         try(
@@ -73,6 +87,11 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param doi
+     * @return
+     */
     public boolean deleteScientificPublicationByDoi(String doi) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -86,6 +105,11 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param publicationId
+     * @return
+     */
     @Override
     public ArrayList<ScientificPublicationResultInterface> getPublicationsFromCollection(int publicationId) {
         final String query = "SELECT a.doi, a.titolo, a.editore, a.modalita_fruizione, a.anno_pubblicazione, a.copertina, a.descrizione " +
@@ -111,6 +135,18 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param publicationToUpdate
+     * @param doi
+     * @param title
+     * @param publisher
+     * @param fruitionMode
+     * @param publicationYear
+     * @param description
+     * @return
+     * @throws Exception
+     */
     @Override
     public ScientificPublicationResultInterface updateScientificPublicationByDoi(String publicationToUpdate, String doi, String title, String publisher, ScientificPublication.FruitionMode fruitionMode, int publicationYear, String description) throws Exception {
         final String query = "UPDATE articolo_scientifico SET doi = ?, titolo = NULLIF(?, ''), editore = NULLIF(?, ''), modalita_fruizione = ?, anno_pubblicazione = ?, descrizione = NULLIF(?, '') WHERE doi = ? RETURNING articolo_scientifico.*";
@@ -151,6 +187,18 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param doi
+     * @param title
+     * @param publisher
+     * @param fruition_mode
+     * @param publication_year
+     * @param cover
+     * @param description
+     * @return
+     * @throws Exception
+     */
     @Override
     public ScientificPublicationResultInterface insertPublicationInDb(String doi, String title, String publisher, ScientificPublication.FruitionMode fruition_mode, int publication_year, byte[] cover, String description) throws Exception {
         try (
@@ -190,6 +238,11 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param doi
+     * @return
+     */
     public ArrayList<AuthorResultInterface> getAuthorsOfScientificPublication(String doi) {
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -212,6 +265,12 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param author
+     * @param scientificPublication
+     * @return
+     */
     public boolean insertAuthorOfScientificPublication(int author, String scientificPublication) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -226,6 +285,12 @@ public class ScientificPublicationDAO implements ScientificPublicationDAOInterfa
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param author
+     * @param scientificPublication
+     * @return
+     */
     public boolean deleteAuthorOfScientificPublication(int author, String scientificPublication) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();

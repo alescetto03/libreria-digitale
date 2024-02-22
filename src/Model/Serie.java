@@ -3,6 +3,9 @@ package Model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Serie
+ */
 public class Serie extends AbstractModel {
     private String name;
     private String prequel;

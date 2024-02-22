@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Una tabella Create Read Update Delete (CRUD) è una tabella che permette all'utente di
+ * visualizzare, inserire, modificare ed eliminare le entità presenti nell'applicativo
+ */
 public abstract class CrudTable extends JPanel {
     protected String[] columns;
     protected ArrayList<Map<String, Object>> data;

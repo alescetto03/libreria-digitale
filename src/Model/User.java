@@ -2,6 +2,9 @@ package Model;
 
 import java.time.LocalDate;
 
+/**
+ * Classe model dell'entità Utente
+ */
 public class User {
     private String username;
     private String email;

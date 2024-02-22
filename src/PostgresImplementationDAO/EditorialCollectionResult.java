@@ -5,6 +5,9 @@ import DAO.EditorialCollectionResultInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Collana del database
+ */
 public class EditorialCollectionResult implements EditorialCollectionResultInterface {
     private String issn;
     private String name;

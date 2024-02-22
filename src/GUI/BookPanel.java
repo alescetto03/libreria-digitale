@@ -5,6 +5,9 @@ import Controller.AppController;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
+/**
+ * Classe che rappresenta uno Scrollpane orizzontale contenente dei libri
+ */
 public class BookPanel extends HorizontalScrollpanePanel {
     AppController appController;
     String book_isbn;

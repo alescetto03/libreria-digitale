@@ -3,6 +3,9 @@ package Model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Rivist
+ */
 public class Journal extends AbstractModel {
     private String issn;
     private String name;

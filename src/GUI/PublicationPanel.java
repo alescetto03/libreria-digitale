@@ -7,6 +7,9 @@ import GUI.SaveItemInCollectionGUI;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
+/**
+ * Classe che rappresenta uno Scrollpane orizzontale contenente degli articoli scientifici
+ */
 public class PublicationPanel extends HorizontalScrollpanePanel {
     AppController appController;
     String publication_doi;

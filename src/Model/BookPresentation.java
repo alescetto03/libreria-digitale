@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Presentazione Libro
+ */
 public class BookPresentation extends AbstractModel {
     private PresentationHall presentationHall;
     private Book presentedBook;

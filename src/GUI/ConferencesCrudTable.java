@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce tutte le conferenze presenti nel database dell'applicativo
+ */
 public class ConferencesCrudTable extends CrudTable {
     public ConferencesCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una conferenza", "Modifica una conferenza");

@@ -10,6 +10,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * CRUD Table che gestisce tutti gli autori presenti nel database dell'applicativo
+ */
 public class AuthorsCrudTable extends CrudTable {
     public AuthorsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, false, true, true, true, "Aggiungi un autore", "Modifica un autore");

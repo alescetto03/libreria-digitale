@@ -2,7 +2,9 @@ package DAO;
 
 import java.sql.Date;
 
-
+/**
+ * Interfaccia che rappresenta una tupla della tabella Autore del database
+ */
 public interface AuthorResultInterface {
     int getId();
 

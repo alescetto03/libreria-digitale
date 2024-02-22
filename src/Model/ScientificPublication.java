@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Articolo Scientifico
+ */
 public class ScientificPublication extends AbstractModel{
     private String doi;
     private String title;

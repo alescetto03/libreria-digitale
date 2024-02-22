@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce tutte le serie presenti nel database dell'applicativo
+ */
 public class SeriesCrudTable extends CrudTable {
     public SeriesCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, false, false, true, true, "Aggiungi un libro in una serie", "Modifica un libro in una serie");

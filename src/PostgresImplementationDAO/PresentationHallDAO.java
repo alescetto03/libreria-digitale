@@ -9,11 +9,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' sala.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare sale
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Sala all'interno del database.
  */
-
 public class PresentationHallDAO implements PresentationHallDAOInterface {
+    /**
+     * @inheritDoc
+     * @param presentationHallId
+     * @return
+     */
     @Override
     public PresentationHallResultInterface getPresentationhallById(int presentationHallId) {
         final String query = "SELECT * FROM Sala WHERE cod_sala = ?";
@@ -32,6 +35,10 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     @Override
     public ArrayList<PresentationHallResultInterface> getAll() {
         final String query = "SELECT * FROM Sala ORDER BY cod_sala";
@@ -53,6 +60,11 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param id
+     * @return
+     */
     @Override
     public boolean deletePresentationHallById(int id) {
         try (
@@ -67,6 +79,11 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param presentationHallId
+     * @return
+     */
     @Override
     public ArrayList<BookPresentationResultInterface> getBookPresentations(int presentationHallId) {
         final String query = "SELECT s.cod_sala, s.nome, s.indirizzo, pl.data_presentazione, l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo FROM presentazione_libro AS pl " +
@@ -94,6 +111,14 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param book
+     * @param presentationHall
+     * @param presentationDate
+     * @return
+     * @throws Exception
+     */
     public boolean insertBookIntoPresentationHall(String book, int presentationHall, Date presentationDate) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -112,6 +137,13 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
             return false;
         }
     }
+
+    /**
+     * @inheritDoc
+     * @param book
+     * @param presentationHall
+     * @return
+     */
     public boolean deleteBookFromPresentationHall(String book, int presentationHall) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -126,6 +158,13 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param name
+     * @param address
+     * @return
+     * @throws Exception
+     */
     @Override
     public PresentationHallResultInterface insertPresentationHallInDb(String name, String address) throws Exception{
         try (
@@ -153,6 +192,14 @@ public class PresentationHallDAO implements PresentationHallDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param id
+     * @param name
+     * @param address
+     * @return
+     * @throws Exception
+     */
     @Override
     public PresentationHallResultInterface updatePresentationHallById(int id, String name, String address) throws Exception{
         try (

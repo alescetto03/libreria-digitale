@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * View che mostra il contenuto di una raccolta
+ */
 public class CollectionsGUI extends AppView{
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce tutti i libri presenti nel database dell'applicativo
+ */
 public class BooksCrudTable extends CrudTable{
     public BooksCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi un libro", "Modifica un libro");

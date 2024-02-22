@@ -4,6 +4,9 @@ import DAO.BookResultInterface;
 import DAO.BookSaleResultInterface;
 import DAO.StoreResultInterface;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Vendita del database
+ */
 public class BookSaleResult implements BookSaleResultInterface {
     private StoreResultInterface store;
     private BookResultInterface book;

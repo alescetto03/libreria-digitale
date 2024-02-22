@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce tutte le collane presenti nel database dell'applicativo
+ */
 public class EditorialCollectionsCrudTable extends CrudTable {
     public EditorialCollectionsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una collana", "Modifica una collana");

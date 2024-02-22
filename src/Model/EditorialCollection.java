@@ -4,6 +4,9 @@ package Model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Collana
+ */
 public class EditorialCollection extends AbstractModel {
     private String issn;
     private String name;

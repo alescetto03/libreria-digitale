@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Libro
+ */
 public class Book extends AbstractModel {
     private String isbn;
     private String title;

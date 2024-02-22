@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 
+/**
+ * L'homepage dell'applicativo
+ */
 public class HomepageGUI extends AppView{
     JPanel contentPane = new JPanel();
     public HomepageGUI(AppController appController) {

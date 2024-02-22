@@ -3,6 +3,9 @@ package Model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Raccolta
+ */
 public class Collection extends AbstractModel{
     private int id;
     private String name;

@@ -5,6 +5,9 @@ import DAO.StoreResultInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Negozio del database
+ */
 public class StoreResult implements StoreResultInterface {
     String partita_iva;
     String name;

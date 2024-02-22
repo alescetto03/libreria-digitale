@@ -8,6 +8,9 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce tutti gli articoli scientifici presenti in una raccolta
+ */
 public class PublicationsInCollectionCrudTable extends CrudTable {
     int collectiond_id;
     public PublicationsInCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, Integer collection_id, String collection_owner) {

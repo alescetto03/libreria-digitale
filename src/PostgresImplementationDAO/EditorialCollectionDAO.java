@@ -8,11 +8,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' Collana.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare collane
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Collana all'interno del database.
  */
-
 public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
+    /**
+     * @inheritDoc
+     * @param issn
+     * @return
+     */
     @Override
     public EditorialCollectionResultInterface getEditorialCollectionByIssn(String issn) {
         final String query = "SELECT * FROM collana WHERE issn = ?";
@@ -33,6 +36,10 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     @Override
     public ArrayList<EditorialCollectionResultInterface> getAll() {
         final String query = "SELECT * FROM Collana ORDER BY issn";
@@ -54,6 +61,11 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param issn
+     * @return
+     */
     @Override
     public boolean deleteEditorialCollectonByIssn(String issn) {
         try (
@@ -68,6 +80,14 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param issn
+     * @param name
+     * @param publisher
+     * @return
+     * @throws Exception
+     */
     @Override
     public EditorialCollectionResultInterface insertEditorialCollectionInDb(String issn, String name, String publisher) throws Exception{
         try (
@@ -98,6 +118,11 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param issn
+     * @return
+     */
     @Override
     public ArrayList<BookResultInterface> getBooksFromEditorialCollection(String issn) {
         final String query = "SELECT l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo FROM libro_contenuto_collana AS lc " +
@@ -122,6 +147,12 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param book
+     * @param editorialCollection
+     * @return
+     */
     @Override
     public boolean insertBookIntoEditorialCollection(String book, String editorialCollection) {
         try (
@@ -137,6 +168,12 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param book
+     * @param editorialCollection
+     * @return
+     */
     @Override
     public boolean deleteBookFromEditorialCollection(String book, String editorialCollection) {
         try (
@@ -152,7 +189,15 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
     }
 
-
+    /**
+     * @inheritDoc
+     * @param editorialCollectionToUpdate
+     * @param issn
+     * @param name
+     * @param publisher
+     * @return
+     * @throws Exception
+     */
     @Override
     public EditorialCollectionResultInterface updateEditorialCollectionByIssn(String editorialCollectionToUpdate, String issn, String name, String publisher) throws Exception {
         final String query = "UPDATE Collana SET issn = ?, nome = NULLIF(?, ''), editore = NULLIF(?, '') WHERE issn = ? RETURNING Collana.*";
@@ -187,7 +232,4 @@ public class EditorialCollectionDAO implements EditorialCollectionDAOInterface {
         }
         return null;
     }
-
-
-
 }

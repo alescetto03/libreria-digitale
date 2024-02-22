@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce le raccolte personali di un utente
+ */
 public class PersonalCollectionsCrudTable extends CrudTable {
     public PersonalCollectionsCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, true, true, true, "Aggiungi una raccolta", "Modifica una raccolta");

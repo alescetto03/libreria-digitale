@@ -1,13 +1,13 @@
 package GUI;
 
-import GUI.AppView;
-import GUI.CrudTable;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce tutti i libri presenti in una raccolta
+ */
 public class BooksInCollectionCrudTable extends CrudTable {
     int collectiond_id;
     public BooksInCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data, Integer collection_id, String collection_owner) {

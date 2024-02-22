@@ -6,10 +6,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' conferenza.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare conferenze
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Conferenza all'interno del database.
  */
 public class ConferenceDAO implements ConferenceDAOInterface {
+    /**
+     * @inheritDoc
+     * @param conferenceId
+     * @return
+     */
     @Override
     public ConferenceResultInterface getConferenceById(int conferenceId) {
         final String query = "SELECT * FROM Conferenza WHERE cod_conferenza = ?";
@@ -28,6 +32,10 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     @Override
     public ArrayList<ConferenceResultInterface> getAll() {
         final String query = "SELECT * FROM Conferenza ORDER BY cod_conferenza";
@@ -49,6 +57,11 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param id
+     * @return
+     */
     @Override
     public boolean deleteConferenceById(int id) {
         try (
@@ -63,6 +76,16 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param location
+     * @param startDate
+     * @param endDate
+     * @param organizer
+     * @param manager
+     * @return
+     * @throws Exception
+     */
     @Override
     public ConferenceResultInterface insertConferenceInDb(String location, Date startDate, Date endDate, String organizer, String manager) throws Exception{
         try (
@@ -100,7 +123,17 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
-
+    /**
+     * @inheritDoc
+     * @param conferenceId
+     * @param location
+     * @param startDate
+     * @param endDate
+     * @param organizer
+     * @param manager
+     * @return
+     * @throws Exception
+     */
     @Override
     public ConferenceResultInterface updateConferenceById(int conferenceId, String location, Date startDate, Date endDate, String organizer, String manager) throws Exception {
         try (
@@ -139,6 +172,11 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param conferenceId
+     * @return
+     */
     @Override
     public ArrayList<ScientificPublicationPresentationResultInterface> getScientificPublicatonPresentations(int conferenceId) {
         final String query = "SELECT c.cod_conferenza, c.luogo, c.data_inizio, c.data_fine, c.organizzatore, c.responsabile, pa.data_presentazione, a.doi, titolo, editore, modalita_fruizione, anno_pubblicazione, copertina, descrizione FROM presentazione_articolo AS pa " +
@@ -166,6 +204,14 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param conference
+     * @param scientificPublication
+     * @param presentationDate
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean insertScientificPublicationPresentation(int conference, String scientificPublication, Date presentationDate) throws Exception {
         try (
@@ -186,6 +232,12 @@ public class ConferenceDAO implements ConferenceDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param conference
+     * @param scientificPublication
+     * @return
+     */
     @Override
     public boolean deleteScientificPublicationPresentation(int conference, String scientificPublication) {
         try (

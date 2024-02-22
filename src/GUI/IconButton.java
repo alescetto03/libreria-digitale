@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Classe rappresentante un pulsante con un'icona
+ */
 public class IconButton extends JButton {
     private boolean mousePress;
     public IconButton(String path, int width, int height, int scaleAlgorithm){

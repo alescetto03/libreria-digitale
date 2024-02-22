@@ -10,12 +10,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' notifica.
- * Permette di reperire le notifiche di un utente
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Notifiche all'interno del database.
  */
-
 public class NotificationDAO implements NotificationDAOInterface {
-
+    /**
+     * @inheritDoc
+     * @param username
+     * @return
+     */
     @Override
     public ArrayList<NotificationResultInterface> getUserNotification(String username) {
         final String query = "SELECT messaggio, data_ora FROM Notifica WHERE Notifica.destinatario = ?";

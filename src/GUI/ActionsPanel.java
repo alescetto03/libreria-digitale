@@ -5,6 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
+/**
+ * Classe GUI che rappresenta un JPanel contenente dei pulsanti:
+ * - pulsante "modifica";
+ * - pulsante "elimina";
+ * - pulsante "visualizza";
+ */
 public class ActionsPanel extends JPanel{
     private ActionButton viewButton;
     private ActionButton editButton;

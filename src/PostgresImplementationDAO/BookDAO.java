@@ -9,11 +9,15 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' libro.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare libri
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Libro all'interno del database.
  */
-
 public class BookDAO implements BookDAOInterface {
+
+    /**
+     * @inheritDoc
+     * @param isbn
+     * @return
+     */
     public BookResultInterface getBookByIsbn(String isbn) {
         final String query = "SELECT * FROM Libro WHERE isbn = ?";
         try (
@@ -31,6 +35,12 @@ public class BookDAO implements BookDAOInterface {
         }
         return null;
     }
+
+    /**
+     * @inheritDoc
+     * @param searchedBook
+     * @return
+     */
     @Override
     public ArrayList<BookResultInterface> getResearchedBook(String searchedBook){
         final String query = "SELECT * FROM Libro WHERE Libro.titolo ILIKE '%'|| ? ||'%'";
@@ -54,6 +64,10 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     @Override
     public ArrayList<BookResultInterface> getAll() {
         final String query = "SELECT * FROM Libro ORDER BY isbn";
@@ -75,6 +89,11 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param fruitionMode
+     * @return
+     */
     public ArrayList<BookResultInterface> getBooksByFruitionMode(Book.FruitionMode fruitionMode) {
         final String query = "SELECT * FROM Libro WHERE modalita_fruizione = ? ORDER BY isbn";
         try (
@@ -96,6 +115,11 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param collectionId
+     * @return
+     */
     @Override
     public ArrayList<BookResultInterface> getBooksFromCollection(int collectionId) {
         final String query = "SELECT l.isbn, l.titolo, l.editore, l.modalita_fruizione, l.anno_pubblicazione, l.copertina, l.descrizione, l.genere, l.target, l.materia, l.tipo " +
@@ -121,6 +145,11 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param isbn
+     * @return
+     */
     public boolean deleteBookByIsbn(String isbn) {
         try (
             Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -134,6 +163,23 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param bookToUpdate
+     * @param isbn
+     * @param title
+     * @param publisher
+     * @param fruition_mode
+     * @param publication_year
+     * @param cover
+     * @param description
+     * @param genre
+     * @param target
+     * @param topic
+     * @param type
+     * @return
+     * @throws Exception
+     */
     @Override
     public BookResultInterface updateBookByIsbn(String bookToUpdate, String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception {
         String query;
@@ -190,6 +236,11 @@ public class BookDAO implements BookDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param publisher
+     * @return
+     */
     public ArrayList<BookResultInterface> getBooksByPublisher(String publisher) {
         final String query = "SELECT * FROM Libro WHERE editore = ?";
         try (
@@ -211,6 +262,22 @@ public class BookDAO implements BookDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param isbn
+     * @param title
+     * @param publisher
+     * @param fruition_mode
+     * @param publication_year
+     * @param cover
+     * @param description
+     * @param genre
+     * @param target
+     * @param topic
+     * @param type
+     * @return
+     * @throws Exception
+     */
     @Override
     public BookResultInterface insertBookInDb(String isbn, String title, String publisher, Book.FruitionMode fruition_mode, int publication_year, byte[] cover, String description, String genre, String target, String topic, Book.BookType type) throws Exception{
         String query;
@@ -263,6 +330,11 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param isbn
+     * @return
+     */
     public ArrayList<AuthorResultInterface> getAuthorsOfBook(String isbn) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -284,6 +356,12 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param author
+     * @param book
+     * @return
+     */
     public boolean insertAuthorOfBook(int author, String book) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -298,6 +376,12 @@ public class BookDAO implements BookDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param author
+     * @param book
+     * @return
+     */
     public boolean deleteAuthorOfBook(int author, String book) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();

@@ -7,10 +7,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' autore.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare autori
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Autore all'interno del database.
  */
 public class AuthorDAO implements AuthorDAOInterface {
+
+    /**
+     * @inheritDoc
+     * @return
+     */
     public ArrayList<AuthorResultInterface> getAll() {
         final String query = "SELECT * FROM Autore ORDER BY cod_autore";
         try (
@@ -31,6 +35,11 @@ public class AuthorDAO implements AuthorDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param id
+     * @return
+     */
     public boolean deleteAuthorById(int id) {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -44,6 +53,17 @@ public class AuthorDAO implements AuthorDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param authorToUpdate
+     * @param name
+     * @param birthDate
+     * @param deathDate
+     * @param nationality
+     * @param biography
+     * @return
+     * @throws Exception
+     */
     @Override
     public AuthorResultInterface updateAuthorById(int authorToUpdate, String name, java.sql.Date birthDate, java.sql.Date deathDate, String nationality, String biography) throws Exception {
         try (
@@ -79,7 +99,16 @@ public class AuthorDAO implements AuthorDAOInterface {
         return null;
     }
 
-    @Override
+    /**
+     * @inheritDoc
+     * @param name
+     * @param birth_date
+     * @param death_date
+     * @param nationality
+     * @param bio
+     * @return
+     * @throws Exception
+     */
     public AuthorResultInterface insertAuthorInDb(String name, Date birth_date, Date death_date, String nationality, String bio) throws Exception {
         try (
                 Connection conn = DatabaseConnection.getInstance().getConnection();

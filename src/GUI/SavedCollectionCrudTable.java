@@ -10,6 +10,9 @@ import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * CRUD Table che gestisce le raccolte salvate da un utente
+ */
 public class SavedCollectionCrudTable extends CrudTable {
     public SavedCollectionCrudTable(AppView parentView, String title, String[] columns, ArrayList<Map<String, Object>> data) {
         super(parentView, title, columns, data, true, false, false, true);

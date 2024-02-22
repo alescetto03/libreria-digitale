@@ -4,6 +4,9 @@ import Controller.AppController;
 
 import java.util.Map;
 
+/**
+ * Classe che rappresenta uno Scrollpane orizzontale contenente delle raccolte
+ */
 public class CollectionPanel extends HorizontalScrollpanePanel {
     AppController appController;
     Object collectionId;

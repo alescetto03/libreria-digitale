@@ -4,6 +4,9 @@ import DAO.CollectionResultInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Raccolta del database
+ */
 public class CollectionResult implements CollectionResultInterface {
     int id;
     String name;

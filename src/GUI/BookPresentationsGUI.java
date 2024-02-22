@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * View che permette all'utente di gestire le presentazioni di un libro in una sala
+ */
 public class BookPresentationsGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();

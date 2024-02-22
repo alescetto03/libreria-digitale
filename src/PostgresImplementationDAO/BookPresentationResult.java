@@ -6,6 +6,9 @@ import DAO.PresentationHallResultInterface;
 
 import java.sql.Date;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Presentazione Libro del database
+ */
 public class BookPresentationResult implements BookPresentationResultInterface {
     private PresentationHallResultInterface presentationHall;
     private BookResultInterface presentedBook;

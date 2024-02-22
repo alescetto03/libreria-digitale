@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * View che permette all'utente di gestire gli autori di un articolo scientifico
+ */
 public class AuthorsOfScientificPublicationGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();

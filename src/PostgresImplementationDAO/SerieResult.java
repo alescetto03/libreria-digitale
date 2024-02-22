@@ -5,6 +5,9 @@ import DAO.SerieResultInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Serie del database
+ */
 public class SerieResult implements SerieResultInterface {
     String name;
     String prequel;

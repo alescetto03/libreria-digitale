@@ -11,11 +11,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' rivista.
- * Permette di fare tutte le operazioni di base, come reperire, eliminare, inserire ed aggiornare riviste
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Rivista all'interno del database.
  */
-
 public class JournalDAO implements JournalDAOInterface {
+    /**
+     * @inheritDoc
+     * @param issn
+     * @return
+     */
     @Override
     public JournalResultInterface getJournalByIssn(String issn) {
         final String query = "SELECT * FROM Rivista WHERE issn = ?";
@@ -36,6 +39,10 @@ public class JournalDAO implements JournalDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @return
+     */
     @Override
     public ArrayList<JournalResultInterface> getAll() {
         final String query = "SELECT * FROM Rivista ORDER BY issn";
@@ -57,6 +64,11 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param issn
+     * @return
+     */
     @Override
     public boolean deleteJournalByIssn(String issn) {
         try (
@@ -71,6 +83,11 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param issn
+     * @return
+     */
     public ArrayList<ScientificPublicationResultInterface> getPublicationsFromJournal(String issn) {
         final String query = "SELECT a.doi, a.titolo, a.editore, a.modalita_fruizione, a.anno_pubblicazione, a.copertina, a.descrizione FROM articolo_scientifico_pubblicazione_rivista AS ar " +
                 "JOIN articolo_scientifico AS a ON a.doi = ar.articolo_scientifico " +
@@ -94,6 +111,12 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param scientificPublication
+     * @param journal
+     * @return
+     */
     @Override
     public boolean insertScientificPublicationIntoJournal(String scientificPublication, String journal) {
         try (
@@ -109,6 +132,12 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param scientificPublication
+     * @param journal
+     * @return
+     */
     @Override
     public boolean deleteScientificPublicationFromJournal(String scientificPublication, String journal) {
         try (
@@ -124,6 +153,16 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param issn
+     * @param name
+     * @param argument
+     * @param publicationYear
+     * @param manager
+     * @return
+     * @throws Exception
+     */
     @Override
     public JournalResultInterface insertJournalInDb(String issn, String name, String argument, int publicationYear, String manager) throws Exception{
         try (
@@ -159,6 +198,17 @@ public class JournalDAO implements JournalDAOInterface {
         }
     }
 
+    /**
+     * @inheritDoc
+     * @param journalToUpdate
+     * @param issn
+     * @param name
+     * @param argument
+     * @param publication_year
+     * @param manager
+     * @return
+     * @throws Exception
+     */
     @Override
     public JournalResultInterface updateJournalByIssn(String journalToUpdate, String issn, String name, String argument, int publication_year, String manager) throws Exception {
         try (

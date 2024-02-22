@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Notifica del database
+ */
 public class NotificationResult implements NotificationResultInterface {
     String text;
     Timestamp date_time;

@@ -4,6 +4,9 @@ import Managements.JdbcCredentialManager;
 
 import java.sql.*;
 
+/**
+ * Classe singleton che si occupa di gestire la connessione al database dell'applicativo
+ */
 public class DatabaseConnection {
     static DatabaseConnection instance = null;
     Connection connection;

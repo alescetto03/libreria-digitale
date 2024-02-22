@@ -6,6 +6,10 @@ import GUI.CrudTable;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Classe che permette di renderizzare l'ActionPanel come colonna di una tabella
+ * @see ActionsPanel
+ */
 public class TableActionsPanelEditor extends DefaultCellEditor {
     private boolean displayViewButton;
     private boolean displayEditButton;

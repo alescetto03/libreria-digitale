@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Articolo Scientifico del database
+ */
 public class ScientificPublicationResult implements ScientificPublicationResultInterface {
     String doi;
     String title;

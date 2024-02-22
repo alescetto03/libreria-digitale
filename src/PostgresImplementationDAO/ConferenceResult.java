@@ -6,6 +6,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Conferenza del database
+ */
 public class ConferenceResult implements ConferenceResultInterface {
     private int id;
     private String place;

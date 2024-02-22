@@ -6,6 +6,9 @@ import DAO.ScientificPublicationResultInterface;
 
 import java.sql.Date;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Presentazione Articolo del database
+ */
 public class ScientificPublicationPresentationResult implements ScientificPublicationPresentationResultInterface {
     private ConferenceResultInterface conference;
     private ScientificPublicationResultInterface presentedScientificPublication;

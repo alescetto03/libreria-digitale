@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Conferenza
+ */
 public class Conference extends AbstractModel {
     private int id;
     private String location;

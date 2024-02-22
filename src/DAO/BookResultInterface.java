@@ -2,6 +2,9 @@ package DAO;
 
 import java.io.InputStream;
 
+/**
+ * Interfaccia che rappresenta una tupla della tabella Libro del database
+ */
 public interface BookResultInterface {
     String getIsbn();
     String getTitle();

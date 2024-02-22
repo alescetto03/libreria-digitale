@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * View che permette all'utente di gestire le vendite di libri di un negozio
+ */
 public class BookSalesGUI extends AppView {
     JPanel contentPane = new JPanel();
     JPanel titlePanel = new JPanel();

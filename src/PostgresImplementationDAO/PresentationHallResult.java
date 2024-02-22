@@ -5,6 +5,9 @@ import DAO.PresentationHallResultInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Sala del database
+ */
 public class PresentationHallResult implements PresentationHallResultInterface {
     int id;
     String name;

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Notifica
+ */
 public class Notification extends AbstractModel{
     private String text;
     private LocalDateTime date_time;

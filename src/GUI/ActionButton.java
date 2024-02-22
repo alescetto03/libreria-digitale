@@ -7,6 +7,9 @@ import java.awt.geom.Ellipse2D;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * Classe GUI che rappresenta un bottone customizzato
+ */
 public class ActionButton extends JButton {
 
     private boolean mousePress;

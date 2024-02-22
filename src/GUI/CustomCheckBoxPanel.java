@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe che rappresenta un JPanel contenente delle checkbox
+ */
 public class CustomCheckBoxPanel extends JPanel {
     private Map<String, JCheckBox> checkBoxMap = new HashMap<>();
     AppController appController;

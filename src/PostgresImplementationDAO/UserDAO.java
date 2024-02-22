@@ -6,11 +6,15 @@ import DAO.UserResultInterface;
 import java.sql.*;
 
 /**
- * Classe per l'interfacciamente con il database per l'entita' utente.
- * Permette di loggare o registrare un utente.
+ * Implementazione per PostgreSQL dell'interfaccia DAO che gestisce la tabella Utente all'interno del database.
  */
 public class UserDAO implements UserDAOInterface {
-
+    /**
+     * @inheritDoc
+     * @param username
+     * @param password
+     * @return
+     */
     public UserResultInterface login(String username, byte[] password) {
         final String query = "SELECT username, email, nome, cognome, data_nascita, amministratore FROM Utente WHERE Utente.username = ? AND Utente.password = ?";
         try (
@@ -37,6 +41,16 @@ public class UserDAO implements UserDAOInterface {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     * @param username
+     * @param email
+     * @param password
+     * @param name
+     * @param surname
+     * @param birthdate
+     * @return
+     */
     public UserResultInterface register(String username, String email, byte[] password, String name, String surname, Date birthdate) {
         final String query = "INSERT INTO Utente(username, email, password, nome, cognome, data_nascita) VALUES (?, ?, ?, ?, ?, ?)RETURNING *";
         try (

@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementazione per PostgreSQL dell'interfaccia che rappresenta una tupla della tabella Libro del database
+ */
 public class BookResult implements BookResultInterface {
     String isbn;
     String title;

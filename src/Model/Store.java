@@ -3,6 +3,9 @@ package Model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe model dell'entità Negozio
+ */
 public class Store extends AbstractModel{
     private String partita_iva;
     private String name;
