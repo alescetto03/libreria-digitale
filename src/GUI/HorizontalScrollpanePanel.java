@@ -63,6 +63,8 @@ public abstract class HorizontalScrollpanePanel extends JPanel {
         actionButton.addActionListener((ActionEvent e) -> {
             if (!onSaveButtonPress()){
                 JOptionPane.showMessageDialog(this, "La raccolta che stai cercando di salvare esiste gia' nelle tue raccolte.", "ATTENZIONE!!!", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Raccolta salvata con successo", "Successo!!!", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         actionButton.setAlignmentX(Component.CENTER_ALIGNMENT);

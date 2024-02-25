@@ -25,7 +25,7 @@ public class SearchResultsGUI extends AppView {
         JScrollPane contentScrollPane = new JScrollPane(content);
         JButton goBackButton = new JButton("Torna indietro");
         goBackButton.addActionListener((ActionEvent e) -> {
-            appController.switchView(previousView);
+            appController.showHomepage();
         });
         goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         topPanel.add(goBackButton);
