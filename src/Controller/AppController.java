@@ -561,7 +561,7 @@ public class AppController {
      * Metodo che mostra il contenuto di una raccolta
      */
     public void showCollectionItems(Object id){
-        int collection_id = Integer.parseInt((String)id);
+        int collection_id = Integer.parseInt(String.valueOf(id));
 
         ArrayList<Collection> collection_data = getCollectionById(collection_id);
         ArrayList<Book> booksInCollection = getBookListFromCollection(collection_id);
